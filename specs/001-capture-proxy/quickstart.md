@@ -17,38 +17,38 @@ Command surface: [contracts/cli.md](./contracts/cli.md). On-disk format:
 |---|---|---|
 | Go 1.26+ | `go version` | Present: go1.26.5 |
 | Protocol tables | `ls ../docs/protocol/*.json` | 404 elements, embedded at build time (research.md R6/R7) |
-| Packet capture capability | `getcap $(which sccap)` | `cap_net_admin,cap_net_raw=eip` |
-| Game client | reaches the hangar | Ubuntu + Proton per the capture manual |
-| `tshark` / `dumpcap` | `tshark -v` | **Independent oracles only** — used to check our work in Scenario 2, never required to capture. Not currently installed: `sudo apt install tshark` |
+| Windows 10 / 11 | `winver` | The only supported platform (constitution v3.0.0) |
+| Npcap | `Get-Service npcap` | Required for capture only. [npcap.com](https://npcap.com) |
+| Elevation | terminal title says Administrator | Npcap refuses capture handles to unprivileged processes |
+| Game client | reaches the hangar | Native, on this same machine |
+| Wireshark | `tshark -v` | **Independent oracle only** — used to check our work in Scenario 2, never required to capture |
 
-Nothing in the runtime path is non-Go: `sccap` is one static binary with no interpreter, library
-or script dependencies. The third-party capture tools above are deliberately outside that rule —
-Scenario 2 compares our output against a tool we did not write, and reimplementing it here would
-destroy the independence that makes the comparison meaningful.
+Nothing in the runtime path is non-Go: `sccap` is one binary with no interpreter, library or
+script dependencies beyond the Npcap driver that capture itself requires. The third-party capture
+tools above are deliberately outside that rule — Scenario 2 compares our output against a tool we
+did not write, and reimplementing it here would destroy the independence that makes the comparison
+meaningful.
 
-Host preparation — package installation, NIC offload control, network namespace setup — is
-**out of scope for this feature** per the constitution and stays shell work. Use the procedures
-in `docs/Star-Conflict-Capture-Protocol.md` §1.
-
-> **Note**: the `tools/` directory referenced by that manual and by the root `README.md` is not
-> present in this workspace (see research.md R14). `sccap doctor` degrades to diagnosing and
-> reporting rather than fixing, so nothing here depends on those scripts.
+Host preparation — driver installation, NIC offload control, service configuration — is
+**out of scope for this feature** per the constitution and stays administrative work. Use the
+procedures in `docs/Star-Conflict-Capture-Protocol.md` §1. `sccap doctor` diagnoses and reports;
+it never changes host state.
 
 ## Build
 
-```bash
+```powershell
 cd sc-capture
-CGO_ENABLED=0 go build -o out/sccap ./cmd/sccap
-sudo setcap cap_net_raw,cap_net_admin=eip out/sccap
-./out/sccap doctor
+go build -tags npcap -o out\sccap.exe .\cmd\sccap
+.\out\sccap.exe doctor          # in an Administrator terminal
 ```
 
-The module is self-contained: it builds from a fresh clone with no external module, one
-dependency (`gopacket`), and no cgo.
+Without `-tags npcap` the build is pure Go with no prerequisites at all and every offline
+scenario below still runs — it simply cannot record. The module is self-contained either way: it
+builds from a fresh clone with no external module and one dependency (`gopacket`).
 
 **Protocol parity check** — run before trusting any decode output:
 
-```bash
+```powershell
 go test ./pkg/scproto/... -run Golden -v
 ```
 
@@ -62,8 +62,8 @@ out of scope, and no scripts ship in any language.
 
 **Then confirm you are watching the right wire**, with the game running:
 
-```bash
-sccap doctor --watch 30s
+```powershell
+.\out\sccap.exe doctor --watch 30s
 ```
 
 This reports which interfaces actually carry traffic to game endpoints. Capturing on the wrong
@@ -78,10 +78,10 @@ changes.
 
 **Proves**: US1 acceptance 1–3 · FR-001, FR-025, FR-026, FR-028 · SC-001, SC-011
 
-```bash
-sccap capture --scenario AUTH-02 --region EU --out ./captures
+```powershell
+.\out\sccap.exe capture --scenario AUTH-02 --region EU --out .\captures
 # play a login-to-hangar session, then Ctrl+C
-sccap verify ./captures/SC_*__AUTH-02__*
+.\out\sccap.exe verify .\captures\SC_*__AUTH-02__*
 ```
 
 **Expected**: a bundle directory containing at least one `capture_*.pcapng`, a `session.json`, and
@@ -102,20 +102,33 @@ never read protocol documentation (SC-001).
 
 Run `sccap` and `dumpcap` against the same interface simultaneously, then compare.
 
-```bash
-dumpcap -i <if> -n -s 0 -w /tmp/independent.pcapng &
-sccap capture --scenario BASE-01 --interface <if> --out ./captures
+`dumpcap` needs Npcap's own device name rather than the Windows adapter name, so ask it which is
+which first — `sccap` accepts either and resolves by address.
+
+```powershell
+$dumpcap = "$env:ProgramFiles\Wireshark\dumpcap.exe"
+& $dumpcap -D                               # find \Device\NPF_{...} for your adapter
+
+Start-Process $dumpcap -ArgumentList '-i','\Device\NPF_{...}','-n','-s','0',
+    '-w',"$env:TEMP\independent.pcapng"
+.\out\sccap.exe capture --scenario BASE-01 --interface Ethernet --out .\captures
 # play for ~2 minutes, stop both
 ```
 
 Compare the two frame streams — timestamps will differ in the low nanoseconds, so compare packet
 bytes, not whole files:
 
-```bash
-tshark -r /tmp/independent.pcapng -T fields -e data.data > /tmp/a.txt
-tshark -r ./captures/SC_*__BASE-01__*/capture_00001_*.pcapng -T fields -e data.data > /tmp/b.txt
-diff /tmp/a.txt /tmp/b.txt && echo "BYTE-IDENTICAL"
+```powershell
+$tshark = "$env:ProgramFiles\Wireshark\tshark.exe"
+& $tshark -r "$env:TEMP\independent.pcapng" -T fields -e data.data > "$env:TEMP\a.txt"
+& $tshark -r .\captures\SC_*__BASE-01__*\capture_00001_*.pcapng -T fields -e data.data > "$env:TEMP\b.txt"
+if (-not (Compare-Object (Get-Content "$env:TEMP\a.txt") (Get-Content "$env:TEMP\b.txt"))) {
+    "BYTE-IDENTICAL"
+}
 ```
+
+> The automated form of this lives in `tests/e2e/byteexact_test.go`, which does the device-name
+> lookup itself and skips cleanly when Npcap, elevation or Wireshark is missing.
 
 **Expected**: no differences. **A single dropped or truncated frame fails this scenario**, and a
 failure here invalidates every other result — nothing downstream matters if the journal is not
@@ -134,7 +147,7 @@ development workflow, not optional.**
 
 Runs offline against a checked-in corpus — no game, no server, no network.
 
-```bash
+```powershell
 go test ./tests/faultinjection/... -v
 ```
 
@@ -161,11 +174,12 @@ amount of careful coding restores it.
 
 **Proves**: US1 acceptance 4 · FR-006 · SC-008
 
-```bash
-sccap capture --scenario BASE-01 --out ./captures &
-sleep 30
-kill -9 %1                       # SIGKILL — no clean shutdown path runs
-sccap verify ./captures/SC_*__BASE-01__*
+```powershell
+$p = Start-Process .\out\sccap.exe -PassThru `
+    -ArgumentList 'capture','--scenario','BASE-01','--out','.\captures'
+Start-Sleep -Seconds 30
+Stop-Process -Id $p.Id -Force        # TerminateProcess — no shutdown path runs at all
+.\out\sccap.exe verify .\captures\SC_*__BASE-01__*
 ```
 
 **Expected**: `verify` reports status `interrupted` and exits `0`. The pcapng walks structurally
@@ -183,17 +197,18 @@ Repeat 20 times. SC-008 requires **100%** of trials to produce a valid, verifiab
 
 Passive capture — no relay, no rewriting, no ban exposure. Use a **non-competitive mode** only.
 
-```bash
-sccap capture --scenario CBT-07 --region EU --out ./captures
+```powershell
+.\out\sccap.exe capture --scenario CBT-07 --region EU --out .\captures
 # enter a non-competitive match, play it out, return to hangar, Ctrl+C
-sccap decode ./captures/SC_*__CBT-07__* --type SCMD_CONNECT_DEDICATED_SERVER --json
+.\out\sccap.exe decode .\captures\SC_*__CBT-07__* --type SCMD_CONNECT_DEDICATED_SERVER --json
 ```
 
 **Expected**: the handoff record decodes, yielding `addr`, `port`, `session_id` and `zone_id`.
 Then:
 
-```bash
-sccap decode ./captures/SC_*__CBT-07__* --conn <dedicated-conn-id> --json | head
+```powershell
+.\out\sccap.exe decode .\captures\SC_*__CBT-07__* --conn <dedicated-conn-id> --json |
+    Select-Object -First 20
 ```
 
 **Expected**: UDP records in **both** directions, with wall and monotonic timestamps, spanning the
@@ -210,10 +225,10 @@ outcome in the feature.
 
 **Proves**: US3 acceptance 1–4 · FR-020–024 · SC-004
 
-```bash
-sccap coverage --json > /tmp/before.json
-sccap capture --scenario ECON-03 --out ./captures     # exercise the store
-sccap coverage --json > /tmp/after.json
+```powershell
+.\out\sccap.exe coverage --json > "$env:TEMP\before.json"
+.\out\sccap.exe capture --scenario ECON-03 --out .\captures     # exercise the store
+.\out\sccap.exe coverage --json > "$env:TEMP\after.json"
 ```
 
 **Expected**: the never-observed set shrinks by exactly the elements that appeared, and by
@@ -221,8 +236,8 @@ nothing else. Elements observed but not decodable report `observed_undecoded`, d
 `never_observed` (FR-022). Coverage persists across restarts and aggregates across every session
 on the machine.
 
-```bash
-sccap coverage --state never_observed | wc -l      # baseline ~232 of 404 known
+```powershell
+(.\out\sccap.exe coverage --state never_observed).Count    # baseline ~232 of 404 known
 ```
 
 **Also assert — state never regresses.** Capture a session that fails to decode an element that a
@@ -235,17 +250,24 @@ make the project's progress metric untrustworthy, which is worse than not having
 
 **Proves**: US5 acceptance 1–3 · FR-029, FR-030 · SC-007
 
-Run with every game service unreachable — pull the network cable, or run in an empty namespace.
+Run with every game service unreachable — pull the network cable, or
+`Disable-NetAdapter -Name Ethernet`. This works on the offline build too, with no Npcap installed
+at all, which is the strongest form of the claim: reading an archive needs nothing.
 
-```bash
-sha256sum ./captures/SC_*__AUTH-02__*/capture_*.pcapng > /tmp/raw-before.txt
+```powershell
+$b = Get-Item .\captures\SC_*__AUTH-02__*
+Get-FileHash "$b\capture_*.pcapng" -Algorithm SHA256 | Export-Csv "$env:TEMP\raw-before.csv"
 
-sccap decode ./captures/SC_*__AUTH-02__* --json > /tmp/decode-1.json
-sccap index ./captures/SC_*__AUTH-02__* --rebuild
-sccap decode ./captures/SC_*__AUTH-02__* --json > /tmp/decode-2.json
+.\out\sccap.exe decode $b --json > "$env:TEMP\decode-1.json"
+.\out\sccap.exe index  $b --rebuild
+.\out\sccap.exe decode $b --json > "$env:TEMP\decode-2.json"
 
-diff /tmp/decode-1.json /tmp/decode-2.json && echo "REPRODUCIBLE"
-sha256sum -c /tmp/raw-before.txt && echo "RAW UNMODIFIED"
+if (-not (Compare-Object (Get-Content "$env:TEMP\decode-1.json") `
+                         (Get-Content "$env:TEMP\decode-2.json"))) { "REPRODUCIBLE" }
+
+$before = Import-Csv "$env:TEMP\raw-before.csv"
+$after  = Get-FileHash "$b\capture_*.pcapng" -Algorithm SHA256
+if (-not (Compare-Object $before.Hash $after.Hash)) { "RAW UNMODIFIED" }
 ```
 
 **Expected**: decoding completes with no server reachable; results are identical to those recorded
@@ -264,11 +286,16 @@ exit `5` with a diagnostic naming both versions, and must not attempt a partial 
 
 **Proves**: US6 acceptance 1–3 · FR-031, FR-032 · SC-009
 
-```bash
-sudo tcpdump -i any -n 'not host <game-server-ips>' -w /tmp/egress.pcap &
-sccap capture --scenario BASE-01 --out ./captures
-# full session, then stop both
-tshark -r /tmp/egress.pcap -Y 'tcp.flags.syn==1 && tcp.flags.ack==0'
+```powershell
+# Watch the capture process's own sockets while it runs — a stronger claim than
+# watching the wire, since it asks what sccap itself opened.
+$p = Start-Process .\out\sccap.exe -PassThru `
+    -ArgumentList 'capture','--scenario','BASE-01','--out','.\captures'
+1..12 | ForEach-Object {
+    Get-NetTCPConnection -OwningProcess $p.Id -ErrorAction SilentlyContinue |
+        Where-Object State -ne 'Listen'
+    Start-Sleep -Milliseconds 250
+}
 ```
 
 **Expected**: no outbound connection to anything other than the game's own servers. The stronger
@@ -276,15 +303,21 @@ form of this assertion is by inspection rather than observation: the binary cont
 submission or telemetry code path at all** (contracts/cli.md, "Subcommands deliberately absent"),
 so there is nothing that could fire.
 
-**Also assert**:
+**Expected**: nothing. The stronger form of this assertion is by inspection rather than
+observation: the binary contains **no submission or telemetry code path at all**
+(contracts/cli.md, "Subcommands deliberately absent"), so there is nothing that could fire.
 
-```bash
-stat -c '%a %n' ./captures/SC_*__BASE-01__* ./captures/SC_*__BASE-01__*/*
+**Also assert** — access, not mode. A file mode here would prove nothing, since `os.Chmod` only
+toggles the read-only attribute:
+
+```powershell
+icacls .\captures\SC_*__BASE-01__*
 ```
 
-Directory `700`, files `600`. `session.json` has `sensitive: true` with a stated reason, and
-`credential_warning: true` if authentication traffic was observed — set without the contributor
-having to know it should be.
+Only your own account and `NT AUTHORITY\SYSTEM` may appear. `BUILTIN\Users`, `Everyone` or
+`Authenticated Users` in that list means the owner-only DACL was not applied or was inherited
+around. `session.json` has `sensitive: true` with a stated reason, and `credential_warning: true`
+if authentication traffic was observed — set without the contributor having to know it should be.
 
 ---
 
@@ -292,9 +325,10 @@ having to know it should be.
 
 **Proves**: US6 acceptance 3 · FR-012, FR-013 · Principle IV
 
-```bash
-sccap capture --scenario BASE-01 --out ./captures        # no flags — passive
-sccap verify ./captures/SC_*__BASE-01__* --json | grep -E '"mode"|"rewrites"'
+```powershell
+.\out\sccap.exe capture --scenario BASE-01 --out .\captures        # no flags — passive
+.\out\sccap.exe verify .\captures\SC_*__BASE-01__* --json |
+    Select-String -Pattern '"mode"','"rewrites"'
 ```
 
 **Expected**: `passive []` — mode is passive and the rewrite list is empty, without the
@@ -307,10 +341,12 @@ rewritten.
 
 **Proves**: FR-036, FR-037 · edge case "disk exhaustion"
 
-```bash
-# small tmpfs to make the floor reachable in seconds
-sudo mount -t tmpfs -o size=600M tmpfs /mnt/tiny
-sccap capture --scenario BASE-01 --out /mnt/tiny --min-free 400MiB --floor 200MiB
+```powershell
+# Set the thresholds above actual free space, so the very first check trips the floor.
+# No volume to create and nothing to clean up if the run is interrupted.
+$free = (Get-PSDrive C).Free
+.\out\sccap.exe capture --scenario BASE-01 --out .\captures `
+    --min-free ($free + 2GB) --floor ($free + 1GB)
 ```
 
 **Expected**: repeated visible warnings after the threshold; on reaching the floor, capture stops
@@ -327,8 +363,8 @@ deleted or overwritten to reclaim space.**
 This is a **spike, and disproving it is a valid and useful outcome** — passive capture already
 archives in-match traffic, so nothing depends on this succeeding. Non-competitive modes only.
 
-```bash
-sccap capture --scenario CBT-07 --relay --relay-udp --out ./captures
+```powershell
+.\out\sccap.exe capture --scenario CBT-07 --relay --relay-udp --out .\captures
 ```
 
 **Expected, either way**: the attempt, any rejection, and all traffic leading to it are recorded,
@@ -337,9 +373,9 @@ broken client. `session.json.rewrites` enumerates every rewrite performed.
 
 If the match **is** joinable through the relay, measure the cost:
 
-```bash
-sccap decode ./captures/SC_*__CBT-07__* --conn <dedicated-conn-id> --json \
-  | <compute p99 RTT delta vs. an unrelayed baseline session>
+```powershell
+.\out\sccap.exe decode .\captures\SC_*__CBT-07__* --conn <dedicated-conn-id> --json |
+    <compute p99 RTT delta vs. an unrelayed baseline session>
 ```
 
 **Expected**: ≤ 15 ms added round-trip at p99 (SC-006). Above that, the relay is not viable for

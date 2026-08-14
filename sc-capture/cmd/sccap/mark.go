@@ -62,7 +62,10 @@ func runMark(args []string) int {
 	}
 
 	if *console {
-		fmt.Fprintln(os.Stderr, "Marker console. Type a label and press Enter. Ctrl+D to finish.")
+		// Ctrl+Z then Enter, not Ctrl+D: this console signals end-of-input
+		// differently, and a contributor told the wrong key sits there with a
+		// live capture wondering why nothing happens.
+		fmt.Fprintln(os.Stderr, "Marker console. Type a label and press Enter. Ctrl+Z then Enter to finish.")
 		fmt.Fprintln(os.Stderr, "Mark before AND after each action you want to find later.")
 		sc := bufio.NewScanner(os.Stdin)
 		for sc.Scan() {

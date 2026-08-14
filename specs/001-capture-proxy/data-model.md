@@ -16,7 +16,7 @@ flowchart TD
     A["<b>Annotation</b><br/>markers.log"]
     CA["<b>Clock Anchor</b><br/>session.json"]
     PE["<b>Protocol Element</b><br/>static universe"]
-    CS["<b>Coverage State</b><br/>~/.local/share/sccap<br/><i>cross-session</i>"]
+    CS["<b>Coverage State</b><br/>%LOCALAPPDATA%\sccap<br/><i>cross-session</i>"]
 
     S -->|1..n| F
     S -->|0..n| CA
@@ -46,7 +46,7 @@ directory; described by `session.json`.
 | `bundle_id` | string | `SC_<UTC_START>__<SCENARIO_ID>__<VOLUNTEER_ID>__<REGION>__<SEQ>` (R12) — equals the directory name |
 | `software` | object | `{name: "sccap", version, git_commit, protocol_tables_version}` — `protocol_tables_version` pins the embedded element universe, so a coverage claim can be traced to the table revision that produced it |
 | `client` | object | Game build, platform, runtime, launcher, locale (FR-025) |
-| `host` | object | Interfaces, netns isolation, offloads, capture tool, filter (empty by default), snaplen, packets captured, packets dropped |
+| `host` | object | Interfaces, off-box tap flag, offloads, capture tool, filter (empty by default), snaplen, packets captured, packets dropped |
 | `utc_start` / `utc_end` | timestamp | RFC 3339, UTC, ms precision. `utc_end` absent ⇒ interrupted session |
 | `clock` | object | NTP source, method, and the `anchors` array (see Clock Anchor) |
 | `mode` | enum | `passive` \| `relay` — passive is the default (Principle IV) |
@@ -63,7 +63,7 @@ abrupt termination. A session in any terminal state is valid and verifiable; onl
 carries `utc_end` and a complete `SHA256SUMS`.
 
 **Rules**
-- Directory created `0700`, files `0600`, at creation time (FR-031, R13).
+- Directory created with an owner-only DACL, inheritance severed, before any file is written into it (FR-031, R13).
 - A session is valid without `index.jsonl`, without `markers.log`, and without `utc_end`.
 - A session is **not** valid without at least one pcapng segment and a parseable `session.json`.
 
@@ -215,7 +215,7 @@ the gap between the two is what the coverage feature measures.
 ## Coverage State
 
 Persistent, cross-session, machine-wide. The project's progress metric against the deadline
-(Principle III). Stored at `${XDG_DATA_HOME:-~/.local/share}/sccap/coverage.json`, replaced
+(Principle III). Stored at `%LOCALAPPDATA%\sccap\coverage.json`, replaced
 atomically.
 
 | Field | Type | Notes |
@@ -268,12 +268,12 @@ traffic.
 
 | Rule | Enforced by | Requirement |
 |---|---|---|
-| Every byte on an interposed connection is in the journal | Capture path; `AF_PACKET` drop counter must be 0 | FR-001, SC-002 |
+| Every byte on an interposed connection is in the journal | Capture path; the driver's drop counter must be 0 | FR-001, SC-002 |
 | No decoder in the write path | Import-cycle test: `journal` must not import `decode` | FR-002, Principle II |
 | Both timestamps on every record | Index writer; clock anchors for interpolation | FR-003 |
 | Unknown traffic journaled and marked | `service: unknown`, `status: unknown_element` | FR-005, FR-023 |
 | Session valid after abrupt kill | Structural pcapng walk + tolerant JSONL parse | FR-006, SC-008 |
 | Schema version refusal is explicit | Reader checks MAJOR before anything else | FR-027 |
 | Coverage never regresses | State lattice is one-directional | FR-020, FR-024 |
-| Sensitive by default | `session.json.sensitive` hard-coded true; `0700`/`0600` | FR-031 |
+| Sensitive by default | `session.json.sensitive` hard-coded true; owner-only DACL | FR-031 |
 | No egress | No network-write code path exists outside the relay's upstream sockets | FR-032, SC-009 |

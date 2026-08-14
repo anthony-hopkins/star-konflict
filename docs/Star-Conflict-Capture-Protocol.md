@@ -1,17 +1,20 @@
 # Star Conflict Network Archival Protocol
 
-**Version 2.0 — Ubuntu / Linux Volunteer Execution Manual**
+**Version 3.0 — Windows Volunteer Execution Manual**
 
 This is an operational manual, not a tutorial. Follow it literally. Every rule here exists
 because violating it produces a capture that cannot be used for protocol reconstruction after
 the servers are gone.
 
-**Platform: Linux only. Ubuntu 22.04 LTS or newer** (24.04 LTS recommended; tested on 24.04 and
-26.04). No Windows tooling is used anywhere in this protocol. If a step appears to require
-Windows, it is a bug in this document — report it.
+**Platform: Windows 10 or 11.** The game is a Windows title, and it and the recorder run on the
+same machine. If a step appears to require another operating system, it is a bug in this document
+— report it.
 
-**Canonical source:** this file. Tooling lives in [`tools/`](../tools/). Submit corrections as
-PRs against this document.
+**Tooling: one binary, `sccap`.** No scripts ship with this project, in any language. Anything
+this manual asks you to run is either a `sccap` subcommand or a stock Windows command. Where a
+command needs Administrator rights it says so; assume PowerShell throughout.
+
+**Canonical source:** this file. Submit corrections as PRs against this document.
 
 ---
 
@@ -69,57 +72,28 @@ them, every field in a combat capture looks like it might be meaningful.
   not go out of your way to capture identifying information beyond normal gameplay, and do not
   publish raw bundles to public indexes without the coordination described in §5.3.
 
-### 0.4 Choose your rig profile — do this first
+### 0.4 Your rig — one machine, and why that is the right one
 
-Star Conflict is a Windows title. On Linux it runs through Proton/Wine, and that may or may not
-work for your account, your GPU, and the current client build. **Establish which profile you are
-on before planning any capture work.**
+The game and the recorder run on the same Windows machine. There is no compatibility layer, no
+second box, and no routing to arrange. If you can play Star Conflict, you can record it.
 
-| | **Profile A — Native Linux host** | **Profile B — Linux capture gateway** |
-|---|---|---|
-| Game runs on | Ubuntu, via Steam Play / Proton or Wine | Any machine (including a Windows box) |
-| Capture runs on | The same Ubuntu host | A separate Ubuntu box routing that machine's traffic |
-| Requires | The client to work under Proton | Two NICs (or a managed switch with a mirror port) |
-| Gives you | netns isolation, TLS keys via GnuTLS, syscall correlation | Zero offload artifacts, zero capture load on the client, true wire bytes |
-| Use when | Proton runs the client acceptably | Proton fails, anti-cheat blocks it, or you want gold-standard wire fidelity |
+**Why this matters beyond convenience.** A capture taken through a compatibility layer on another
+operating system would carry the game's payload bytes intact — the client writes bytes to a socket
+and they reach the wire unchanged. What it would *not* carry is anything beneath the payload. TCP
+options, segmentation behaviour, keepalive defaults, retransmission timing and MTU would all
+belong to the host stack rather than to the game running as shipped. Those are precisely the
+questions §3.7 exists to answer and that per-record timestamps exist to make answerable, so
+recording where the game actually runs is what makes them mean anything.
 
-**Both profiles are fully Linux-side.** Profile B satisfies a Linux-only tooling requirement even
-when the game itself will not run on Linux — every capture, verification, and analysis step
-happens on Ubuntu.
+**Advanced, entirely optional: a mirror-port tap.** If you have a managed switch with port
+mirroring, or a second machine with two NICs bridging the gaming machine to the router, capturing
+there gives you frames untouched by your gaming machine's NIC offloads and puts zero capture load
+on the client. It is strictly better wire fidelity, and it is more setup than most contributors
+need. `sccap` runs the same way on the capture host. Set `host.tap: true` in the sidecar so a
+reader knows the frames were observed off-box.
 
-**They are complementary, not alternatives.** Proton does not alter payload bytes — the game
-writes bytes to a socket and the Linux kernel puts those exact bytes on the wire, and UDP
-datagram boundaries are preserved exactly — so Profile A is trustworthy for the entire
-application-protocol corpus (§3.2–§3.6). What Proton *does* change sits below the payload: the
-TLS handshake is GnuTLS rather than SChannel (§1.9), and TCP options, segmentation and keepalive
-defaults are Linux's rather than Windows'. So:
-
-| Question you are answering | Trust |
-|---|---|
-| What do the game's messages look like? Opcodes, entity encoding, physics fields, economy | **Either profile.** Payload bytes are identical. |
-| What does the server send, and at what tick rate? | **Either profile.** That is the server talking. |
-| What handshake must the emulator accept from a Windows client? | **Profile B only.** |
-| What are the transport-level timeouts and keepalive behaviours? | **Profile B**, or annotate that you measured Linux's stack. |
-| Can I decrypt the auth flow at all? | **Profile A** is far easier (§1.9). |
-
-If you have the hardware for both, the highest-value split is: **Profile A for TLS key
-extraction and bulk scenario volume, Profile B for the fingerprint-accurate reference captures
-of §3.1 authentication and §3.7 timeouts.**
-
-**Profile A viability check — run this before anything else:**
-
-```bash
-# 1. Install Steam and enable Steam Play for all titles:
-#    Steam -> Settings -> Compatibility -> "Enable Steam Play for all other titles"
-# 2. Install and launch Star Conflict. Confirm you can reach the hangar and enter a match.
-# 3. Confirm which Proton build was used:
-ls -dt ~/.steam/steam/steamapps/compatdata/*/ | head
-protontricks -l 2>/dev/null || echo "install protontricks for a friendlier listing"
-```
-
-If the client will not launch, will not authenticate, or is blocked by anti-cheat, **stop and
-switch to Profile B (§1.9).** Do not burn volunteer time fighting Proton — a Profile B gateway
-produces better captures anyway.
+Do not treat the tap as a prerequisite. **An ordinary same-machine capture with the offloads
+turned off is a good capture**, and volume of those beats a perfect rig that never gets used.
 
 ### 0.5 Capture tiers
 
@@ -128,9 +102,12 @@ a handful of botched Tier 3 attempts.
 
 | Tier | Requirements | Adds |
 |---|---|---|
-| **T1** | Wired Ethernet, quiesced host, `dumpcap` + OBS + marker beacon, session sidecar | The baseline everyone can do |
-| **T2** | + network-namespace isolation, TLS key extraction, socket sampler, offloads disabled | Perfectly isolated traffic, decryptable auth, exact endpoint inventory |
-| **T3** | + Two synchronized clients in one match, or a Profile B gateway/tap, or loss/latency profiles | Authoritative-vs-local field discrimination, reliability-layer discovery |
+| **T1** | Wired Ethernet, quiesced host, `sccap capture` + markers + a screen recording | The baseline everyone can do |
+| **T2** | + offloads disabled, endpoint inventory recorded, TLS key material where obtainable | Trustworthy framing, exact endpoint inventory, decryptable auth |
+| **T3** | + Two synchronized clients in one match, or a mirror-port tap, or loss/latency profiles | Authoritative-vs-local field discrimination, reliability-layer discovery |
+
+Tier 2 is mostly a matter of five minutes in §1.2 rather than extra hardware. Tier 3 needs either
+a second account and machine, or a switch that can mirror.
 
 ---
 
@@ -147,48 +124,43 @@ shutdown at any price** and should be prioritized above all polished work.
 | 4 | **Idle baselines (hangar and in-match)** | SC-BASE-01/02 | Cheap, fast, and makes every other capture interpretable. |
 | 5 | **Economy: buy, sell, upgrade — plus the failure cases** | SC-ECON-* | Failure responses reveal the server's validation table, which the emulator must reimplement. |
 | 6 | **Open Space: sector transition, dock, NPC fight, loot** | SC-WLD-* | World persistence and AI triggers, entirely absent from arena captures. |
-| 7 | **TLS key material for the auth/launcher flow** | §1.8 | Under Wine this is unusually achievable — see the GnuTLS route. |
+| 7 | **TLS key material for the auth/launcher flow** | §1.9 | Hard here, and worth attempting anyway — read §1.9 before spending time on it. |
 | 8 | **Disconnect / reconnect / timeout / kick** | SC-EDGE-* | The paths every emulator gets wrong, and that nobody thinks to capture. |
 | 9 | **Two-client synchronized match capture** | SC-T3-01 | The only way to distinguish server-authoritative fields from client-local ones. |
-| 10 | **Client binaries, Proton prefix, and version manifest** | §6.1 | PCAPs without the matching client build are frequently undecodable. |
+| 10 | **Client binaries and version manifest** | §6.1 | PCAPs without the matching client build are frequently undecodable. |
 
 ---
 
-## 1. Environment Configuration (Ubuntu)
+## 1. Environment Configuration (Windows)
 
-### 1.1 One-shot bootstrap
+### 1.1 One-shot setup
 
-```bash
-git clone <this-repo> && cd star-conflict-clone
-./tools/setup-ubuntu.sh
+Three installs and a build. Full step-by-step with screenshots-in-prose is in
+[Part 2 of the README](../README.md#part-2--setup-once-per-machine); this is the operational
+summary.
+
+1. **[Npcap](https://npcap.com)** — the packet driver. Accept the defaults.
+2. **[Go 1.26+](https://go.dev/dl/)** — to build the tool.
+3. **[Wireshark](https://www.wireshark.org/)** *(optional but recommended)* — not for capturing,
+   for reading captures afterwards and for the independent cross-check in §4.
+
+```powershell
+cd sc-capture
+go build -tags npcap -o out\sccap.exe .\cmd\sccap
 ```
 
-This installs the toolchain, fixes the `dumpcap` permission trap, and verifies clock discipline.
-Re-run `./tools/setup-ubuntu.sh --check` before **every** session — it is fast and catches the
-regressions that silently ruin captures.
+Then, in an **Administrator** PowerShell, before every session:
 
-What it installs:
-
-```bash
-sudo apt install wireshark-common tshark chrony ethtool iproute2 python3 obs-studio ffmpeg jq zstd
+```powershell
+.\out\sccap.exe doctor
 ```
 
-**The `dumpcap` permission trap — the #1 Ubuntu setup failure.** Ubuntu ships
-`/usr/bin/dumpcap` as `root:wireshark` mode `0754`. Capabilities alone are not enough: a user
-outside the `wireshark` group cannot even *execute* the binary, and the error is a bare
-`Permission denied` that looks like a capture problem rather than a group problem.
+It is fast, it names the exact remedy for anything it finds, and it never changes your machine
+itself. Run it every time — it catches the regressions that silently ruin captures.
 
-```bash
-sudo dpkg-reconfigure wireshark-common      # answer YES to "allow non-superusers to capture"
-sudo usermod -aG wireshark "$USER"
-# log out and back in -- or, for the current shell only:
-newgrp wireshark
-getcap /usr/bin/dumpcap                      # expect: cap_net_admin,cap_net_raw=eip
-dumpcap -D                                   # must list interfaces without sudo
-```
-
-**Never run `dumpcap` under `sudo`.** It drops privileges deliberately; running it as root
-writes root-owned capture files into your bundle and breaks the rest of the toolchain.
+> **Administrator is not optional.** Npcap refuses capture handles to unprivileged processes.
+> `doctor` reports this as a distinct `privileges` line rather than letting it surface later as a
+> mysterious failure to open an interface.
 
 ### 1.2 Host preparation
 
@@ -196,58 +168,74 @@ writes root-owned capture files into your bundle and breaks the rest of the tool
 - [ ] **Use wired Ethernet.** Wi-Fi introduces retransmission artifacts and driver-level
       reordering that corrupt timing analysis. If you must use Wi-Fi, record it honestly in the
       sidecar so devs discount your inter-arrival timings.
-- [ ] Disable any VPN, WireGuard tunnel, or "gaming accelerator". They re-encapsulate traffic and
-      destroy the endpoint inventory. Check with `ip route show` and `ip -br link`.
-- [ ] Leave IPv6 enabled and capture it. Accidentally filtering out an IPv6 channel is a silent,
+- [ ] Disable any VPN or "gaming accelerator". They re-encapsulate traffic and destroy the
+      endpoint inventory. Check with `Get-NetAdapter` and `Get-NetRoute -DestinationPrefix 0.0.0.0/0`.
+- [ ] Leave IPv6 enabled and capture it. Accidentally excluding an IPv6 channel is a silent,
       total data loss.
+- [ ] Watch for Hyper-V, WSL and VirtualBox virtual adapters. They make `doctor` report several
+      live interfaces, and picking one of them records nothing. §1.3 is how you tell.
 
 **NIC offload — this one matters and is usually skipped**
 
-TSO, GSO, GRO and LRO cause the capture to record *coalesced* super-frames that never existed on
-the wire. For protocol reversing this destroys the true framing and MSS boundaries.
+Large Send Offload and Receive Segment Coalescing make the adapter hand up *coalesced*
+super-frames that never existed on the wire. Every byte is still captured, but the framing and
+timing become your driver's reconstruction, which destroys MSS boundaries and any inter-arrival
+measurement.
 
-```bash
-./tools/setup-ubuntu.sh --offloads-off eno1      # before capturing
-./tools/setup-ubuntu.sh --offloads-on  eno1      # restore afterwards
+```powershell
+# Look first — these report per-adapter, per-direction:
+Get-NetAdapterLso  -Name "Ethernet"
+Get-NetAdapterRsc  -Name "Ethernet"
 
-# equivalently, by hand:
-sudo ethtool -K eno1 tso off gso off gro off lro off
-ethtool -k eno1 | grep -E '^(tcp-segmentation|generic-segmentation|generic-receive|large-receive)-offload'
+# Turn them off for the session (Administrator):
+Disable-NetAdapterLso -Name "Ethernet"
+Disable-NetAdapterRsc -Name "Ethernet"
+
+# Afterwards, if you want them back:
+Enable-NetAdapterLso -Name "Ethernet"
+Enable-NetAdapterRsc -Name "Ethernet"
 ```
 
-Some NICs report `[fixed]` for an offload — it cannot be changed and that is harmless. Record in
-the sidecar which offloads you actually disabled. If you could not disable them, say so — devs
-will treat your frame boundaries as untrustworthy rather than deriving a wrong MSS.
+`sccap doctor` deliberately does **not** report whether these are on. The underlying properties
+are per-driver with no stable names across vendors, so any answer it gave would sometimes be
+wrong, and a diagnostic that lies about frame fidelity is worse than one that says "look for
+yourself". It prints the commands above instead.
+
+Some adapters do not implement LSO or RSC at all, in which case the `Get-` cmdlet errors rather
+than reporting `False`. That is fine — there is nothing to disable. Record in the sidecar what you
+actually turned off. If you could not turn something off, say so: a reader will treat your frame
+boundaries as untrustworthy rather than deriving a wrong MSS from them.
 
 **Clock discipline**
 
-Timestamps are how PCAPs from different volunteers get correlated. An unsynced clock makes a
+Timestamps are how captures from different volunteers get correlated. An unsynced clock makes a
 Tier 3 dual-client capture worthless.
 
-```bash
-sudo apt install chrony
-sudo systemctl enable --now chrony
-sudo chronyc makestep                  # step the clock immediately
-chronyc tracking                       # record 'Reference ID' and 'System time' offset
-timedatectl show -p NTPSynchronized --value   # must print: yes
+```powershell
+# Administrator:
+w32tm /resync
+w32tm /query /status          # record 'Last Successful Sync Time' and 'Phase Offset'
 ```
 
-Record the measured offset in milliseconds in `session.json` → `clock.offset_ms_at_start`.
-`start-capture.sh` reads it from `chronyc` automatically.
+If the service is not running, `doctor` says so and prints `net start w32time`. `sccap` records
+clock anchors from both a wall-clock and a monotonic source in every session, so a mid-session
+step is visible rather than silently folded into your timings.
 
 **Quiesce the host**
 
-The correct capture filter is *no capture filter* (§1.5), and network-namespace isolation (§1.4)
-makes quiescing largely unnecessary. Without isolation, before every session close: web
-browsers, Discord, Nextcloud/Dropbox/rclone, `unattended-upgrades`, Flatpak/snap auto-refresh,
-backup timers.
+The correct capture filter is *no capture filter* (§1.5), which means everything else on the
+machine lands in your file. Before every session, close: web browsers, Discord, OneDrive/Dropbox,
+game launchers other than Steam, and anything that syncs. Pause Windows Update.
 
-```bash
-sudo systemctl stop unattended-upgrades.service
-systemctl --user stop nextcloud-client.service 2>/dev/null
-sudo snap refresh --hold=24h 2>/dev/null
-# see what is actually talking:
-sudo ss -tunp state established
+```powershell
+# See what is actually talking, busiest first:
+Get-NetTCPConnection -State Established |
+    Select-Object RemoteAddress, RemotePort, OwningProcess |
+    Sort-Object OwningProcess
+
+# Resolve the noisy ones to names:
+Get-Process -Id (Get-NetTCPConnection -State Established).OwningProcess |
+    Select-Object -Unique ProcessName
 ```
 
 > **Do NOT close Steam, and do NOT filter out Steam traffic.** If the client authenticates via a
@@ -259,39 +247,60 @@ sudo ss -tunp state established
 You cannot write a correct filter for an application whose endpoints you have not measured. Do
 not copy port numbers from forum posts; derive them.
 
-1. **Find the process tree.** Under Proton the game is not one process — Steam spawns `reaper`,
-   which spawns `pressure-vessel`, which spawns `wine`, which spawns the `.exe`. Any of them may
-   own the socket.
+1. **Find the interface first.** This is the one step that is both mandatory and cheap. With the
+   game running and sitting in the hangar:
 
-   ```bash
-   pgrep -a -f -i 'conflict|wine|proton|pressure-vessel'
-   ps -ef --forest | grep -A20 -i steam | head -40
+   ```powershell
+   .\out\sccap.exe doctor --watch 30s
    ```
 
-2. **Run the socket sampler**, then play through login → hangar → matchmaking → a match → back
-   to hangar:
+   It samples every live adapter simultaneously using the same capture backend a real session
+   would, and reports which of them actually carries traffic to the game's ports:
 
-   ```bash
-   ./tools/watch_game_sockets.py --out sockets.csv --filter-file display-filter.txt
-   # or target the whole Steam tree explicitly:
-   ./tools/watch_game_sockets.py --pid "$(pgrep -f '^/.*/steam$' | head -1)"
-   # Ctrl+C when done
+   ```
+    * Ethernet     packets=1841    game=212    services=shard(180),chat(32)
+      Wi-Fi        packets=12      game=0
+      vEthernet    packets=0       game=0
    ```
 
-   It samples `/proc` every 250 ms, follows the entire descendant tree (re-resolved each tick, so
-   the game process is picked up when it launches), records every distinct socket, and writes a
-   ready-to-paste Wireshark display filter.
+   The starred line is the one to record. **If nothing shows game traffic, stop.** Capturing anyway
+   produces a file that passes every other check in this document and contains none of the game.
+   It is the only failure here that is both silent and total.
 
-   *It deliberately over-collects.* If a pattern matches Steam itself, every Steam child is
-   included. That is safe — an inclusive display filter that is slightly too broad costs nothing,
-   while a too-narrow one is fatal. Use `--pid` when you want precision.
+2. **Find the process and its sockets.** The game is one process — no launcher tree to chase, no
+   compatibility layer owning the socket on its behalf.
 
-3. **Recover UDP peers from the capture.** UDP is connectionless, so the sampler can only see the
-   *local* port. Match it against the PCAP to find the remote match-server endpoints:
+   ```powershell
+   Get-Process StarConflict | Select-Object Id, Path, StartTime
 
-   ```bash
-   tshark -n -r capture_00001_*.pcapng -Y "udp.port == <LOCAL_UDP_PORT>" \
-          -T fields -e ip.src -e ip.dst -e udp.srcport -e udp.dstport | sort -u
+   # TCP endpoints, live:
+   Get-NetTCPConnection -OwningProcess (Get-Process StarConflict).Id |
+       Select-Object LocalPort, RemoteAddress, RemotePort, State
+
+   # UDP is connectionless, so only the local port is visible here:
+   Get-NetUDPEndpoint -OwningProcess (Get-Process StarConflict).Id |
+       Select-Object LocalAddress, LocalPort
+   ```
+
+   Sample this repeatedly while playing through login → hangar → matchmaking → a match → back to
+   hangar. Endpoints appear and disappear across those transitions, which is the point.
+
+3. **Recover UDP peers from the capture itself.** The local port above is only half the pair. The
+   remote match-server endpoints come out of the recording:
+
+   ```powershell
+   .\out\sccap.exe decode .\captures\SC_* --type SCMD_CONNECT_DEDICATED_SERVER
+   ```
+
+   That message is the handoff: it hands the client the address, port and session id of a match
+   server. It is the single most valuable message in the protocol, because everything after it is
+   traffic no tool in this project has ever recorded.
+
+   With Wireshark installed, the same thing from the raw file:
+
+   ```powershell
+   & "$env:ProgramFiles\Wireshark\tshark.exe" -n -r .\captures\SC_*\capture_00001_*.pcapng `
+       -Y "udp.port == <LOCAL_UDP_PORT>" -T fields -e ip.src -e ip.dst -e udp.srcport -e udp.dstport
    ```
 
 4. **Commit the result to the pooled endpoint inventory** (§5.2). Every volunteer's endpoints go
@@ -303,64 +312,43 @@ separate UDP flow to a match server whose address is handed to the client at mat
 Your Phase 0 output either confirms this or — more valuably — contradicts it. Report
 contradictions.
 
-### 1.4 Network-namespace isolation (Tier 2 — strongly recommended)
+### 1.4 Isolating the game's traffic — what is and is not available here
 
-**This is the Linux capability with no Windows equivalent, and it removes the single largest
-source of error in this protocol: guessing a filter.**
+There is no way on Windows to give the game a private network stack that you then capture in
+isolation. On other platforms that trick exists and removes the largest source of error in this
+protocol; here it does not, and pretending otherwise would waste your time.
 
-Run the game in a dedicated network namespace connected to the host by a veth pair. Capture on
-the host side of the veth and the file contains the game's traffic and *nothing else* — no
-browser, no Discord, no OS telemetry, no cloud sync. There is no filter to get wrong, and nothing
-unexpected can be silently excluded.
+**So the answer is quiescing, not isolation, and it is done at §1.2.** Your capture will contain
+whatever else the machine was doing. That is acceptable — Principle I says capture everything and
+decide later, and a slightly noisy file is vastly better than a filtered one — but it puts real
+weight on closing things beforehand.
 
-```bash
-sudo ./tools/netns-capture.sh up          # namespace + veth + NAT, offloads off on the veth
-sudo ./tools/netns-capture.sh status      # verify DNS and ICMP inside the namespace
+Three things make the noise manageable after the fact:
 
-# Steam is single-instance: FULLY QUIT any running Steam first, or the game launches
-# outside the namespace and outside your capture.
-sudo ./tools/netns-capture.sh run steam
+- **The recording is complete, so filtering stays reversible.** Everything below is read-time
+  filtering against a full archive, which is allowed and safe. `sccap decode --type`,
+  `--status`, and Wireshark display filters (§1.6) all narrow the view without touching the
+  evidence.
+- **`sccap` identifies the game's own flows.** It knows the master-server ports and surfaces them
+  in the status line and the record index, so "which of these is the game" is answered for you
+  rather than guessed.
+- **The marker beacon (§2.5) anchors the timeline**, so you can find the interesting thirty
+  seconds in an hour of file without knowing anything about the traffic around it.
 
-# capture on the veth, in another terminal
-./tools/start-capture.sh -s CBT-01 -v vol-042 -r EU -i sc-host
+If you want genuinely isolated traffic, the mirror-port tap in §0.4 is the way to get it: capture
+between the gaming machine and the router and the file contains that machine's traffic and nothing
+from your capture host at all. Set `host.tap: true` in the sidecar.
 
-sudo ./tools/netns-capture.sh down        # tear down, restore sysctls, leave no residue
+**Verify before trusting a session.** Capture for ten seconds with the game idle in the hangar and
+look at what landed:
+
+```powershell
+.\out\sccap.exe capture --scenario BASE-03 --out .\captures    # Ctrl+C after ~10s
+.\out\sccap.exe verify .\captures\SC_*
 ```
 
-> **`status` needs `sudo`.** Probing inside a namespace requires root. Run without it and the
-> connectivity lines report **UNKNOWN**, not failure — the namespace is very likely fine. Do not
-> tear down a working rig on the strength of an unprivileged `status`.
-
-`down` removes the namespace, veth, NAT rules and per-namespace `resolv.conf`, and restores
-`net.ipv4.ip_forward` to whatever it was before `up` — it does not leave forwarding enabled
-behind you.
-
-Set `host.netns_isolated: true` and `host.interface: "sc-host"` in the sidecar.
-
-**Verify isolation before trusting a session.** Capture for ten seconds with the game idle; if
-you see anything that is not the game, isolation is not working. Confirm the game is really
-inside:
-
-```bash
-ip netns pids sccap        # should list the wine/game processes
-```
-
-**Three caveats that change what you capture, so read them:**
-- **IPv6.** `up` configures a ULA subnet with NAT66 **only if the host has a default IPv6
-  route**. Many home connections do not, so `ipv6 : DISABLED` is common and expected — but it
-  means the namespace is IPv4-only and an IPv6 game channel would be silently absent, the exact
-  failure §1.5 tells you never to risk. `sudo ... status` reports which case you are in. Check
-  it, and if IPv6 is disabled, rely on your non-isolated captures to rule out an IPv6 channel.
-- Inside the namespace the client sits behind NAT at `10.77.0.2`, so its observed local address
-  differs from a normal run.
-- Anything the protocol does with client-reported addresses (NAT punch-through, peer hints) will
-  look different. For SC-MM-04 handoff behaviour specifically, prefer a non-isolated capture.
-
-Because of all three, **take at least one non-isolated capture per scenario family** so the true
-topology and address family are preserved somewhere in the archive.
-
-Further caveats (X11 abstract sockets, Steam single-instance) are documented at the bottom of
-`tools/netns-capture.sh`.
+If `drops` is anything but 0, the machine is too busy — close more and try again before recording
+anything you care about.
 
 ### 1.5 Capture filters (BPF, applied at capture time)
 
@@ -368,11 +356,16 @@ Further caveats (X11 abstract sockets, Steam single-instance) are documented at 
 > A capture filter is irreversible. Anything it drops is gone forever, and the traffic most
 > likely to be dropped by a naive filter is exactly the traffic nobody predicted — a NAT
 > punch-through to an unexpected subnet, a telemetry channel, a CDN fetch, a fallback relay.
-> With netns isolation there is nothing to filter anyway. Take the disk hit.
+> Take the disk hit.
 
-Use a filter only if you are disk- or CPU-constrained (`start-capture.sh --low-disk`). It removes
-only LAN service chatter that is definitively not the game, and **explicitly preserves the marker
-beacon**:
+`sccap` has no capture-filter flag and will not grow one — capture-time filtering is a permanent,
+irreversible discard decision (Principle I). If you are genuinely disk-constrained, the honest
+lever is `--floor`, which stops the session cleanly with the metadata written rather than
+quietly dropping traffic to fit.
+
+For reference, a filter that removes only LAN service chatter definitively not the game, and
+**explicitly preserves the marker beacon**, would look like this. It is documented so you can
+recognise one in somebody else's pre-`sccap` capture, not so you can apply it:
 
 ```
 udp port 24242 or not (
@@ -398,7 +391,7 @@ discovery. Preserves: DNS, ICMP, ARP, DHCP, NTP, all TCP/UDP game candidates, an
 
 ### 1.6 Display filters (applied at analysis time — always reversible)
 
-Paste the sampler's `display-filter.txt`, which looks like:
+Build an inclusive filter from the endpoints you measured in §1.3:
 
 ```
 ip.addr in {203.0.113.10, 203.0.113.11} || udp.port in {31337, 31338} || tcp.port in {443, 5222}
@@ -431,8 +424,11 @@ tls.handshake.type == 1 || tls.handshake.type == 11
 # Find your seeded known-plaintext anchor (see §2.7)
 frame contains "ZZQQ"
 
-# Exclude LAN noise if you captured unfiltered without netns isolation
+# Exclude LAN noise (you captured unfiltered, so it is all in there)
 !(mdns || llmnr || nbns || ssdp || dhcp || igmp)
+
+# Windows-specific noise that shows up on a normal desktop
+!(nbns || browser || wsdd || dhcpv6)
 ```
 
 Filtering by IP is strictly better than filtering by application name. An **inclusive** filter
@@ -441,12 +437,12 @@ built from Phase 0 endpoints is exact; name-based exclusion of browsers and chat
 ### 1.7 Wireshark profile settings
 
 Create a dedicated profile (**Edit → Configuration Profiles → +**, name it `star-conflict`), then
-share `~/.config/wireshark/profiles/star-conflict/` with your first submission so others can drop
-it straight in.
+share `%APPDATA%\Wireshark\profiles\star-conflict\` with your first submission so others can
+drop it straight in.
 
 | Setting | Value | Why |
 |---|---|---|
-| Protocols → TCP → *Validate the TCP checksum if possible* | **Off** | Checksum offload marks valid packets as bad and hides them from filters. |
+| Protocols → TCP → *Validate the TCP checksum if possible* | **Off** | Checksum offload marks valid outbound packets as bad and hides them from filters. This is not optional on Windows — checksum offload is on by default and is not one of the things §1.2 tells you to disable. |
 | Protocols → TCP → *Allow subdissector to reassemble TCP streams* | **On** | Needed to see application PDUs spanning segments. |
 | Protocols → TCP → *Reassemble out-of-order segments* | **On** | |
 | Protocols → UDP → *Try heuristic sub-dissectors first* | **Off** | Stops Wireshark mis-dissecting the game protocol as RTP and hiding the raw bytes. |
@@ -458,215 +454,214 @@ Custom columns (Preferences → Columns): `frame.time_utc`, `frame.time_delta_di
 
 ### 1.8 Capture invocation
 
-**Use `dumpcap`, never the Wireshark GUI, for real captures.** The GUI dissects live, which costs
-CPU and causes kernel-level packet drops under load — exactly during combat, exactly when you
+**Use `sccap`, never the Wireshark GUI, for real captures.** The GUI dissects live, which costs
+CPU and causes driver-level packet drops under load — exactly during combat, exactly when you
 need the data.
 
-```bash
-./tools/start-capture.sh -s ECON-03 -v vol-042 -r EU
+```powershell
+.\out\sccap.exe capture --scenario ECON-03 --volunteer vol-042 --region EU --out .\captures
 ```
 
-That wrapper creates the correctly-named bundle, writes a pre-filled `session.json`, runs
-pre-flight checks (wireless link, offloads, NTP), and invokes:
+That creates the correctly-named bundle, writes `session.json` before the first frame is
+captured, identifies the game client automatically, and starts journalling. Add
+`--interface Ethernet` if §1.3 showed more than one live adapter.
 
-```bash
-dumpcap -i eno1 -n -s 262144 -B 512 \
-        -w "<bundle>/capture.pcapng" -b duration:600 -b filesize:200000
+The defaults are the settings that matter, and they are not adjustable by accident:
+
+| Default | Why it is this way |
+|---|---|
+| **Full snaplen** — no truncation | The payload is the entire point. A truncated capture is unusable, and this is the single most common fatal mistake in packet archival. `--snaplen` exists but records a warning into the bundle, and `verify` reports it. |
+| **No capture filter** | A capture filter is an irreversible discard decision (§1.5, Principle I). Read-time filtering against a complete archive is what you want instead. |
+| **64 MB buffer, immediate mode** | Sized for combat bursts. Immediate mode rather than batching, so the drop counter is truthful within a second rather than a batch. |
+| **Rolls segments by size and duration, never deletes** | Files stay navigable and uploadable. There is no ring buffer and no `--prune`: nothing ever deletes your oldest data to make room. |
+
+**Watch the status line. `drops` must stay at 0:**
+
+```
+[00:04:12] services=lb,shard,chat  frames=182401  journal=241MiB  drops=0  records=9188  novel=2
 ```
 
-| Flag | Meaning | Why it is set this way |
-|---|---|---|
-| `-s 262144` | Snapshot length | **Never truncate.** The payload is the entire point. A default-truncated capture is unusable and this is the single most common fatal mistake. |
-| `-n` | No name resolution | Avoids self-generated DNS in your own capture and saves CPU. |
-| `-B 512` | 512 MB kernel buffer | Prevents drops during combat bursts. Raise to 1024 if drops are reported. |
-| `-b duration:600` | Roll file every 600 s | Keeps files navigable. |
-| `-b filesize:200000` | Roll every ~200 MB (value in kB) | Keeps files under practical upload limits. |
-| *(no `-b files:N`)* | — | **Critical.** Adding `-b files:N` makes it a *ring buffer* that deletes your oldest data. Omit it so files accumulate. |
+A climbing `drops` means traffic crossed the wire and is missing from your file. Stop, close
+things, start again. It is on screen precisely so you find out in ten seconds rather than after an
+hour. `novel` counting up is good — it means you have hit something the tool has never seen.
 
-Check for drops afterwards — `start-capture.sh` tees dumpcap's summary to `dumpcap.log`:
+Afterwards, the drop count is checked again from the recorded metadata rather than from memory:
 
-```bash
-grep -iE 'packets (captured|dropped)' <bundle>/dumpcap.log
+```powershell
+.\out\sccap.exe verify .\captures\SC_*
 ```
 
 ### 1.9 TLS / SSL session key extraction
 
-The goal is an **NSS key log** that lets Wireshark decrypt the auth and launcher traffic. Work
-through this in order.
+The goal is an **NSS key log** that lets Wireshark decrypt the auth and launcher traffic.
 
-**Linux has a real advantage here, with one real cost.** Under Wine/Proton the client's Windows
-SChannel calls are serviced by Wine's `secur32`, which on most builds is backed by **GnuTLS** —
-and GnuTLS honours `SSLKEYLOGFILE`. The Windows-native case (where SChannel ignores it entirely
-and you are pushed to a MITM proxy) frequently does not apply here.
+**Be warned: this is the hardest section in the manual, and it may not be possible on your
+machine.** Read Step 5 below before you spend an evening on it — the fallback is genuinely fine.
 
-> **The cost: a Proton capture does not record a Windows client's TLS handshake.**
-> The ClientHello is generated by GnuTLS, not SChannel, so its cipher-suite ordering, extension
-> set and overall fingerprint differ from what a native Windows client sends. Everything *inside*
-> the session is unaffected — but the handshake itself is Wine's, not the game's.
->
-> This matters for two things, and only these two: reproducing a client the live server would
-> have accepted if it ever fingerprinted TLS, and knowing what the emulator must accept from the
-> Windows clients most users will run. **Capture at least one auth-flow handshake from a native
-> Windows client via a Profile B gateway (§1.10)** as the fingerprint reference, even if all your
-> decrypted auth work comes from Proton. Record `client.runtime` accurately in every bundle so
-> analysts know which they are looking at.
+**Why it is hard here.** Windows applications that use the operating system's own TLS
+implementation (SChannel) cannot be persuaded to write a key log. `SSLKEYLOGFILE` is a convention
+honoured by OpenSSL, NSS and GnuTLS; SChannel ignores it completely, and there is no supported
+switch that changes that. Whether this route works at all therefore depends entirely on what the
+client links against, which is what Step 1 establishes before you try anything.
 
-#### Step 1 — Set `SSLKEYLOGFILE` via Steam launch options
+This is a real cost of recording on the platform the game ships for, and it is worth being clear
+that it is a cost. What you get in exchange is that everything *else* in the capture — the TCP
+behaviour, the handshake fingerprint, the timing — is the game's own rather than a compatibility
+layer's. The master-server protocol, which is the bulk of the archive and the part with no
+encryption at all, is unaffected either way.
 
-No environment-propagation dance is needed. Right-click the game → **Properties → Launch
-Options**:
+#### Step 1 — Identify the TLS stack, before trying anything
 
-```
-SSLKEYLOGFILE=/home/YOURUSER/sc-archive/sslkeys.log %command%
+```powershell
+# Which crypto libraries has the running client actually loaded?
+Get-Process StarConflict -Module |
+    Where-Object { $_.ModuleName -match 'ssl|crypto|nss|gnutls|schannel|ncrypt|bcrypt' } |
+    Select-Object ModuleName, FileName
 ```
 
-For a non-Steam / plain Wine launch:
-
-```bash
-mkdir -p ~/sc-archive
-SSLKEYLOGFILE=~/sc-archive/sslkeys.log wine /path/to/game.exe
-```
-
-Add `PROTON_LOG=1` to the launch options as well — it writes `~/steam-<appid>.log`, which
-records the Proton build and any Wine errors, and belongs in the bundle.
-
-#### Step 2 — Verify keys are actually being written
-
-```bash
-wc -l ~/sc-archive/sslkeys.log
-head -2 ~/sc-archive/sslkeys.log
-```
-
-A working keylog contains lines beginning with `CLIENT_RANDOM` (TLS 1.2) or
-`CLIENT_HANDSHAKE_TRAFFIC_SECRET` / `CLIENT_TRAFFIC_SECRET_0` / `SERVER_TRAFFIC_SECRET_0`
-(TLS 1.3). **An empty or absent file means this route does not work for this client — do not
-assume it silently succeeded.** Record the result either way in `session.json` → `tls`.
-
-#### Step 3 — Identify the TLS stack (only if Step 2 failed)
-
-```bash
-GAMEPID=$(pgrep -f -i conflict | head -1)
-sudo lsof -p "$GAMEPID" | grep -Ei 'gnutls|openssl|libssl|libcrypto|nss'
-grep -Ei 'gnutls|libssl|libcrypto|nss' "/proc/$GAMEPID/maps" | awk '{print $6}' | sort -u
-```
-
-| Libraries loaded | Implication |
+| Modules loaded | Implication |
 |---|---|
-| `libgnutls.so*` | Wine's schannel backend. `SSLKEYLOGFILE` should work — re-check Step 1. |
-| `libssl.so*` / `libcrypto.so*` | OpenSSL. `SSLKEYLOGFILE` works only if built with the keylog callback; go to Step 4. |
-| `libnss3.so` | NSS. `SSLKEYLOGFILE` works. |
-| None, but TLS on the wire | Statically linked or custom crypto. Go to Step 4. |
+| `libssl*.dll` / `libcrypto*.dll` | OpenSSL, bundled with the game. `SSLKEYLOGFILE` has a real chance — go to Step 2. |
+| `nss3.dll` / `ssl3.dll` | NSS. `SSLKEYLOGFILE` works. Go to Step 2. |
+| `schannel.dll` / `ncrypt.dll` / `bcrypt.dll` only | The operating system's stack. `SSLKEYLOGFILE` will not work. Skip to Step 3. |
+| None, but TLS is on the wire | Statically linked or custom crypto. Skip to Step 3. |
 
-Record the finding in `tls.stack_detected`. This is itself a useful data point even when
-extraction fails.
+Record the finding in `session.json` → `tls.stack_detected`. **This is a useful data point even
+when extraction fails** — knowing the client uses SChannel tells an emulator author what the
+server must be prepared to negotiate with.
 
-#### Step 4 — eBPF interception with `ecapture` (no CA, no proxy)
+#### Step 2 — Set `SSLKEYLOGFILE` (only if Step 1 found a bundled library)
 
-`ecapture` attaches uprobes to the TLS library and dumps plaintext without touching the
-certificate chain, so **certificate pinning does not defeat it**. This is the cleanest fallback
-on Linux and has no Windows equivalent.
+Steam passes its own environment to the game, so set it for the whole session before launching
+Steam:
 
-```bash
-# https://github.com/gojue/ecapture -- download the release binary for your kernel
-sudo ./ecapture tls --help                 # check flag names for YOUR version before relying on them
-sudo ./ecapture tls --pcapfile=./decrypted.pcapng   # auto-detects OpenSSL/GnuTLS/NSS
-sudo ./ecapture tls -m keylog -k ./sslkeys.log      # or emit a keylog instead
+```powershell
+New-Item -ItemType Directory -Force -Path "$HOME\sc-archive" | Out-Null
+[Environment]::SetEnvironmentVariable(
+    'SSLKEYLOGFILE', "$HOME\sc-archive\sslkeys.log", 'User')
 ```
 
-If auto-detection misses the library (likely under Wine, where it is loaded via `secur32`),
-point `ecapture` at it explicitly — the flag for this has changed across releases, so take the
-name from `--help` rather than from here. Find the library first:
+Then **fully exit Steam** (right-click the tray icon → Exit; not just the window) and start it
+again, so it picks up the new environment. Launch the game and reach the hangar.
 
-```bash
-grep -Eo '/[^ ]*libgnutls[^ ]*' "/proc/$(pgrep -f -i conflict | head -1)/maps" | sort -u
+Verify that keys are actually being written — do not assume:
+
+```powershell
+Get-Content "$HOME\sc-archive\sslkeys.log" -TotalCount 2
+(Get-Content "$HOME\sc-archive\sslkeys.log").Count
 ```
 
-Requires a kernel with BTF (Ubuntu 22.04+ stock kernels have it):
+A working key log contains lines beginning with `CLIENT_RANDOM` (TLS 1.2) or
+`CLIENT_HANDSHAKE_TRAFFIC_SECRET` / `CLIENT_TRAFFIC_SECRET_0` / `SERVER_TRAFFIC_SECRET_0`
+(TLS 1.3). **An empty or absent file means this route does not work for this client.** Record the
+result either way in `session.json` → `tls`.
 
-```bash
-ls /sys/kernel/btf/vmlinux && echo "BTF present"
+Unset it afterwards, so it does not sit in your environment for every other application:
+
+```powershell
+[Environment]::SetEnvironmentVariable('SSLKEYLOGFILE', $null, 'User')
 ```
 
-#### Step 5 — Intercepting proxy (last resort)
+#### Step 3 — Intercepting proxy (last resort)
 
-Only if Steps 1–4 all fail. [PolarProxy](https://www.netresec.com/?page=PolarProxy) writes the
-*decrypted* traffic straight to a PCAP, which is exactly the archival artifact we want:
+Only if Steps 1–2 established that no key log is obtainable.
+[PolarProxy](https://www.netresec.com/?page=PolarProxy) writes the *decrypted* traffic straight to
+a PCAP, which is exactly the archival artifact we want:
 
-```bash
-./PolarProxy -p 443,80 -x rootCA.cer -o ./decrypted_pcaps/
+```powershell
+.\PolarProxy.exe -p 443,80 -x rootCA.cer -o .\decrypted_pcaps\
 ```
 
-Caveats to record in the sidecar: certificate pinning defeats this (if the client errors during
-login with the proxy active, it pins — set `tls.pinning_suspected: true` and fall back to
-capturing ciphertext). A proxy also changes the wire-level endpoints, so **always take a matching
-un-proxied capture of the same scenario** so the true topology is preserved.
+Three caveats, all of which must go in the sidecar:
 
-#### Step 6 — Bind the keys to the capture, permanently
+- **Certificate pinning defeats this.** If the client errors during login with the proxy active,
+  it pins. Set `tls.pinning_suspected: true` and fall back to capturing ciphertext.
+- **A proxy changes the wire-level endpoints**, so always take a matching un-proxied capture of
+  the same scenario so the true topology is preserved somewhere.
+- **Installing a root CA on your own machine is a real change to your machine's trust store.**
+  Remove it when you are done, and do not do this on a machine you use for anything sensitive.
+
+#### Step 4 — Bind the keys to the capture, permanently
 
 Keys are useless if separated from their PCAP, and volunteer bundles get shuffled. Inject the
 secrets **into** the pcapng as a Decryption Secrets Block so they can never be lost:
 
-```bash
-editcap --inject-secrets tls,sslkeys.log capture_00001.pcapng capture_00001_keyed.pcapng
+```powershell
+& "$env:ProgramFiles\Wireshark\editcap.exe" --inject-secrets tls,"$HOME\sc-archive\sslkeys.log" `
+    .\capture_00001.pcapng .\capture_00001_keyed.pcapng
 ```
 
 Verify by opening the `_keyed` file with no key preference configured — if application data
 appears decrypted, it worked. Ship **both** the keyed file and the raw `sslkeys.log`, and set
 `tls.injected_into_pcapng: true`.
 
-#### Step 7 — Even if all of this fails, capture anyway
+> Keep the original file too, and do not overwrite it. The unmodified segment is the evidence and
+> its hash is in `SHA256SUMS`; the keyed file is derived, and `verify` will report it as an extra
+> file rather than a corruption.
+
+#### Step 5 — Even if all of this fails, capture anyway
+
+**This is the important step, and it is the one most likely to be skipped in frustration.**
 
 Encrypted bytes plus the client binary are still a solvable problem — the key schedule lives in
-the executable and can be reversed later. An *uncaptured* handshake is unsolvable forever. **Never
-skip a scenario because you could not decrypt it.**
+the executable, which is why §6.1 tells you to archive it. An *uncaptured* handshake is
+unsolvable forever. **Never skip a scenario because you could not decrypt it.**
+
+Keep this in proportion: the master-server protocol — three TCP services carrying authentication,
+inventory, economy, matchmaking and chat, which is the overwhelming majority of what this project
+is trying to preserve — **has no transport encryption at all.** None of the above applies to it.
+TLS covers the web-facing auth and launcher flow, one valuable corner of a much larger archive.
 
 Two things to extract regardless of decryption, because both feed the emulator's redirect map:
 
-```bash
+```powershell
+$tshark = "$env:ProgramFiles\Wireshark\tshark.exe"
+
 # Every hostname the client asked for (SNI)
-tshark -n -r capture_00001.pcapng -T fields -e tls.handshake.extensions_server_name | sort -u | grep .
+& $tshark -n -r .\capture_00001.pcapng -T fields -e tls.handshake.extensions_server_name |
+    Where-Object { $_ } | Sort-Object -Unique
 
 # Every hostname resolved, with answers
-tshark -n -r capture_00001.pcapng -Y "dns.flags.response==1" \
-       -T fields -e dns.qry.name -e dns.a | sort -u
+& $tshark -n -r .\capture_00001.pcapng -Y "dns.flags.response==1" `
+    -T fields -e dns.qry.name -e dns.a | Sort-Object -Unique
 ```
 
-### 1.10 Profile B — the Ubuntu capture gateway
+### 1.10 Mirror-port capture (Tier 3, optional)
 
-Use when Proton will not run the client, or when you want the best possible wire fidelity. The
-gaming machine plugs into the Ubuntu box; the Ubuntu box routes to the internet and captures in
-the middle. **No capture software runs on the gaming machine at all**, so there is zero
-capture-induced load and zero offload distortion.
+Use when you want the best possible wire fidelity: frames untouched by the gaming machine's NIC
+offloads, and zero capture-induced load on the client. **No capture software runs on the gaming
+machine at all.**
 
-```bash
-# eno1 = uplink to the router, enp3s0 = cable to the gaming machine
-sudo sysctl -w net.ipv4.ip_forward=1
-sudo ip addr add 10.88.0.1/24 dev enp3s0 && sudo ip link set enp3s0 up
-sudo nft -f - <<'NFT'
-table inet scgw {
-  chain postrouting { type nat hook postrouting priority srcnat;
-    ip saddr 10.88.0.0/24 oifname "eno1" masquerade }
-  chain forward { type filter hook forward priority filter;
-    iifname "enp3s0" oifname "eno1" accept
-    iifname "eno1" oifname "enp3s0" ct state related,established accept }
-}
-NFT
-sudo apt install dnsmasq
-sudo dnsmasq -i enp3s0 --dhcp-range=10.88.0.50,10.88.0.100,12h --no-daemon &
+Two ways to get there, in order of preference:
 
-# offloads OFF on the capture interface, then capture -- this is the only interface that matters
-./tools/setup-ubuntu.sh --offloads-off enp3s0
-./tools/start-capture.sh -s CBT-01 -v vol-042 -r EU -i enp3s0
+**A managed switch with port mirroring.** Mirror the gaming machine's port to a spare port,
+connect a second Windows machine to it, and capture there. Nothing about the game's path changes
+— this is a pure observer.
+
+**A second machine with two NICs, bridging.** The gaming machine plugs into it; it forwards to the
+router. Windows can bridge two adapters directly:
+
+```powershell
+# On the capture machine, as Administrator. Both adapters, one bridge:
+New-NetSwitchTeam -Name "SCBridge" -TeamMembers "Ethernet","Ethernet 2"
 ```
 
-Set `host.profile: "B"` in the sidecar. A managed switch with a mirror/SPAN port, or a passive
-network tap feeding a second NIC, works identically and is preferable if you have one — capture
-on the mirrored interface with `ip link set <iface> up` and no IP assigned.
+Then capture on the bridge interface with `sccap` exactly as normal:
 
-For Profile B, run the marker beacon **on the gaming machine** so its packets traverse the
-gateway and land in the capture. If the gaming machine cannot run Python, run the beacon on the
-gateway instead and record `video.marker_overlay: false` — you lose frame-accurate video sync and
-fall back to clock correlation, so say so in `notes.md`.
+```powershell
+.\out\sccap.exe doctor --watch 30s          # confirm the game's traffic appears here
+.\out\sccap.exe capture --scenario CBT-01 --interface "SCBridge" --out .\captures
+```
+
+Set `host.tap: true` in the sidecar so a reader knows the frames were observed off-box, and record
+which arrangement you used in `notes.md` — a mirror port and a bridge have different failure
+modes and it matters which one produced the file.
+
+Run the marker beacon (§2.5) **on the gaming machine**, so its broadcast datagrams traverse the
+tap and land in the capture alongside the game's traffic. `sccap mark` on the capture host would
+stamp the log but its packets would never cross the mirrored link, and you would lose
+frame-accurate video sync — if you have to do it that way, record
+`video.marker_overlay: false` and say so in `notes.md`.
 
 ---
 
@@ -679,24 +674,32 @@ plus everything needed to interpret it.
 
 ```
 SC_20260814T203015Z__AUTH-02__vol-042__EU__000/
-├── capture_00001_20260814203015.pcapng   # dumpcap output (may be several)
+├── capture_00001_20260814203015.pcapng   # the evidence (may be several segments)
 ├── capture_00002_20260814204015.pcapng
 ├── session.json                          # REQUIRED -- the sidecar, see §2.4
-├── markers.log                           # REQUIRED -- SCMARK beacon log
-├── dumpcap.log                           # REQUIRED -- proves the captured/dropped counts
-├── sockets.csv                           # T2 -- socket sampler output
-├── display-filter.txt                    # T2 -- generated Wireshark filter
-├── sslkeys.log                           # T2 -- if TLS extraction succeeded
-├── steam-<appid>.log                      # T2 -- PROTON_LOG output
+├── markers.log                           # REQUIRED -- SCMARK marker log
+├── index.jsonl                           # derived -- one line per decoded record
+├── coverage-delta.json                   # derived -- what this session contributed
+├── sockets.txt                            # T2 -- endpoint inventory from §1.3
+├── display-filter.txt                    # T2 -- Wireshark filter built from it
+├── sslkeys.log                           # T2 -- if TLS extraction succeeded (§1.9)
 ├── video.mkv                             # REQUIRED for gameplay scenarios
-├── client_version.txt                    # REQUIRED -- see §6.1
 ├── notes.md                              # anything surprising that happened
 └── SHA256SUMS                            # REQUIRED -- generated last
 ```
 
+`sccap` writes everything above except `video.mkv`, `notes.md` and the two optional T2 files, and
+it writes `session.json` **before the first frame is captured** so that even a session killed one
+second later is self-describing. The captured and dropped counts live in `session.json` →
+`host.packets_captured` / `packets_dropped`; there is no separate tool log to keep.
+
 A bundle missing `session.json` or `markers.log` will be rejected at intake. This is not
 bureaucracy: without them the capture cannot be placed on a timeline and cannot be correlated
 with any other volunteer's data.
+
+Only the `.pcapng` segments and `session.json` are irreplaceable. `index.jsonl` and
+`coverage-delta.json` are derived and can be regenerated from the segments at any time with
+`sccap index --rebuild`, including years from now by a better decoder.
 
 ### 2.2 Naming
 
@@ -712,45 +715,57 @@ SC_<UTC_START>__<SCENARIO_ID>__<VOLUNTEER_ID>__<REGION>__<SEQ>
 | `REGION` | Server region you connected to | `EU`, `NA`, `RU`, `SEA` |
 | `SEQ` | Zero-padded attempt counter | `000`, `001` |
 
-No spaces, no colons, no local time, ASCII only. `start-capture.sh` generates this for you —
-use it rather than naming by hand.
+No spaces, no colons, no local time, ASCII only. `sccap capture` generates this from
+`--scenario`, `--volunteer` and `--region` — use it rather than naming by hand, and note that it
+picks the next free `SEQ` rather than ever overwriting an existing bundle.
 
 ### 2.3 Segmentation — how to avoid submitting a 4-hour blob
 
 **The rule: one scenario, one bundle.** Start the capture immediately before the scenario, stop
-it immediately after. Do not leave `dumpcap` running across scenarios.
+it immediately after. Do not leave a capture running across scenarios.
 
 Every capture is wrapped in this envelope:
 
-1. **Start** `start-capture.sh`.
-2. **Start** the marker beacon if not already running.
-3. **10 seconds of deliberate idle.** Touch nothing. This lead-in captures the steady state
+1. **Start** `sccap capture` in an Administrator terminal.
+2. **10 seconds of deliberate idle.** Touch nothing. This lead-in captures the steady state
    immediately before your action, which is what the diff is taken against.
-4. **Stamp a marker** naming the scenario: type `BEGIN AUTH-02` + Enter in the marker console.
-5. **Perform the scenario**, stamping a marker before *and* after each atomic sub-action.
-6. **Stamp** `END AUTH-02`.
-7. **10 seconds of deliberate idle** lead-out.
-8. **Stop** `dumpcap` (Ctrl+C), then the beacon.
+3. **Stamp a marker** naming the scenario, from a *second* Administrator terminal:
+   `sccap mark "BEGIN AUTH-02"`.
+4. **Perform the scenario**, stamping a marker before *and* after each atomic sub-action.
+   `sccap mark --console` keeps a prompt open for this — type a label, press Enter, repeat.
+5. **Stamp** `END AUTH-02`.
+6. **10 seconds of deliberate idle** lead-out.
+7. **Stop** the capture with **Ctrl+C**.
+
+`sccap mark` finds the running capture by itself — there is no session id to pass and no beacon to
+start or stop separately.
 
 Hard limits:
 
-- **Soft cap 10 minutes / 200 MB per file**, enforced automatically by `-b`.
+- **Soft cap 10 minutes / 200 MB per segment**, rolled automatically. Segments accumulate; nothing
+  is ever deleted to make room.
 - **Hard cap 30 minutes per bundle** except a full match or Open Space session, which get their
   own scenario IDs.
-- **If something unplanned happens** — do not delete the capture. Stamp `ANOMALY <what
-  happened>`, finish the envelope, note it in `notes.md`, and submit it flagged. Unplanned events
-  are frequently the most informative captures in the archive.
+- **If something unplanned happens** — do not delete the capture. Stamp
+  `sccap mark "ANOMALY <what happened>"`, finish the envelope, note it in `notes.md`, and submit
+  it flagged. Unplanned events are frequently the most informative captures in the archive.
 
-**Never:** run one capture across login → match → logout; use a ring buffer; stop and restart
-`dumpcap` mid-scenario; or edit/re-save a PCAP before submitting. Filtering is the dev team's job
-and is destructive when done wrong.
+**Never:** run one capture across login → match → logout; stop and restart mid-scenario; or edit
+and re-save a PCAP before submitting. Filtering is the dev team's job, is destructive when done
+wrong, and `verify` will notice the hash no longer matches.
+
+> **Closing the console window is not stopping the capture.** Windows gives the process about two
+> seconds and then terminates it. The bundle survives that — it is designed to, and §4 will report
+> it as `VERIFIED (interrupted)` rather than failing it — but you lose the clean close and the
+> final `SHA256SUMS`. Press Ctrl+C.
 
 ### 2.4 The session sidecar (`session.json`)
 
-Machine-readable metadata, validated at intake against
-[`tools/session.schema.json`](../tools/session.schema.json). `start-capture.sh` writes a
-pre-filled stub with the Linux/Proton fields already populated; you complete the `<FILL IN>`
-placeholders afterwards. `verify_capture.py` fails the bundle if any remain.
+Machine-readable metadata. `sccap capture` writes it before the first frame lands and refreshes
+it periodically, so an abruptly killed session is still self-describing. Everything under
+`clock`, `client`, `host`, `markers` and the schema/version fields is filled in automatically —
+you add the human knowledge: `account`, `economy_ledger`, `known_plaintext`, `video` and
+`notes`. `sccap verify` reports anything inconsistent with what is actually on disk.
 
 ```json
 {
@@ -763,21 +778,26 @@ placeholders afterwards. `verify_capture.py` fails the bundle if any remain.
   "utc_start": "2026-08-14T20:30:15.000Z",
   "utc_end":   "2026-08-14T20:38:02.000Z",
 
-  "clock": { "ntp_source": "time.cloudflare.com", "offset_ms_at_start": -3.2,
-             "method": "chronyc tracking" },
+  "clock": { "ntp_source": "time.windows.com", "offset_ms_at_start": -3.2,
+             "method": "w32tm /query /status" },
 
   "client": {
-    "game_version": "1.7.x", "build_id": "<from client_version.txt>",
-    "platform": "Ubuntu 24.04.1 LTS / 6.8.0-45-generic",
-    "runtime": "proton-9.0-3", "launcher": "steam",
-    "process_name": "<from Phase 0>", "locale": "en"
+    "name": "Star Conflict", "build_id": "24666578",
+    "depot_manifests": { "212072": "3741217375342066373" },
+    "install_path": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\star conflict",
+    "binary_name": "StarConflict.exe",
+    "binary_sha256": "830f9e5b21c9612d...",
+    "binary_build_id": "3F2A9C10BE4411D7A9F30060B0EC3D3901",
+    "binary_build_id_kind": "codeview",
+    "binary_arch": "I386 (32-bit)",
+    "platform": "windows", "runtime": "native", "launcher": "steam", "locale": "en"
   },
 
   "host": {
-    "profile": "A", "link": "wired-1000M", "nic": "Intel I225-V",
-    "interface": "sc-host", "netns_isolated": true,
-    "offloads_disabled": ["tso", "gso", "gro", "lro"],
-    "capture_tool": "Dumpcap (Wireshark) 4.2.2", "capture_filter": "", "snaplen": 262144,
+    "os": "Windows 11 26100.2314", "link": "wired-1000M", "nic": "Intel I225-V",
+    "interface": "Ethernet", "tap": false,
+    "offloads_disabled": ["lso", "rsc"],
+    "capture_tool": "sccap 0.4.0 (npcap)", "capture_filter": "", "snaplen": 0,
     "packets_captured": 184203, "packets_dropped": 0
   },
 
@@ -797,8 +817,8 @@ placeholders afterwards. `verify_capture.py` fails the bundle if any remain.
   "markers": { "beacon_port": 24242, "count": 96, "first_seq": 1, "last_seq": 96 },
   "video": { "file": "video.mkv", "fps": 60, "start_utc": "2026-08-14T20:30:12.400Z",
              "marker_overlay": true },
-  "tls": { "keylog_present": true, "keylog_lines": 214, "injected_into_pcapng": true,
-           "stack_detected": "gnutls", "pinning_suspected": false, "proxy_used": "none" },
+  "tls": { "keylog_present": false, "keylog_lines": 0, "injected_into_pcapng": false,
+           "stack_detected": "schannel", "pinning_suspected": false, "proxy_used": "none" },
 
   "anomalies": [],
   "notes": "Third repetition of the same purchase; see notes.md."
@@ -815,8 +835,8 @@ Wall-clock comparison between OBS and Wireshark is not good enough — OBS's rec
 timestamp, encoder latency, and container timebase collectively introduce hundreds of
 milliseconds of unknown skew, which at a 30 Hz snapshot rate is a dozen ambiguous ticks.
 
-**The solution is a marker that appears in both media simultaneously.** `tools/sc-marker.py`
-broadcasts a small ASCII UDP datagram onto the local link once per second:
+**The solution is a marker that appears in both media simultaneously.** `sccap` broadcasts a
+small ASCII UDP datagram onto the local link once per second, and again whenever you stamp one:
 
 ```
 SCMARK|000042|2026-08-14T20:31:40.118Z|884421993310|EVENT|purchase Mk3 Shield Booster
@@ -837,66 +857,81 @@ To align, a developer reads the sequence number on-screen at the moment of inter
 
 **Operation**
 
-```bash
-./tools/sc-marker.py --session SC-ECON-03 --log <bundle>/markers.log
+Leave a second Administrator terminal open beside the capture:
+
+```powershell
+.\out\sccap.exe mark --console
 # Heartbeats emit automatically once per second.
-# Type a label + Enter at any time to stamp an EVENT marker:
+# Type a label and press Enter to stamp an EVENT marker:
 BEGIN ECON-03
 before purchase  credits=1450320
 after purchase   credits=1201320
 END ECON-03
+# Ctrl+Z then Enter to finish.
 ```
 
-Inside a network namespace, run the beacon inside it too so its packets cross the veth:
+One-off marks without a console:
 
-```bash
-sudo ./tools/netns-capture.sh run ./tools/sc-marker.py --session SC-ECON-03 --dest 10.77.0.255
+```powershell
+.\out\sccap.exe mark "ANOMALY the client froze for 5s"
 ```
+
+`sccap mark` locates the running capture through a pointer under `%LOCALAPPDATA%\sccap`, so there
+is no session id to pass and nothing to keep in sync. If no capture is running it says so rather
+than writing a marker nobody will find.
+
+> **Windows Firewall can silently eat the beacon.** The marker line is always written to
+> `markers.log` — that record is durable and never depends on the network — but the *datagram*
+> is what lands in the PCAP and gives you video sync. If §2.5's verification below finds zero
+> markers in the capture, allow `sccap.exe` outbound UDP, or accept the prompt Windows raises the
+> first time you run a capture.
 
 Verify markers survived into the capture:
 
-```bash
-tshark -n -r <bundle>/capture_00001*.pcapng -Y 'udp contains "SCMARK"' -T fields -e frame.number | wc -l
+```powershell
+.\out\sccap.exe decode .\captures\SC_* --type SCMARK
 ```
 
-Zero means the beacon was not running, was firewalled, or the capture filter excluded broadcast.
-Fix it and recapture — a gameplay bundle without markers has no video correlation.
+Or, independently, with Wireshark:
+
+```powershell
+& "$env:ProgramFiles\Wireshark\tshark.exe" -n -r .\captures\SC_*\capture_00001*.pcapng `
+    -Y 'udp contains "SCMARK"' -T fields -e frame.number
+```
+
+Zero means the beacon datagrams were firewalled or the wrong interface was captured. Fix it and
+recapture — a gameplay bundle without markers in the PCAP has no video correlation.
 
 ### 2.6 Screencast configuration
 
-**OBS Studio** (`sudo apt install obs-studio`, or the Flatpak for a newer build).
+**OBS Studio** ([obsproject.com](https://obsproject.com/), or `winget install OBSProject.OBSStudio`).
 
 | Setting | Value | Why |
 |---|---|---|
 | Container | **MKV** | Survives a crash mid-recording; MP4 does not. Remux afterwards if you like. |
 | Resolution | Native, no downscale | HUD numbers must be legible — they are the ground truth for damage, currency, and speed. |
 | FPS | **60** | 30 is acceptable but halves your temporal resolution against a 30 Hz snapshot stream. |
-| Encoder | **VAAPI** (Intel/AMD) or **NVENC** (NVIDIA) | Software x264 steals CPU from the capture and causes packet drops. |
-| Rate control | CQP/CRF ~20 | Quality matters more than file size; a low bitrate smears HUD text. |
+| Encoder | **NVENC** (NVIDIA), **AMF** (AMD) or **QuickSync** (Intel) | Software x264 steals CPU from the capture and causes packet drops. |
+| Rate control | CQP ~20 | Quality matters more than file size; a low bitrate smears HUD text. |
 | Audio | **On** | Free extra sync channel; weapon and hit audio cues time-align to combat events. |
 
-**Wayland vs X11.** Ubuntu defaults to Wayland, where OBS window/screen capture goes through the
-PipeWire portal (`xdg-desktop-portal-gnome`) and requires a per-session permission grant. If
-capture is unreliable, log in on **"Ubuntu on Xorg"** from the gear icon at the login screen.
-Lightweight Wayland-native alternatives:
-
-```bash
-wf-recorder -f video.mkv -c libx264 -p crf=20        # wlroots compositors
-gpu-screen-recorder -w screen -f 60 -o video.mkv     # NVIDIA/AMD, very low overhead
-```
+**Capture mode.** Use **Game Capture** for the game itself and add a **Window Capture** source for
+the marker console. Display Capture works too and costs slightly more GPU. If Game Capture shows
+a black screen, run OBS as Administrator — it needs equal or greater privilege than the process it
+is hooking, and your capture terminal is already elevated.
 
 **Required on-screen elements**, arranged so they never overlap the HUD:
 
-1. The **marker beacon console** (small terminal, bottom-right, always-on-top) so the sequence
-   number is readable in every frame.
+1. The **marker console** (small window, bottom-right, always-on-top) so the sequence number is
+   readable in every frame.
 2. A **UTC clock with milliseconds** — belt and braces if the beacon dies mid-session:
-   ```bash
-   watch -n0.1 -t 'date -u +%H:%M:%S.%3N'
+   ```powershell
+   while ($true) { Write-Host -NoNewline "`r$((Get-Date).ToUniversalTime().ToString('HH:mm:ss.fff'))"; Start-Sleep -Milliseconds 100 }
    ```
 3. Any **HUD element the scenario measures**: currency counters for economy, speed/throttle for
    physics, damage numbers for combat.
 
-Start OBS **before** `dumpcap`, stop it **after**. Record `video.start_utc` in the sidecar.
+Start OBS **before** the capture, stop it **after**. Record `video.start_utc` in the sidecar.
 
 ### 2.7 Known-plaintext seeding
 
@@ -911,30 +946,42 @@ accelerates analysis.
 | Ship name (if renamable) | `ZZQQ-SHIP-03` | Entity naming and per-ship record layout |
 
 Use ASCII, a restricted alphabet (`Z`, `Q`, `X`, `A`), and strings unlikely to occur naturally, so
-they survive `grep` and stay recognisable under simple transforms. Record every seeded string in
-`known_plaintext.seeded_strings`.
+they survive a byte search and stay recognisable under simple transforms. Record every seeded
+string in `known_plaintext.seeded_strings`.
 
-### 2.8 Bonus Linux annotation channels (Tier 2/3, optional)
+### 2.8 Bonus annotation channels (Tier 2/3, optional)
 
 Neither replaces a PCAP, but both give a second, independent view that makes ambiguous captures
 decidable. Run either alongside a normal capture, never instead of one.
 
-**Wine socket tracing** — logs every winsock call the client makes, with arguments, which maps
-API-level intent onto wire bytes:
+**Socket-level correlation.** Sample the client's endpoints on a tight loop while playing, so
+API-level intent can be lined up against wire bytes:
 
-```bash
-WINEDEBUG=+winsock,+wsock32 %command%      # in Steam launch options
-# writes to the Proton log; keep it with the bundle
+```powershell
+while ($true) {
+    $t = (Get-Date).ToUniversalTime().ToString('o')
+    Get-NetTCPConnection -OwningProcess (Get-Process StarConflict).Id -ErrorAction SilentlyContinue |
+        ForEach-Object { "$t,TCP,$($_.LocalPort),$($_.RemoteAddress),$($_.RemotePort),$($_.State)" }
+    Start-Sleep -Milliseconds 250
+} | Tee-Object -FilePath .\sockets.txt
 ```
 
-**Syscall correlation** — timestamps every `sendto`/`recvfrom` the game performs:
+Keep `sockets.txt` in the bundle. It is how a reader tells which of several concurrent flows the
+client considered established at a given moment.
 
-```bash
-sudo strace -f -tt -T -e trace=network -p "$(pgrep -f -i conflict | head -1)" -o syscalls.log
+**ETW network tracing** — a kernel-level record of every send and receive the process made, with
+timestamps, independent of anything this project wrote:
+
+```powershell
+# Administrator. Produces an .etl alongside the capture.
+netsh trace start capture=no provider=Microsoft-Windows-TCPIP level=5 tracefile=.\tcpip.etl
+# ...play...
+netsh trace stop
 ```
 
-`strace` slows the process noticeably. Never use it during a physics or hit-registration
-scenario where timing fidelity matters; it is for hangar and economy work.
+This costs real CPU. Never run it during a physics or hit-registration scenario where timing
+fidelity matters; it is for hangar and economy work, where it resolves "did the client send that,
+or did the server volunteer it?"
 
 ---
 
@@ -945,13 +992,15 @@ required artifacts), and **Look for** (what the developer will extract — inclu
 understand why precision matters, and so you can tell when a capture went wrong).
 
 **Universal preconditions for every scenario below:**
-- [ ] `./tools/setup-ubuntu.sh --check` passes
-- [ ] Offloads disabled on the capture interface, clock NTP-synced
-- [ ] Capture started via `start-capture.sh` (enforces `-s 262144`, no ring buffer)
-- [ ] Marker beacon running, console visible in the screencast
-- [ ] OBS (or `wf-recorder`) recording, HUD elements visible
+- [ ] `sccap doctor` shows no `FAIL`, in an Administrator terminal
+- [ ] `sccap doctor --watch 30s` confirmed the interface actually carries game traffic
+- [ ] LSO and RSC checked (§1.2), clock synced
+- [ ] Capture started with `sccap capture` — full snaplen and no filter are the defaults
+- [ ] `sccap mark --console` running in a second terminal, visible in the screencast
+- [ ] OBS recording, HUD elements visible
 - [ ] 10 s idle lead-in and lead-out
-- [ ] Sidecar completed afterwards; `verify_capture.py` passes
+- [ ] `drops=0` held for the whole session
+- [ ] Sidecar completed afterwards; `sccap verify` passes
 
 `P0` marks a triage priority from §0.6.
 
@@ -1039,7 +1088,8 @@ reproduce it exactly or the server rejects it — and it is usually in the first
 credentials. Full envelope.
 
 **Look for.** The token-resume path, which is shorter and often skips TLS entirely. Reveals token
-lifetime, refresh mechanics, and what the client persists locally (check the Proton prefix, §6.1).
+lifetime, refresh mechanics, and what the client persists locally (check the install directory and
+`%LOCALAPPDATA%`, §6.1).
 
 #### SC-AUTH-04 — Failed authentication (all variants) `P0`
 **Do.** On a throwaway account, trigger each failure, one per capture, marker naming the expected
@@ -1052,7 +1102,7 @@ a message. Failure paths are what emulator projects universally lack and are che
 
 #### SC-AUTH-05 — Clean logout and client exit
 **Do.** Use the in-game logout/exit option. Separately, capture a hard kill
-(`pkill -9 -f conflict`). Both need a full envelope.
+(`Stop-Process -Name StarConflict -Force`). Both need a full envelope.
 
 **Look for.** The graceful teardown sequence vs its absence; whether the server is told, and the
 FIN/RST pattern the emulator must tolerate.
@@ -1186,8 +1236,9 @@ assignment.
 **Do.** The most important handshake in the game. Stamp `queue join` → wait → stamp the **instant**
 "match found" appears → stamp on accept → stamp the instant the loading screen appears → stamp
 the instant you first see your ship in space. Three repetitions minimum, ideally across different
-game modes and regions. **Prefer a non-netns capture here** (§1.4) so client-reported addressing
-is not masked by NAT.
+game modes and regions. If you normally capture through a tap or bridge (§1.10), **take at least
+one of these on the gaming machine itself** so client-reported addressing is not masked by an
+intermediate NAT.
 
 **Look for.**
 - The **assignment packet**: the match server's IP and port handed to the client. Look for a
@@ -1229,7 +1280,7 @@ matches are available to you, run all of §3.5 inside one.**
 >
 > **Prerequisite: capture SC-BASE-02 first, on the same map, in the same session.**
 >
-> **Do not run `strace` (§2.8) during this section** — the syscall overhead distorts exactly the
+> **Do not run the ETW trace (§2.8) during this section** — the tracing overhead distorts exactly the
 > timing you are trying to measure.
 
 #### SC-CBT-01 — Single-axis rotation isolation `P0`
@@ -1432,34 +1483,42 @@ the least likely to be recoverable from the client binary alone.
 #### SC-EDGE-01 — Network loss mid-match `P0`
 **Do.** In a **PvE/Practice** match, mid-flight, sever connectivity for 90 s, then restore it.
 
-**Use the drop-after-the-capture-point method, not an unplugged cable.** If you take the link
-down, the client's retry packets are never transmitted and therefore never captured — you lose
-the exact data you wanted. Dropping *after* the veth keeps every retry visible:
+**Break the path, not the link.** If you disable the adapter or pull the cable, the client's retry
+packets are never transmitted and therefore never captured — you lose the exact data you wanted.
+The retries are the point.
 
-```bash
-sudo ./tools/netns-capture.sh block      # sever connectivity, retries still cross sc-host
+**Best: break it upstream, where your capture still sees the attempts.** Unplug the *router's*
+uplink, or pull the cable at the switch rather than at the machine. Your NIC stays up, the client
+keeps retransmitting into a void, and every retry lands in the file.
+
+**Second best: a firewall rule that blocks the game's peers by address.** Windows Firewall filters
+outbound traffic above the capture point, so blocked packets never reach the wire and are not
+recorded — but the client's *behaviour* is still captured, and connections already established
+are torn down realistically:
+
+```powershell
+# Administrator. Use the peer addresses from §1.3.
+New-NetFirewallRule -DisplayName "SC-EDGE-01" -Direction Outbound `
+    -RemoteAddress 203.0.113.10,203.0.113.11 -Action Block
 # ...wait 90 s...
-sudo ./tools/netns-capture.sh unblock    # restore
+Remove-NetFirewallRule -DisplayName "SC-EDGE-01"
 ```
 
-For a Profile B gateway, the same idea on the gateway's own forward chain:
+**With a tap or bridge (§1.10), best of all:** block on the capture machine's forward path. The
+gaming machine transmits normally, the capture sits between it and the block, and every retry is
+recorded exactly as sent.
 
-```bash
-sudo nft add rule inet scgw forward iifname "enp3s0" drop
-sudo nft flush chain inet scgw forward   # then re-apply the accept rules from §1.10
-```
-
-Plain Tier 1 with no isolation cannot do this cleanly — an `OUTPUT` chain DROP happens *before*
-the AF_PACKET tap, so the retries are invisible. Take the link down instead
-(`sudo ip link set eno1 down`), accept that you capture the recovery rather than the retries, and
-note the limitation in `notes.md`.
+Whichever you use, **say which one in `notes.md`.** They produce visibly different files, and a
+reader deriving a retry cadence from the wrong one derives a wrong number.
 
 **Look for.** Client retry/backoff cadence — the emulator must tolerate it; the server timeout
 value; and whether a reconnect/resume path exists.
 
 #### SC-EDGE-02 — Client hard kill and reconnect
-**Do.** Mid-match, `pkill -9 -f conflict`. Immediately relaunch, log in, and see whether you
-rejoin the match in progress. Capture the entire sequence as one bundle.
+**Do.** Mid-match, kill the client outright — `Stop-Process -Name StarConflict -Force`, or End
+Task from Task Manager. Not a clean exit: the point is that the client never gets to say goodbye.
+Immediately relaunch, log in, and see whether you rejoin the match in progress. Capture the entire
+sequence as one bundle.
 
 **Look for.** The **rejoin-in-progress** path — a distinct and complex handshake that is easy to
 forget exists until the emulator has to implement it.
@@ -1467,9 +1526,12 @@ forget exists until the emulator has to implement it.
 #### SC-EDGE-03 — Idle timeout
 **Do.** Log in and leave the client **completely untouched** in the hangar until the server
 disconnects you (may take 15–60 min). Capture throughout. Good background task — just do not
-touch the machine. Disable the screen blanker so OBS keeps a usable recording:
-```bash
-gsettings set org.gnome.desktop.session idle-delay 0
+touch the machine. Stop the display sleeping so OBS keeps a usable recording, and make sure the
+machine itself will not suspend:
+```powershell
+# Administrator. 0 = never. Restore your usual values afterwards.
+powercfg /change monitor-timeout-ac 0
+powercfg /change standby-timeout-ac 0
 ```
 
 **Look for.** The idle timeout value and the disconnect notification. Also produces a very long,
@@ -1483,15 +1545,20 @@ and the shutdown sequence are high-value and time-limited.
 **Look for.** Server-initiated teardown messages and how the client presents them.
 
 #### SC-EDGE-05 — Degraded network conditions `T3`
-**Do.** Using `tc netem` on **your own uplink only**, run SC-CBT-01 and SC-CBT-06 under each
-profile. In a netns setup, apply it to the veth so only the game is affected:
+**Do.** Degrade **your own uplink only**, then run SC-CBT-01 and SC-CBT-06 under each profile.
 
-```bash
-sudo tc qdisc add dev sc-host root netem loss 5%
-sudo tc qdisc change dev sc-host root netem delay 150ms
-sudo tc qdisc change dev sc-host root netem delay 50ms 20ms distribution normal
-sudo tc qdisc del dev sc-host root                  # remove
-```
+Windows ships no `netem` equivalent. Three workable routes, best first:
+
+1. **Your router's QoS or rate limiter.** Many consumer routers can throttle one client by MAC
+   address. This affects only your machine and needs nothing installed.
+2. **[clumsy](https://jagt.github.io/clumsy/)** — a small, well-known WinDivert-based tool that
+   applies loss, lag and jitter to matched traffic. Filter it to the game's peers from §1.3 so
+   nothing else on the machine is affected.
+3. **A tap or bridge (§1.10) whose capture machine shapes the forwarded traffic**, if you already
+   have that rig.
+
+Record the exact tool, version and parameters in `notes.md`. A loss figure is meaningless without
+knowing what produced it, and these three do not shape identically.
 
 Do this **only in Practice/PvE**, never in PvP where it degrades other players' matches.
 
@@ -1517,16 +1584,19 @@ emulator must present a version the client accepts; this capture shows both side
 The single most valuable capture type for emulator development.
 
 **Do.**
-1. Two Ubuntu machines (or one machine plus a second in a separate netns), two accounts, two
-   capture rigs.
-2. **Sync both clocks against the same NTP source** immediately before starting, and record both
+1. Two Windows machines, two accounts, two capture rigs.
+2. **Sync both clocks against the same time source** immediately before starting, and record both
    offsets:
-   ```bash
-   sudo chronyc -a 'burst 4/4' && sudo chronyc makestep && chronyc tracking
+   ```powershell
+   # Administrator, on each machine:
+   w32tm /config /manualpeerlist:"time.cloudflare.com" /syncfromflags:manual /update
+   w32tm /resync
+   w32tm /query /status        # record the phase offset from each
    ```
-3. Run the marker beacon on **both**. If the machines share a LAN, both beacons broadcast onto the
-   same link, so **each capture contains both machines' markers** — a hard, clock-independent
-   cross-correlation channel. Use distinct `--session` labels.
+3. Run `sccap mark --console` on **both**. If the machines share a LAN, both beacons broadcast
+   onto the same link, so **each capture contains both machines' markers** — a hard,
+   clock-independent cross-correlation channel. Give each machine a distinct `--volunteer` id so
+   the two marker streams are told apart.
 4. Enter the **same match** (custom/private if possible), ideally on opposing teams.
 5. Run a scripted sequence, both players stamping their own beacon:
    - A flies a known path while B holds still (markers at each waypoint).
@@ -1542,8 +1612,8 @@ interpolation, prediction and lag-compensation pipeline directly. This cannot be
 single-client capture at any effort level.
 
 #### SC-T3-02 — Gateway / tap capture
-**Do.** Profile B (§1.10): capture at the Ubuntu gateway, a managed switch mirror port, or a
-passive tap — not on the gaming machine.
+**Do.** The tap arrangement in §1.10 — a managed switch mirror port, a bridging second machine,
+or a passive tap. Not on the gaming machine.
 
 **Look for.** True wire bytes with zero NIC offload artifacts and zero capture-induced load on the
 client. If you have this capability, prefer it for all combat scenarios: it is the gold-standard
@@ -1553,60 +1623,88 @@ framing reference against which host captures can be validated.
 
 ## 4. Verification & QA — Run Before Every Submission
 
-```bash
-./tools/verify_capture.py SC_20260814T203015Z__ECON-03__vol-042__EU__000/
-./tools/verify_capture.py <bundle>/ --secret 'my-throwaway-password' --write-sums
+```powershell
+.\out\sccap.exe verify .\captures\SC_20260814T203015Z__ECON-03__vol-042__EU__000
 ```
 
-Exit code `0` = submittable, `1` = blocked, `2` = environment/usage problem.
+Exit code `0` = submittable, `2` = verification failed, `5` = the bundle declares a schema this
+build cannot read.
+
+**An interrupted session passes.** If the tool was killed rather than stopped cleanly, `verify`
+reports `VERIFIED (interrupted)` and exits 0. That is correct and deliberate: a session is valid
+up to the point it stopped, and abrupt termination is an expected way for a capture to end. Only
+*inconsistency* fails — a hash that does not match, a structurally broken segment, a claim in
+`session.json` contradicted by what is on disk.
 
 ### 4.1 Automated checks
 
+`sccap verify` performs all of these. The right-hand column is what to do when one fails.
+
 | # | Check | Pass criterion | If it fails |
 |---|---|---|---|
-| 1 | Files open | `capinfos` exits 0 on every capture | File truncated — `dumpcap` was killed. Recapture. |
-| 2 | **Not truncated** | `Packet size limit` ≥ 65535 | **Fatal.** You captured headers only. Recapture with `-s 262144`. |
-| 3 | Non-empty | Packet count > 100 | Wrong interface. Verify with `dumpcap -D`. |
-| 4 | **No drops** | `dumpcap.log` reports 0 dropped | The kernel buffer overflowed and the file has holes. Raise `-B` to 1024, close background load, recapture. `capinfos` cannot see this — drops never reach the file — which is why `dumpcap.log` is required. |
-| 5 | Duration sane | Matches scenario, ≤ 30 min (except AUTH-01/WLD/MM-04/EDGE-03/T3) | Split by scenario and recapture. |
-| 6 | **Game traffic present** | ≥ 1 *remote* peer with > 50 KB payload | You captured only noise. The capturing host is auto-detected (it appears in ≥80% of frames) and excluded, so this measures real peers. |
-| 7 | **Markers present** | ≥ 2 SCMARK frames bracketing the capture | Beacon not running or broadcast filtered. **Recapture.** |
-| 8 | Payload non-trivial | Many frames with `udp.length > 8` or `tcp.len > 0` | You captured only ACKs and keepalives. |
-| 9 | Required files present and non-empty | `session.json`, `markers.log`, `dumpcap.log`, `client_version.txt` | Fix before submitting. |
-| 10 | Sidecar valid | Validates, `bundle_id` matches the directory, **no placeholder of any shape** left | Complete the sidecar — `<FILL IN>` *and* option stubs like `<steam\|lutris\|standalone>` are both rejected. |
-| 11 | Non-public peers | Warns if every busy peer is private | Expected for a gateway/netns capture; otherwise a VPN is re-encapsulating. |
+| 1 | Schema | A MAJOR this build understands | Use a newer `sccap`. Never partially read a bundle whose schema you do not know. |
+| 2 | Termination | Clean, or interrupted (both fine) | A bundle claiming a clean close with no `utc_end` is inconsistent — report it, it is a tool bug. |
+| 3 | **Integrity** | Every file matches `SHA256SUMS` | Something rewrote a file after capture. Do not submit; the evidence is no longer trustworthy. A missing `SHA256SUMS` is expected for an interrupted session — regenerate with `--write-sums`. |
+| 4 | Segments | Every `.pcapng` walks end to end | A torn tail on the *last* segment is expected after a kill. An earlier truncated segment means something else went wrong. |
+| 5 | **No drops** | `packets_dropped` is 0 | **Fatal.** Traffic crossed the wire and is missing from your file. Close background load and recapture. This is read from the driver's own counter, recorded during capture — it cannot be recovered from the file afterwards, which is why it is checked live in §1.8. |
+| 6 | **Not truncated** | `snaplen` is 0 (full frames) | **Fatal.** You captured headers only. Recapture without `--snaplen`. |
+| 7 | No capture filter | `capture_filter` empty | Traffic outside the filter was never recorded and cannot be recovered. |
+| 8 | Clock anchors | Monotonic, ≥ 2 anchors | A backwards anchor means the clock stepped mid-session; note it in `notes.md`. |
+| 9 | Permissions | Owner-only ACL | Something widened access to the bundle. A warning, not a failure — but a session may contain credentials, so check who was granted access. |
+| 10 | Sensitivity | Marked sensitive | A bundle not marked sensitive is a tool bug. Report it. |
+| 11 | Index | Records resolve to real frames | A truncated tail is expected after a kill; `sccap index --rebuild` regenerates it. |
 
 ### 4.2 Manual checks — five minutes, do not skip
 
-- [ ] **Eyeball the payload.** Open in Wireshark, apply
+These are the ones no tool can do for you.
+
+- [ ] **Eyeball the payload.** Open a segment in Wireshark, apply
       `ip.addr in {<GAME_IPS>} && (udp.length > 8 || tcp.len > 0)`, click a few packets, look at
       the Bytes pane. You should see varied, structured binary. If every payload looks identical,
       you captured keepalives and missed the real traffic. If it is all printable ASCII, note it —
       that is a significant and welcome finding.
+- [ ] **Confirm markers reached the PCAP**, not just `markers.log`:
+      ```powershell
+      .\out\sccap.exe decode .\captures\SC_* --type SCMARK
+      ```
+      Zero means Windows Firewall ate the beacon datagrams (§2.5). The log is still intact, but
+      you have lost video correlation for this session.
 - [ ] **Confirm the video and PCAP overlap.** The first and last SCMARK sequence numbers in the
       PCAP must both be visible somewhere in the video.
 - [ ] **Confirm the scenario actually happened.** Watch the video at 4× and confirm you did what
       the scenario specifies, in order, with markers. It is common to discover you skipped a
       repetition.
-- [ ] **Confirm netns isolation actually held** (if used): `ip netns pids sccap` listed the game,
-      and the capture contains no non-game traffic.
-- [ ] **Secret scan.** `verify_capture.py --secret` covers this; expect zero hits. Hits are a
-      genuine protocol finding — record in `notes.md`, flag the bundle `restricted`, change that
-      password.
-- [ ] **Generate checksums last**, after every other file is final (`--write-sums`, or
-      `cd <bundle> && sha256sum * > SHA256SUMS`).
+- [ ] **Secret scan.** Search the segments for your throwaway password; expect to find it. That is
+      not a bug — the master-server protocol has no transport encryption, which is exactly why
+      §0.3 says throwaway accounts only. Record it in `notes.md`, and change that password when
+      you stop using the account for captures.
+- [ ] **Coverage went down.** `sccap coverage` — the never-observed count should be lower than
+      before this session. If it did not move, you recorded something already thoroughly covered;
+      that is fine occasionally but pick an unexplored scenario next time.
 
-### 4.3 Quick manual equivalents
+### 4.3 Independent cross-check (recommended once per rig)
 
-```bash
-capinfos -A capture_00001*.pcapng                       # everything at a glance
-tshark -n -r capture_00001*.pcapng -q -z conv,udp       # top talkers
-tshark -n -r capture_00001*.pcapng -q -z conv,tcp
-tshark -n -r capture_00001*.pcapng -Y 'udp contains "SCMARK"' \
-       -T fields -e frame.time_utc -e data.data | head   # marker sanity
-tshark -n -r capture_00001*.pcapng -q -z io,stat,1      # activity over time
-tshark -n -r capture_00001*.pcapng -q -z io,phs         # protocol breakdown
+Everything above is `sccap` checking its own work. Once — when you first set the machine up, and
+again if you change adapters — verify it against a tool this project did not write:
+
+```powershell
+$tshark = "$env:ProgramFiles\Wireshark\tshark.exe"
+
+& $tshark -n -r .\captures\SC_*\capture_00001*.pcapng -q -z conv,udp    # top talkers
+& $tshark -n -r .\captures\SC_*\capture_00001*.pcapng -q -z conv,tcp
+& $tshark -n -r .\captures\SC_*\capture_00001*.pcapng -q -z io,stat,1   # activity over time
+& $tshark -n -r .\captures\SC_*\capture_00001*.pcapng -q -z io,phs      # protocol breakdown
+
+& "$env:ProgramFiles\Wireshark\capinfos.exe" -A .\captures\SC_*\capture_00001*.pcapng
 ```
+
+`capinfos` should report a packet-size limit of 65535 or none at all. Anything smaller means
+frames were truncated at capture time, which no later step can undo.
+
+> The project's own test suite does this comparison rigorously — running `sccap` and `dumpcap` on
+> the same interface simultaneously and asserting every journaled frame appears byte-identically
+> in the independent capture. Independence is the point; comparing against ourselves would prove
+> nothing.
 
 ---
 
@@ -1614,15 +1712,22 @@ tshark -n -r capture_00001*.pcapng -q -z io,phs         # protocol breakdown
 
 ### 5.1 Packaging
 
-```bash
-./tools/verify_capture.py <bundle>/ --write-sums          # must exit 0
-tar -I 'zstd -10' -cf <bundle>.tar.zst <bundle>/
-sha256sum <bundle>.tar.zst
+```powershell
+.\out\sccap.exe verify .\captures\SC_* --write-sums      # must exit 0
+
+$bundle = Get-Item .\captures\SC_*
+Compress-Archive -Path $bundle -DestinationPath "$($bundle.Name).zip"
+Get-FileHash "$($bundle.Name).zip" -Algorithm SHA256
 ```
 
-Resolve every FAIL. WARNs are acceptable if explained in `notes.md`. Generate `SHA256SUMS` last.
-Do not use a solid archive spanning multiple bundles. Submit via the project's coordinated
-channel, not a public file host (§5.3).
+Resolve every failure. Warnings are acceptable if explained in `notes.md`. Generate `SHA256SUMS`
+last, after every other file is final. Do not build one archive spanning multiple bundles. Submit
+via the project's coordinated channel, not a public file host (§5.3).
+
+> **The ACL does not travel with the archive.** A bundle is protected on disk by an owner-only
+> DACL, and zipping it produces an ordinary file with ordinary permissions containing credentials
+> in the clear. Treat the `.zip` as the sensitive object from the moment you create it, and delete
+> it once it has been submitted.
 
 ### 5.2 Pooled endpoint inventory
 
@@ -1650,30 +1755,50 @@ set `restricted: true` and flag it in `notes.md` so intake handles it separately
 key schedules, message-ID tables, and struct layouts all live in the binary. Every volunteer
 should contribute at least one complete client archive.
 
-```bash
-APPID=$(ls ~/.steam/steam/steamapps/compatdata/ | head)   # confirm against the store page URL
-GAMEDIR=~/.steam/steam/steamapps/common/"Star Conflict"
+`sccap` records the build identity into every session automatically (§2.4), so you do not need to
+transcribe version numbers by hand. What you *do* need to do is keep a copy of the executable
+those identities point at.
 
-# 1. the game install, including engine archives (.vromfs.bin) and configs (.blk)
-tar -I 'zstd -8' -cf sc-client-$(date -u +%Y%m%d).tar.zst -C "$(dirname "$GAMEDIR")" "$(basename "$GAMEDIR")"
+```powershell
+$stamp = Get-Date -UFormat %Y%m%d
+$dest  = "$HOME\sc-archive"
+New-Item -ItemType Directory -Force -Path $dest | Out-Null
 
-# 2. the Proton prefix -- registry, saved config, cached session state
-tar -I 'zstd -8' -cf sc-prefix-$(date -u +%Y%m%d).tar.zst \
-    -C ~/.steam/steam/steamapps/compatdata "$APPID"
+# sccap already found the install; use the path it prints rather than assuming C:.
+$game = "C:\Program Files (x86)\Steam\steamapps\common\star conflict"
 
-# 3. exact version identifiers, all three sources
-{ echo "== in-game version string =="; echo "<paste from the client UI>"
-  echo "== steam manifest =="; cat ~/.steam/steam/steamapps/appmanifest_${APPID}.acf
-  echo "== proton build =="; cat ~/steam-${APPID}.log 2>/dev/null | head -20
-  echo "== install listing =="; find "$GAMEDIR" -maxdepth 2 -printf '%s %p\n' | sort -rn | head -50
-} > client_version.txt
-sha256sum sc-client-*.tar.zst sc-prefix-*.tar.zst >> client_version.txt
+# 1. The client itself: executables, DLLs, engine archives (.vromfs.bin) and configs (.blk).
+#    Exclude 'data' only if you are short of space -- it may hold item and ship tables.
+Compress-Archive -Path $game -DestinationPath "$dest\sc-client-$stamp.zip"
+
+# 2. Local state: saved config, cached session state, crash logs.
+Compress-Archive -Path "$env:LOCALAPPDATA\Star Conflict","$env:APPDATA\Star Conflict" `
+                 -DestinationPath "$dest\sc-localstate-$stamp.zip" -ErrorAction SilentlyContinue
+
+# 3. Exact version identifiers, from every source that has one.
+@(
+  "== in-game version string =="
+  "<paste from the client UI>"
+  "== steam manifest =="
+  (Get-Content "C:\Program Files (x86)\Steam\steamapps\appmanifest_212070.acf")
+  "== what sccap detected =="
+  (& .\out\sccap.exe doctor | Select-String 'game client')
+  "== install listing, largest first =="
+  (Get-ChildItem $game -File | Sort-Object Length -Descending |
+     Select-Object -First 50 | ForEach-Object { "$($_.Length) $($_.Name)" })
+) | Out-File "$dest\client_version.txt"
+
+Get-FileHash "$dest\*.zip" -Algorithm SHA256 | Format-List |
+    Out-File -Append "$dest\client_version.txt"
 ```
 
 - [ ] **Every patch from now until shutdown.** Copy the install directory before each update and
-      keep both. Set Steam to "Only update this game when I launch it" so updates never surprise
-      you. Patch deltas near shutdown are especially valuable.
-- [ ] **Strip credentials from the prefix archive** before submitting, or flag it `restricted`.
+      keep both. Set Steam to **"Only update this game when I launch it"** so updates never
+      surprise you. Patch deltas near shutdown are especially valuable.
+- [ ] **Strip credentials from the local-state archive** before submitting, or flag it
+      `restricted`. Cached session tokens live there.
+- [ ] **Keep the executable even if you keep nothing else.** It is the only way to recover a
+      message's structure if that message was never recorded.
 
 ### 6.2 Post-shutdown capture — do not stop when the servers do
 
@@ -1685,25 +1810,52 @@ client and attempting to log in against dead servers. This alone is worth archiv
 **Step 2 — redirect the endpoints to a local sink and capture what the client says.** Use the
 hostname inventory you built in §5.2.
 
-```bash
-# point every game hostname at this machine (one line per host from the inventory)
-sudo tee -a /etc/hosts <<'EOF'
+```powershell
+# Administrator. Point every game hostname at this machine.
+$hosts = "$env:SystemRoot\System32\drivers\etc\hosts"
+Copy-Item $hosts "$hosts.backup-before-sc"          # so you can put it back exactly
+Add-Content $hosts @"
 127.0.0.1  login.example-gaijin-host.net
 127.0.0.1  lobby.example-gaijin-host.net
-EOF
-
-# capture loopback -- note: -i lo, not your NIC, since the traffic never leaves the box
-dumpcap -i lo -n -s 262144 -w postmortem.pcapng &
-
-# minimal sinks that accept anything and hex-dump the first bytes.
-# ports below 1024 need root; run these in separate terminals.
-sudo socat -x -v TCP-LISTEN:443,reuseaddr,fork /dev/null 2>tcp-first-bytes.log
-     socat -x -v UDP-RECVFROM:31337,fork      /dev/null 2>udp-first-bytes.log
+"@
+ipconfig /flushdns
 ```
 
-Remove the `/etc/hosts` lines afterwards. If the client refuses to talk to a sink presenting no
-valid certificate, that is itself the finding — record it, and fall back to reading the plaintext
-pre-TLS bytes from the loopback capture.
+**Capturing loopback needs the Npcap loopback adapter.** Traffic to `127.0.0.1` never touches a
+physical NIC. Npcap installs a loopback capture adapter (usually shown as
+`Adapter for loopback traffic capture`) when the "Support loopback traffic" option is selected at
+install time — if `sccap doctor` does not list it, re-run the Npcap installer and enable it.
+
+```powershell
+.\out\sccap.exe capture --scenario POST-01 --interface "Loopback" --out .\captures
+```
+
+A minimal sink that accepts anything and records the first bytes the client sends:
+
+```powershell
+# In a separate Administrator terminal, per port from your inventory.
+$listener = [System.Net.Sockets.TcpListener]::new([System.Net.IPAddress]::Any, 443)
+$listener.Start()
+while ($true) {
+    $client = $listener.AcceptTcpClient()
+    $buf = New-Object byte[] 4096
+    $n = $client.GetStream().Read($buf, 0, 4096)
+    ($buf[0..($n-1)] | ForEach-Object { $_.ToString("x2") }) -join ' ' |
+        Out-File -Append .\tcp-first-bytes.log
+    $client.Close()
+}
+```
+
+Restore the hosts file afterwards:
+
+```powershell
+Move-Item "$hosts.backup-before-sc" $hosts -Force
+ipconfig /flushdns
+```
+
+If the client refuses to talk to a sink presenting no valid certificate, that is itself the
+finding — record it, and fall back to reading the plaintext pre-TLS bytes from the loopback
+capture. The master-server protocol has no TLS at all, so its first bytes come through regardless.
 
 **Look for.** The **exact first bytes the client sends unprompted** — precisely the first thing
 the emulator must parse and answer, isolated from all other traffic. Then, iteratively: what does
@@ -1713,28 +1865,32 @@ active development, and it is the natural continuation of this project's work.
 ### 6.3 Quick reference card
 
 ```
-SETUP (once)      ./tools/setup-ubuntu.sh
-BEFORE EACH       ./tools/setup-ubuntu.sh --check
-                  ./tools/setup-ubuntu.sh --offloads-off eno1
-ISOLATE (T2)      sudo ./tools/netns-capture.sh up
-                  sudo ./tools/netns-capture.sh status          # sudo, and check the ipv6 line
-                  sudo ./tools/netns-capture.sh run steam       # quit Steam first!
-START             OBS -> start-capture.sh -> sc-marker.py -> 10s idle -> BEGIN marker
+SETUP (once)      install Npcap + Go (+ Wireshark)
+                  cd sc-capture; go build -tags npcap -o out\sccap.exe .\cmd\sccap
+
+BEFORE EACH       open PowerShell AS ADMINISTRATOR
+                  .\out\sccap.exe doctor                        # every line OK
+                  .\out\sccap.exe doctor --watch 30s            # game running, in hangar
+                  Get-NetAdapterLso -Name "Ethernet"            # and Rsc; disable if on
+
+START             OBS -> sccap capture -> 10s idle -> BEGIN marker
+                  .\out\sccap.exe capture --scenario CBT-01 --region EU --out .\captures
+                  .\out\sccap.exe mark --console                # second admin terminal
+
 DURING            marker before AND after every atomic action; 3+ repetitions each
                   record exact HUD numbers (currency / HP / speed) at every marker
-STOP              END marker -> 10s idle -> Ctrl+C dumpcap -> beacon -> OBS
-AFTER             session.json -> verify_capture.py --write-sums -> submit
-                  sudo ./tools/netns-capture.sh down
-                  ./tools/setup-ubuntu.sh --offloads-on eno1
+                  WATCH drops=0 -- if it climbs, stop and start over
 
-dumpcap -i <if> -n -s 262144 -B 512 -w <bundle>/capture.pcapng -b duration:600 -b filesize:200000
-                        ^^^^^^^^^ never truncate     ^^^^ no `-b files:` = no ring buffer
+STOP              END marker -> 10s idle -> Ctrl+C in the capture terminal -> stop OBS
 
-NEVER  run dumpcap under sudo · truncate snaplen · use a ring buffer · guess at ports
-       run a 4-hour blob · edit a PCAP before submitting · capture real-money purchases
-       inject traffic at live servers · strace during physics scenarios
-ALWAYS UTC · markers · 3 repetitions · exact before/after numbers
-       submit anomalies rather than deleting them
+AFTER             .\out\sccap.exe verify .\captures\SC_*        # must exit 0
+                  .\out\sccap.exe coverage                      # never-observed must drop
+                  complete session.json, write notes.md
+                  Enable-NetAdapterLso / -Rsc if you turned them off
+
+NEVER  truncate the snaplen · edit a .pcapng before submitting · guess at ports
+       close the console window instead of Ctrl+C · capture on a guessed interface
+       delete a capture because something went wrong -- mark it ANOMALY and submit
 ```
 
 ### 6.4 Glossary
@@ -1744,8 +1900,10 @@ ALWAYS UTC · markers · 3 repetitions · exact before/after numbers
 | **Bundle** | A directory containing one scenario's PCAP plus all metadata. The unit of submission. |
 | **Envelope** | The standard start/idle/marker/action/marker/idle/stop procedure around every capture (§2.3). |
 | **SCMARK** | The UDP marker beacon providing PCAP↔video↔semantic-event binding (§2.5). |
-| **Profile A / B** | Game-on-Ubuntu-via-Proton vs Ubuntu-gateway-capturing-another-machine (§0.4). |
-| **netns isolation** | Running the game in a dedicated network namespace so the capture contains only its traffic (§1.4). |
+| **Tap / mirror capture** | Recording between the gaming machine and the router rather than on it, for offload-free frames and zero capture load (§1.10). |
+| **Npcap** | The Windows packet driver `sccap` records through. A separate install; its licence forbids redistribution, so it cannot be bundled (§1.1). |
+| **LSO / RSC** | Large Send Offload and Receive Segment Coalescing — adapter features that glue packets together before Windows sees them, making captured frame boundaries fiction (§1.2). |
+| **Offline build** | `sccap` built without `-tags npcap`: reads, verifies and decodes archives with no prerequisites, but cannot record. |
 | **Differential capture** | Repeating an action with one variable changed, to localize fields by diffing (§0.2). |
 | **Known-plaintext seeding** | Injecting distinctive ASCII into game state as a byte-stream anchor (§2.7). |
 | **Full-state sync** | The large post-auth server→client burst carrying the whole account model. |

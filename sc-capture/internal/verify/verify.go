@@ -142,9 +142,8 @@ func Verify(dir string) (*Result, error) {
 			"readable beyond the owner (%s): %s — this session may contain credentials",
 			summary, strings.Join(loose, ", "))
 	} else if err == nil {
-		// The summary is platform-specific wording: a Unix mode, or the set of
-		// principals a Windows ACL grants. A reader should not have to know
-		// which platform produced a bundle to understand how it was protected.
+		// The summary names the principals the bundle's ACL grants, rather
+		// than a mode, so a reader can see exactly who could have touched it.
 		res.add("permissions", "ok", "%s", summary)
 	}
 

@@ -130,13 +130,21 @@
         },
         "binary_build_id": {
           "type": "string",
-          "description": "GNU build-id from the executable's ELF notes — the compiler's own stamp on this exact binary."
+          "description": "Build identity read from the client executable's PE headers. Interpret it according to binary_build_id_kind — the two kinds are not comparable with each other."
+        },
+        "binary_build_id_kind": {
+          "type": "string",
+          "enum": ["codeview", "image"],
+          "description": "'codeview' is the linker-stamped PDB GUID and age, the strong identity and the key a symbol server files the binary under. 'image' is the TimeDateStamp and SizeOfImage pair, used when the linker emitted no debug record; weaker, since a reproducible build pins the timestamp to a constant. Recorded alongside the value so a reader is never left inferring which they hold from the shape of the string."
         },
         "binary_arch": { "type": "string" },
-        "platform": { "type": "string" },
+        "platform": {
+          "type": "string",
+          "description": "The operating system the client ran on. 'windows' for any session recorded by this tool from v3.0.0 onward; earlier archived sessions may read 'linux'."
+        },
         "runtime": {
           "type": "string",
-          "description": "e.g. 'native' or a Wine/Proton build. Changes what a reader should expect of the capture, notably how TLS key material could have been obtained."
+          "description": "'native' when no compatibility layer sits between the game and the socket, which is the only case this tool now produces. Archived sessions may name a Wine/Proton build instead. This changes what a reader should trust below the payload: packet boundaries, timing, MTU and retransmission belong to the host stack, not the game, whenever it is not 'native'."
         },
         "launcher": { "type": "string" },
         "source": {
@@ -150,7 +158,7 @@
       "type": "object",
       "required": ["interfaces", "capture_tool", "snaplen", "packets_captured", "packets_dropped"],
       "properties": {
-        "profile": { "type": "string" },
+        "os": { "type": "string" },
         "link": { "type": "string" },
         "nic": { "type": "string" },
         "interfaces": {
@@ -165,8 +173,15 @@
             }
           }
         },
-        "netns_isolated": { "type": "boolean" },
-        "offloads_disabled": { "type": "array", "items": { "type": "string" } },
+        "tap": {
+          "type": "boolean",
+          "description": "True when frames were observed off-box, via a switch mirror port or a bridging capture host, rather than on the machine running the game."
+        },
+        "offloads_disabled": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Which adapter offloads the contributor confirmed were off, e.g. ['lso','rsc']. Left empty when unknown: the tool deliberately does not guess at offload state, since the properties behind it have no stable names across vendors, so this is a contributor's assertion rather than a measurement."
+        },
         "capture_tool": { "type": "string" },
         "capture_filter": {
           "type": "string",

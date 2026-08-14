@@ -14,8 +14,8 @@ const (
 	// the session was interrupted; an interrupted session verifies OK.
 	VerifyFailed = 2
 
-	// NoCapability means capture is impossible on this host, almost always a
-	// missing CAP_NET_RAW/CAP_NET_ADMIN.
+	// NoCapability means capture is impossible on this host: no Npcap backend
+	// compiled in, Npcap not installed, or the process is not elevated.
 	NoCapability = 3
 
 	// DiskFloor means capture stopped because free space reached the hard

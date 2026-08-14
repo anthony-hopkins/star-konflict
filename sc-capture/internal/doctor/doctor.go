@@ -105,14 +105,6 @@ func checkClient(r *Report) {
 	r.add("game client", Pass, detail, "")
 }
 
-func selfPath() string {
-	p, err := os.Executable()
-	if err != nil {
-		return "$(command -v sccap)"
-	}
-	return p
-}
-
 // InterfaceInfo describes one candidate capture interface.
 type InterfaceInfo struct {
 	Name     string `json:"name"`
@@ -199,17 +191,23 @@ func checkInterfaces(r *Report, want string) {
 	}
 }
 
+// reportOffloads warns about segmentation and receive offload.
+//
+// Offloads make the NIC hand up reassembled super-frames that never existed on
+// the wire. The capture is still complete — every byte is there — but frame
+// boundaries and inter-packet timing become the driver's reconstruction rather
+// than the network's. Anything measuring tick rate, keepalive cadence or
+// retransmission is reading fiction.
+//
+// An interface whose offload state could not be read still gets a warning.
+// "Could not determine" is not "off", and a contributor told nothing will
+// reasonably assume the second.
 func reportOffloads(r *Report, i InterfaceInfo) {
-	if i.Offloads == "" {
-		return
+	detail := offloadUnknownDetail
+	if i.Offloads != "" {
+		detail = "enabled: " + i.Offloads + " — captured frame boundaries will be synthetic"
 	}
-	// Offloads make the NIC hand up reassembled super-frames that never
-	// existed on the wire. The capture is still complete, but frame
-	// boundaries and timing are the driver's fiction rather than the
-	// network's.
-	r.add("offloads ("+i.Name+")", Warn,
-		"enabled: "+i.Offloads+" — captured frame boundaries will be synthetic",
-		offloadRemedy(i.Name))
+	r.add("offloads ("+i.Name+")", Warn, detail, offloadRemedy(i.Name))
 }
 
 func checkCoverageDir(r *Report, dir string) {

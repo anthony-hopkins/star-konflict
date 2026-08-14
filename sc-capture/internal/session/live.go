@@ -42,8 +42,9 @@ func PublishLive(l Live) error {
 // ReadLive returns the running session, if there is one.
 //
 // A stale pointer left behind by a killed process is treated as absent rather
-// than reported as an error: SIGKILL is an expected way for a capture to end,
-// and it must not leave the next command confused.
+// than reported as an error: being terminated is an expected way for a capture
+// to end — a closed console window does it — and it must not leave the next
+// command confused.
 func ReadLive() (*Live, error) {
 	b, err := os.ReadFile(livePath())
 	if err != nil {

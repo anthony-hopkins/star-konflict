@@ -3,65 +3,62 @@
 Archives the complete network footprint of a Star Conflict play session as a self-describing,
 verifiable bundle, and tracks which parts of the protocol have never been observed.
 
-One static Go binary. No interpreter, no libraries to install, no scripts.
+One Go binary for Windows. No interpreter, no libraries to install, no scripts.
 
 ## Build
 
-### Linux
+### With capture
 
-```bash
-CGO_ENABLED=0 go build -o out/sccap ./cmd/sccap
-sudo setcap cap_net_raw,cap_net_admin=eip out/sccap
-./out/sccap doctor
-```
-
-Pure Go, no cgo, one static binary, no prerequisites.
-
-### Windows
-
-Capture needs [Npcap](https://npcap.com) — install it first, then:
+Recording needs [Npcap](https://npcap.com) and a C compiler — install Npcap first, then:
 
 ```powershell
 go build -tags npcap -o out\sccap.exe .\cmd\sccap
 .\out\sccap.exe doctor          # run the terminal as Administrator
 ```
 
-Without `-tags npcap` you still get a working binary — it just cannot record:
+### Without capture
 
 ```powershell
 go build -o out\sccap.exe .\cmd\sccap
 ```
 
-That build runs `verify`, `decode`, `index` and `coverage` on any archived session with nothing
-extra installed, which is enough to analyse captures somebody else recorded. `sccap doctor` says
-plainly which kind of binary you have.
+A static binary with no prerequisites at all — no Npcap, no cgo. It runs `verify`, `decode`,
+`index` and `coverage` on any archived session, which is enough to analyse captures somebody else
+recorded. It simply cannot record one. `sccap doctor` says plainly which kind of binary you have.
 
-**Why the tag.** Npcap requires cgo, which forfeits static linking and cross-compilation — the
-reasons Go was chosen — and its licence forbids redistribution, so it cannot be bundled. Charging
-that cost only to contributors who actually capture keeps the offline half free.
+**Why the tag.** Npcap requires cgo, which forfeits static linking and cross-compilation, and its
+licence forbids redistribution so it cannot be bundled. Charging that cost only to contributors who
+actually capture keeps the offline half free.
 
-Bundles are byte-identical across platforms. A session recorded on Windows and one recorded on
-Linux are interchangeable at intake.
+**Why Windows.** Star Conflict is a Windows title and its players are on Windows, so that is where
+recording happens. It is also where a recording is worth most: payload bytes would survive a
+compatibility layer intact, but packet boundaries, timing, MTU and retransmission would be the
+host stack's rather than the game's — and those are exactly the questions per-record timestamps
+exist to answer.
 
 `doctor` must exit 0 before anything else is worth trying. It reports what is missing and the
 exact command to fix it — it never changes host state itself.
 
 Then, with the game running:
 
-```bash
-./out/sccap doctor --watch 30s
+```powershell
+.\out\sccap.exe doctor --watch 30s
 ```
 
 This reports which interfaces actually carry game traffic. Capturing on the wrong one produces a
 session that passes every other check and contains nothing useful. It is the only failure mode
 here that is both silent and total.
 
+Interfaces are named the way Windows names them — `Ethernet`, `Wi-Fi` — everywhere they appear.
+Npcap's own `\Device\NPF_{GUID}` form is accepted too, and is resolved by matching addresses
+rather than adapter descriptions, which are vendor text that two adapters routinely share.
+
 ## Capture
 
-```bash
-./out/sccap capture --scenario AUTH-02 --region EU --out ./captures
+```powershell
+.\out\sccap.exe capture --scenario AUTH-02 --region EU --out .\captures
 # play, then Ctrl+C
-./out/sccap verify ./captures/SC_*
+.\out\sccap.exe verify .\captures\SC_*
 ```
 
 Defaults are passive, unfiltered and full-snaplen. Nothing is rewritten and nothing is discarded.
@@ -90,7 +87,7 @@ away and regenerated.
 1. The game numbers its own messages — a gap in the sequence is visible
 2. The transport numbers its own bytes, separately — a second gap detector
 3. Every message carries a checksum — damage is detectable, not just absence
-4. The kernel counts what it dropped, and that number is on screen during capture. It must be zero
+4. The driver counts what it dropped, and that number is on screen during capture. It must be zero
 
 ## Commands
 
@@ -107,11 +104,11 @@ away and regenerated.
 
 ### Reading an archive
 
-```bash
-./out/sccap decode ~/captures/SC_* --status unknown_element   # what surprised us
-./out/sccap decode ~/captures/SC_* --type SCMD_CONNECT_DEDICATED_SERVER
-./out/sccap coverage                                          # what is still missing
-./out/sccap coverage --state never_observed                   # the list, in full
+```powershell
+.\out\sccap.exe decode $HOME\captures\SC_* --status unknown_element   # what surprised us
+.\out\sccap.exe decode $HOME\captures\SC_* --type SCMD_CONNECT_DEDICATED_SERVER
+.\out\sccap.exe coverage                                              # what is still missing
+.\out\sccap.exe coverage --state never_observed                       # the list, in full
 ```
 
 Filtering here is **read-time** filtering against a complete archive, which is
@@ -119,9 +116,9 @@ allowed. Capture-time filtering is not: the journal always holds everything.
 
 ### Improving a decoder later
 
-```bash
-./out/sccap index ~/captures/SC_* --rebuild
-./out/sccap verify ~/captures/SC_* --write-sums
+```powershell
+.\out\sccap.exe index $HOME\captures\SC_* --rebuild
+.\out\sccap.exe verify $HOME\captures\SC_* --write-sums
 ```
 
 `--rebuild` regenerates `index.jsonl` from the pcapng segments alone and
@@ -150,15 +147,23 @@ path at all. There is also no `prune`: the tool never deletes a session to recla
 ## Safety
 
 Sessions contain authentication material — the master-server protocol has no transport
-encryption. Every session is marked sensitive, created `0700`/`0600`, and nothing leaves your
-machine unless you send it yourself. Use a throwaway game account.
+encryption. Every session is marked sensitive and nothing leaves your machine unless you send it
+yourself. Use a throwaway game account.
+
+Protection is an explicit owner-only DACL — the owning user and SYSTEM, with inheritance severed —
+installed on the session directory before a single byte is written into it. A file mode would be
+theatre here: `os.Chmod` toggles the read-only attribute and stops nothing, and a session written
+under a directory that grants Users read access would stay readable by every account on the
+machine no matter what mode it carried. `verify` reports the principals that actually hold access
+for the same reason.
 
 ## Where this sits
 
 `sc-capture/` is a self-contained Go module inside the
 [star-konflict](https://github.com/anthony-hopkins/star-konflict) repository. It builds on its own
-— one dependency, no cgo, no sibling module — but it lives alongside the capture manual, the
-scenario checklist and the protocol reference it depends on, so one clone gets you everything.
+— no sibling module, and no cgo unless you ask for capture — but it lives alongside the capture
+manual, the scenario checklist and the protocol reference it depends on, so one clone gets you
+everything.
 
 Start at the [repository README](../README.md) for the step-by-step capture guide.
 

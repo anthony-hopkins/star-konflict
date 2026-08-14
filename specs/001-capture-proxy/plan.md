@@ -6,12 +6,12 @@
 
 ## Summary
 
-Build `sc-capture` — a Go module producing a single static binary, `sccap` — that
+Build `sc-capture` — a Go module producing a single binary, `sccap` — that
 archives the complete network footprint of a Star Conflict play session as a self-describing,
 verifiable bundle, and knows enough about what it captured to report what has never been seen.
 
 The architectural decision that shapes everything else: **capture happens at the wire with
-`AF_PACKET`, not inside a proxy.** A MITM proxy terminates TCP and therefore cannot record the
+the wire, not inside a proxy.** A MITM proxy terminates TCP and therefore cannot record the
 real connection's transport framing (FR-004), cannot be byte-identical to an independent packet
 capture (SC-002), and necessarily places a decoder in the byte path (Principle II). Capturing
 frames off the interface satisfies all three by construction, and has the further effect that
@@ -31,22 +31,24 @@ dedicated-server relay is scoped to a time-boxed feasibility spike.
 
 **Language/Version**: Go 1.26 (toolchain present: go1.26.5; server repo targets 1.26.1)
 
-**Primary Dependencies**: `github.com/gopacket/gopacket` v1.7.1 (`afpacket`, `pcapgo`,
+**Primary Dependencies**: `github.com/gopacket/gopacket` v1.7.1 (`pcap`, `pcapgo`,
 `reassembly`) — the only external dependency. Protocol framing, message typing and value
 encodings are implemented in-repo in `pkg/scproto` (Principle VI as amended). No cgo —
 `CGO_ENABLED=0`. No external module required: it builds from a fresh clone of this repository.
 
 **Storage**: Filesystem bundles. pcapng segments (raw journal) + `index.jsonl` (derived record
 index) + `session.json` (metadata) + `markers.log` + `SHA256SUMS`. Cross-session coverage state
-in a single atomically-replaced JSON document under `$XDG_DATA_HOME/sccap/`.
+in a single atomically-replaced JSON document under `%LOCALAPPDATA%\sccap\`.
 
 **Testing**: `go test` with table-driven and golden-corpus tests; mandatory fault-injection suite
 (decoder panic, malformed frame, stream desync, unknown message type) asserting byte-identical
 journals; loopback end-to-end test against a synthetic server; cross-repo framing conformance
 vectors.
 
-**Target Platform**: Linux (Ubuntu 24.04 primary), x86-64 and arm64, static single binary.
-Requires `CAP_NET_RAW`/`CAP_NET_ADMIN` on the binary or a capable parent; granting them is host
+**Target Platform**: Windows 10/11, x86-64 and arm64 (constitution v3.0.0). Live capture requires
+[Npcap](https://npcap.com) and a `-tags npcap` cgo build; the plain build is a static binary with
+no prerequisites that reads archives but cannot record. Capture also requires an elevated
+process — Npcap refuses handles to unprivileged callers. Installing Npcap and elevating are host
 setup and out of scope per the constitution — `sccap doctor` detects and reports it.
 
 **Project Type**: CLI tool with on-disk format contracts (single binary, subcommands).
@@ -65,7 +67,7 @@ maintainer can pick this up with no legal analysis, which is the same reason the
 is standard — the artifact should outlive the project and its authors.
 
 **Performance Goals**: Zero kernel drops at expected game traffic rates (< 10 Mbit/s, low
-thousands of pps) — asserted from `AF_PACKET` `Stats()`, not assumed. Relay mode, when enabled,
+thousands of pps) — asserted from the capture backend's own `Stats()`, not assumed. Relay mode, when enabled,
 adds ≤ 15 ms round-trip at p99 (SC-006). Live decode must never apply backpressure to capture.
 
 **Scale/Scope**: One contributor, one machine, one session at a time. Sessions of ~30 min and up
@@ -84,7 +86,7 @@ to a few GB. Known protocol element universe ≈ 404 (39 message types, 249 `AC_
 | V | Self-Describing and Verifiable | Schema version, software version, client build, UTC range, clock discipline, interposed connections, integrity hashes. Per-record wall + monotonic timestamps. | PASS | PASS — `session.json` + clock anchors (R4) + `SHA256SUMS` |
 | VI | One Protocol Implementation | Exactly one implementation of framing, message typing and value encodings, in a package with no capture/storage/transport dependencies. | PASS | PASS — `pkg/scproto`; enforced by an import test and a no-second-parser review check |
 | VII | Independently Useful Increments | Every increment produces a valid archived session on its own. | PASS | PASS — Increment 1 alone delivers US1 end to end |
-| VIII | Contributor Safety | Sensitive by default and visible; no egress without explicit action; no primary account required. | PASS | PASS — `0700`/`0600`, no network egress code paths exist at all |
+| VIII | Contributor Safety | Sensitive by default and visible; no egress without explicit action; no primary account required. | PASS | PASS — owner-only DACL with inheritance severed, no network egress code paths exist at all |
 
 **Development-workflow gates**: evidence before implementation (no decoder for an unobserved
 shape) — honoured by treating `docs/protocol/` as a hypothesis to verify, never as ground truth;
@@ -155,7 +157,7 @@ star-conflict-clone/                    # the repository
     │       ├── bitreader.go            # MSB-first bit reader for bit-packed bodies
     │       └── tables/                 # go:embed of docs/protocol/*.json (404 elements)
     ├── internal/
-    │   ├── capture/                    # AF_PACKET source, ring config, drop accounting
+    │   ├── capture/                    # Npcap source, buffer config, drop accounting
     │   ├── journal/                    # pcapng writer, segmentation, flush/fsync, SHA256SUMS
     │   ├── session/                    # lifecycle, session.json, clock anchors, disk floor
     │   ├── flow/                        # flow table, service classification, handoff tracking
@@ -226,11 +228,11 @@ before the sibling repos were removed, they agreed, and the Python one is archiv
 parity is a test failure rather than a mystery. The specific trap to encode as a test: the header
 is big-endian on the wire but is fed to the checksum in **little-endian** order.
 
-**Risk 2 — `CAP_NET_RAW` friction for non-expert contributors.** SC-001 gives a novice 15
+**Risk 2 — Npcap and elevation friction for non-expert contributors.** SC-001 gives a novice 15
 minutes to a verified session; a capability-permission failure can consume all of it.
 *Mitigation*: `sccap doctor` is the documented first command, diagnoses the exact missing
 capability, and prints the precise command to fix it — mirroring how the manual handles the
-`dumpcap` permission trap, which it calls the #1 Ubuntu setup failure.
+capture-permission trap, which it calls the single most common setup failure.
 
 **Risk 3 — Loopback traffic when the relay is enabled.** With `--relay`, client↔proxy traffic is
 on `lo` while proxy↔server is on the NIC, so capture must bind both interfaces and the journal

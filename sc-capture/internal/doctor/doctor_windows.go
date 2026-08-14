@@ -14,17 +14,23 @@ func ifaceUpRemedy(iface string) string {
 	return `Enable-NetAdapter -Name "` + iface + `"    (run as Administrator)`
 }
 
+// offloadUnknownDetail is what the shared check says when nothing could be
+// read. See offloadSummary for why nothing can be.
+const offloadUnknownDetail = "cannot be determined here — if LSO or RSC is on, " +
+	"captured frame boundaries and timings will be the driver's reconstruction"
+
 func offloadRemedy(iface string) string {
-	return `Disable-NetAdapterLso -Name "` + iface + `"; ` +
+	return `Get-NetAdapterLso -Name "` + iface + `"; Get-NetAdapterRsc -Name "` + iface + `"` +
+		"\n" + `         Disable-NetAdapterLso -Name "` + iface + `"; ` +
 		`Disable-NetAdapterRsc -Name "` + iface + `"    (run as Administrator)`
 }
 
 // checkCapabilities reports whether this process can open a capture handle.
 //
-// Two separate requirements on Windows, and conflating them produces a
-// confusing failure: the binary must be built with a capture backend, and the
-// process must be elevated. Either one missing stops a capture, for entirely
-// different reasons.
+// Two separate requirements, and conflating them produces a confusing failure:
+// the binary must be built with a capture backend, and the process must be
+// elevated. Either one missing stops a capture, for entirely different reasons
+// with entirely different remedies.
 func checkCapabilities(r *Report) {
 	if ok, why := capture.Available(); !ok {
 		r.add("capture backend", Fail, why,
@@ -52,11 +58,12 @@ func isElevated() bool {
 
 // carrier reports whether an interface has a usable link.
 //
-// Windows exposes no direct equivalent of /sys/class/net/*/carrier through the
-// standard library, so this uses the practical test: an interface that is up
-// and holds a routable unicast address is carrying traffic. That is the
-// property the caller actually cares about — "can the game reach a server
-// through this" — rather than the electrical state of the cable.
+// The electrical link state is not reachable through the standard library, so
+// this uses the practical test instead: an interface that is up and holds a
+// routable unicast address is carrying traffic. That is the property the caller
+// actually cares about — "can the game reach a server through this" — and on a
+// machine with several virtual adapters it is the more useful of the two
+// answers anyway.
 func carrier(name string) bool {
 	iface, err := net.InterfaceByName(name)
 	if err != nil {
@@ -83,22 +90,24 @@ func carrier(name string) bool {
 	return false
 }
 
-// offloadSummary is not queried on Windows.
+// offloadSummary is deliberately not implemented.
 //
-// The equivalent settings (LSO, RSC, checksum offload) live behind per-driver
-// WMI properties with no stable names across vendors, so a query here would be
-// unreliable in exactly the way a diagnostic must not be. Reporting nothing is
-// honest; the shared check surfaces the manual command instead, and a
-// contributor is told to look rather than told a wrong answer.
+// LSO, RSC and checksum offload live behind per-driver WMI properties with no
+// stable names across vendors, and the `Get-NetAdapter*` cmdlets that do read
+// them reliably are not something this tool will shell out to — a diagnostic
+// that guesses is worse than one that admits it does not know.
+//
+// Returning nothing is not the same as staying quiet: reportOffloads turns an
+// empty answer into an explicit "cannot be determined, here is how to look",
+// so a contributor is told to check rather than told a wrong answer.
 func offloadSummary(iface string) string { return "" }
 
 // checkClock reports whether the system clock is disciplined.
 //
-// The Windows Time service is the equivalent of the NTP daemon the Linux path
-// checks via adjtimex. As there, this is a warning rather than a failure:
-// monotonic ordering within a session survives an undisciplined clock, and a
-// wall-clock step is recorded as an anchor. It is cross-contributor
-// correlation that suffers.
+// A warning rather than a failure: monotonic ordering within a session survives
+// an undisciplined clock, and a wall-clock step is recorded as an anchor. What
+// suffers is correlation between contributors — lining two recordings of the
+// same match up against each other, which is exactly what SC-T3-01 is for.
 func checkClock(r *Report) {
 	m, err := mgr.Connect()
 	if err != nil {

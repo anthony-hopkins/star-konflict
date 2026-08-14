@@ -9,8 +9,11 @@ defaults:
     working-directory: sc-capture
 
 jobs:
+  # The offline build: no cgo, no Npcap, no prerequisites. This is what a
+  # contributor who only wants to read and analyse archived sessions installs,
+  # and it is the configuration every test below runs against.
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -26,49 +29,61 @@ jobs:
       # unmistakable in the log rather than buried in the suite.
       - name: Architecture rules (Principles II and VI)
         run: go test -v ./tests/architecture/...
-      # Capture tests need CAP_NET_RAW and a live interface; they skip
-      # themselves on a runner rather than failing, so this asserts the
-      # offline suites really ran.
       - name: Protocol parity against the archived reference
         run: go test -v ./pkg/scproto/... -run Golden
       - name: Fault injection (constitution, Development Workflow)
         run: go test -v ./tests/faultinjection/...
 
-  # Everything except live capture is platform-independent, so the offline
-  # commands must build and their tests must pass on Windows without Npcap.
-  # This is what keeps a Windows contributor able to verify, decode, index and
-  # report coverage on an archived session with nothing extra installed.
-  windows:
+  # The capture backend is the one file cgo compiles and the only one a runner
+  # cannot exercise: capture needs Npcap installed, elevation and a live
+  # interface, so tests/e2e skips here no matter what. Compiling it is
+  # therefore the only protection it gets, and it needs that protection —
+  # source_npcap.go is where an API mistake would sit undetected until a
+  # contributor tried to record a session that no longer exists.
+  #
+  # The SDK provides only headers and an import library; the Npcap runtime
+  # itself is not installed and is not needed to compile.
+  capture-backend:
     runs-on: windows-latest
+    env:
+      NPCAP_SDK_VERSION: '1.13'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
           go-version: '1.26'
           cache-dependency-path: sc-capture/go.sum
-      - name: Vet
-        run: go vet ./...
-      - name: Build (offline commands, no capture backend)
+      - name: Fetch the Npcap SDK
+        shell: pwsh
+        run: |
+          $url = "https://npcap.com/dist/npcap-sdk-$env:NPCAP_SDK_VERSION.zip"
+          $zip = Join-Path $env:RUNNER_TEMP 'npcap-sdk.zip'
+          Invoke-WebRequest -Uri $url -OutFile $zip
+          Expand-Archive -Path $zip -DestinationPath (Join-Path $env:RUNNER_TEMP 'npcap-sdk')
+      - name: Build with the capture backend
+        shell: pwsh
         env:
-          CGO_ENABLED: '0'
-        run: go build -o out/sccap.exe ./cmd/sccap
-      - name: Platform-independent suites
-        run: go test ./pkg/... ./internal/... ./tests/architecture/... ./tests/faultinjection/...
+          CGO_ENABLED: '1'
+        run: |
+          $sdk = Join-Path $env:RUNNER_TEMP 'npcap-sdk'
+          $env:CGO_CFLAGS = "-I$sdk\Include"
+          $env:CGO_LDFLAGS = "-L$sdk\Lib\x64"
+          go build -tags npcap -o out\sccap-npcap.exe .\cmd\sccap
+      - name: Vet the capture backend
+        shell: pwsh
+        env:
+          CGO_ENABLED: '1'
+        run: |
+          $sdk = Join-Path $env:RUNNER_TEMP 'npcap-sdk'
+          $env:CGO_CFLAGS = "-I$sdk\Include"
+          $env:CGO_LDFLAGS = "-L$sdk\Lib\x64"
+          go vet -tags npcap ./...
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       matrix:
-        include:
-          - goos: linux
-            goarch: amd64
-            ext: ''
-          - goos: linux
-            goarch: arm64
-            ext: ''
-          - goos: windows
-            goarch: amd64
-            ext: '.exe'
+        goarch: [amd64, arm64]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -77,17 +92,18 @@ jobs:
           cache-dependency-path: sc-capture/go.sum
       # CGO_ENABLED=0 is not incidental: a static binary with no runtime
       # prerequisites is the entire distribution story for non-expert
-      # contributors (constitution, Additional Constraints). The Windows
-      # artifact is therefore the offline build; a capture-capable Windows
-      # binary needs Npcap and `-tags npcap`, which cannot be cross-compiled
-      # and is not produced here.
-      - name: Build ${{ matrix.goos }}/${{ matrix.goarch }}
+      # contributors (constitution, Additional Constraints). The published
+      # artifact is therefore the offline build. A capture-capable binary needs
+      # Npcap and `-tags npcap`, which cannot be cross-compiled and whose
+      # licence forbids redistributing the dependency anyway, so it is built
+      # above but never shipped from here.
+      - name: Build windows/${{ matrix.goarch }}
         env:
           CGO_ENABLED: '0'
-          GOOS: ${{ matrix.goos }}
+          GOOS: windows
           GOARCH: ${{ matrix.goarch }}
-        run: go build -o out/sccap-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }} ./cmd/sccap
+        run: go build -o out/sccap-windows-${{ matrix.goarch }}.exe ./cmd/sccap
       - uses: actions/upload-artifact@v4
         with:
-          name: sccap-${{ matrix.goos }}-${{ matrix.goarch }}
+          name: sccap-windows-${{ matrix.goarch }}
           path: sc-capture/out/

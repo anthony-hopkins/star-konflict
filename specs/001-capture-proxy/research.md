@@ -37,8 +37,10 @@ them in display; a sidecar is greppable and schema-validated.
 
 ## R2. Where capture happens: wire-level vs. in-proxy (central decision)
 
-**Decision**: Capture at the wire, with `AF_PACKET`, always. The proxy/relay is an **optional
-overlay**, not the capture mechanism. Passive wire capture is the default mode.
+**Decision**: Capture at the wire, always. The proxy/relay is an **optional overlay**, not the
+capture mechanism. Passive wire capture is the default mode. (The mechanism was `AF_PACKET` when
+this was written and is Npcap under constitution v3.0.0 — see R5. Nothing in this decision turns
+on which.)
 
 **Rationale**: This is forced by three independent constraints that all point the same way.
 
@@ -107,8 +109,8 @@ carries both `t_wall` (UTC, ns) and `t_mono` (ns since session start). The two a
 by **clock anchors** — paired `CLOCK_REALTIME`/`CLOCK_MONOTONIC` readings written to
 `session.json` at session start, every 30 s, and at session end.
 
-**Rationale**: FR-003 demands both clocks per record; pcapng has a slot for only one, and
-`AF_PACKET` hands up a realtime timestamp. Anchors let any frame's monotonic time be recovered by
+**Rationale**: FR-003 demands both clocks per record; pcapng has a slot for only one, and the
+capture backend hands up a realtime timestamp. Anchors let any frame's monotonic time be recovered by
 interpolation, and — the point of the edge case — a wall-clock step mid-session shows up as a
 discontinuity *between anchors*, leaving monotonic ordering intact and the step itself recorded
 rather than silently corrupting the timeline. `session.json` already carries a `clock` block in
@@ -122,22 +124,39 @@ non-uniform across contributor rigs. Anchoring is uniform and rig-independent.
 
 ## R5. Go capture stack
 
-**Decision**: `github.com/gopacket/gopacket` v1.7.1 (the maintained fork) — `afpacket` for the
-`AF_PACKET` v3 ring buffer, `pcapgo.NgWriter` for pcapng output, `reassembly` for TCP stream
-reassembly in the decode layer. No `libpcap`/cgo. Verified fetchable from this workspace.
+> **Superseded by constitution v3.0.0 (2026-08-14).** The original decision below chose a pure-Go
+> `AF_PACKET` backend to preserve `CGO_ENABLED=0`. Windows has no `AF_PACKET`, so the capture
+> backend is now Npcap via `gopacket/pcap`, behind a `npcap` build tag. The reasoning about where
+> `reassembly` sits, and about needing a driver-reported drop counter to assert on, is unchanged
+> and is why the Npcap handle is opened in immediate mode with `PacketsIfDropped` counted.
+>
+> The cgo cost is real and is accepted rather than hidden: see the amendment record. The plain
+> build has no cgo, no Npcap and no prerequisites; it simply cannot record.
 
-**Rationale**: Pure-Go `AF_PACKET` keeps `CGO_ENABLED=0` static single-binary distribution and
-cross-compilation intact, which is the constitution's stated reason for choosing Go. The v3 ring
-buffer gives kernel-side batching and, importantly, exposes `Stats()` drop counters — the
-zero-loss assertion in SC-002/SC-003 needs a number to assert on, and this is where it comes
-from. gopacket's `reassembly` package is used **only** in the decode layer, downstream of the
-journal, where a desync degrades to "bytes stored, meaning unknown" instead of losing anything.
+**Decision**: `github.com/gopacket/gopacket` v1.7.1 (the maintained fork) — `pcap` for the Npcap
+capture handle (build tag `npcap`, cgo), `pcapgo.NgWriter` for pcapng output, `reassembly` for
+TCP stream reassembly in the decode layer.
 
-**Alternatives considered**: `libpcap` via cgo — breaks static cross-compilation for
-non-expert contributors. Raw `AF_PACKET` syscalls by hand — no benefit over a maintained
-wrapper and a fresh source of bugs in the one component that must not have any. Shelling out to
-`dumpcap` — the manual already does that; a tool that only wraps it adds nothing and cannot
-correlate live decode.
+**Rationale**: Npcap is the only supported way to see raw frames on Windows, and `gopacket/pcap`
+is the maintained binding to it. The handle is opened in **immediate mode** rather than with a
+batching timeout: batching would delay the drop counter that tells a contributor their capture is
+going wrong, and game traffic rates are far too low to need it. `Stats()` supplies the number
+SC-002/SC-003 assert on, counting both `PacketsDropped` and `PacketsIfDropped` — a frame the
+interface discarded is as much a hole in the archive as one the driver dropped. gopacket's
+`reassembly` package is used **only** in the decode layer, downstream of the journal, where a
+desync degrades to "bytes stored, meaning unknown" instead of losing anything.
+
+**Alternatives considered**: shipping only the offline build and telling contributors to capture
+with `dumpcap` — the manual already does that; a tool that only wraps it adds nothing, cannot
+correlate live decode, and cannot report drops as they happen. Writing an NDIS driver — absurd
+for this project's scope and lifetime. Falling back to raw sockets — Windows raw sockets cannot
+see inbound TCP at all, which fails Principle I outright.
+
+**A consequence worth recording**: Npcap names devices `\Device\NPF_{GUID}` while Windows, and
+therefore `doctor`'s interface list, names them `Ethernet` and `Wi-Fi`. `capture` resolves
+between the two **by IP address**, not by adapter description — descriptions are vendor strings
+that two adapters in one machine routinely share, and choosing the wrong one produces exactly the
+silent, total failure `doctor --watch` exists to prevent.
 
 ---
 
@@ -191,8 +210,11 @@ the snapshot is re-derivable from `source/AC_ptrs` if it is ever doubted.
 
 ## R7. Coverage state store
 
-**Decision**: A single JSON document at `${XDG_DATA_HOME:-~/.local/share}/sccap/coverage.json`,
-written by atomic temp-file + `rename(2)`. Bootstrapped from the known element universe:
+**Decision**: A single JSON document at `%LOCALAPPDATA%\sccap\coverage.json`, written by
+atomic temp-file + rename. `LOCALAPPDATA` rather than `APPDATA` deliberately: this is per-machine
+state, and a coverage store that roamed with a user profile would claim elements were observed on
+a machine that never recorded them. `SCCAP_DATA_DIR` overrides it, which is how the test suite
+avoids folding its results into a contributor's real store. Bootstrapped from the known element universe:
 39 message types, 249 `AC_*` opcodes, 116 `SN_*` notification types.
 
 **Rationale**: The dataset is ~404 elements with three states each. That is kilobytes. A
@@ -297,16 +319,25 @@ no gain.
 
 ## R13. Protection at rest
 
-**Decision**: Session directory `0700`, all files `0600`, set at creation via `umask` within the
-session writer rather than `chmod` afterwards. No encryption. `session.json` carries
+> **Superseded by constitution v3.0.0 (2026-08-14).** A file mode is not a protection mechanism
+> on Windows, so the original `0700`/`0600` decision is replaced by an explicit DACL. The
+> reasoning — protect at creation, never encrypt — is unchanged and is why the ACL is installed
+> on the directory before any file is written into it.
+
+**Decision**: An explicit owner-only DACL on the session directory — the owning user and
+`NT AUTHORITY\SYSTEM`, with inheritance severed — installed at creation, before any file is
+written into it. Files inside inherit it. No encryption. `session.json` carries
 `"sensitive": true` and a `sensitivity_reason` string; the credential warning fires when the
 decode layer observes `AC_PLAYER_CREDENTIALS` (opcode 9) or a `CCMD_AUTH_REQUEST` (type 4).
 
 **Rationale**: Settled in clarification — encryption would put a key between a future reader and
 the raw evidence, which undercuts Principle II and adds an archive-destroying failure mode.
-Setting the mode at creation rather than after closes the window where a session is briefly
-world-readable. The credential warning is tied to concrete, already-decoded messages rather than
-a heuristic.
+Protecting at creation rather than after closes the window where a session is briefly readable by
+others. `os.Chmod` here toggles the read-only attribute and nothing else, so a mode-based scheme
+would report protection it never provided; severing inheritance is what stops a session written
+under a `BUILTIN\Users`-readable parent from staying readable by every account on the machine.
+`verify` reports the principals holding access rather than a mode, for the same reason. The
+credential warning is tied to concrete, already-decoded messages rather than a heuristic.
 
 ---
 
@@ -315,7 +346,8 @@ a heuristic.
 **Decision**: `sccap` emits a bundle that is a **superset** of the manual's bundle
 (`docs/…§2.1`): same directory naming, same `session.json` (extended, `schema_version` bumped),
 same `markers.log` semantics, same `SHA256SUMS`, plus `index.jsonl` and `coverage-delta.json`.
-`dumpcap.log` is replaced by an equivalent `capture.log` carrying `AF_PACKET` stats, and
+`dumpcap.log` is replaced by the recorded counters in `session.json.host` — `packets_captured`
+and `packets_dropped`, taken from the capture driver's own statistics — and
 `session.json.host.capture_tool` records `sccap <version>` instead of Dumpcap.
 
 **The `tools/` gap, and how it is closed** *(resolved 2026-08-14)*: the manual and the root
@@ -330,7 +362,7 @@ is dispositioned:
 | `verify_capture.py` | → `sccap verify`, in Go. Better placed: it reads the session's own recorded drop counters rather than parsing a log |
 | `session.schema.json` | → `contracts/session.schema.json`, reconstructed from the manual's §2.4 example. If an authoritative copy surfaces, reconcile against it |
 | `setup-ubuntu.sh` | **Not recreated.** Host setup is out of scope; `sccap doctor` detects each condition it used to configure and names the remedy |
-| `netns-capture.sh` | **Not recreated.** Same; the completeness guarantee it provided by construction is replaced by `sccap doctor --watch` detecting which interfaces actually carry game traffic (plan Risk 4) |
+| `netns-capture.sh` | **Not recreated**, and under v3.0.0 not recreatable — Windows offers no per-process network stack to isolate into. The completeness guarantee it provided by construction is replaced by `sccap doctor --watch` detecting which interfaces actually carry game traffic (plan Risk 4), and by quiescing the host (manual §1.2). This is a genuine loss and the manual says so in §1.4 rather than implying an equivalent exists |
 
 This is a net loss of automation and a net gain in honesty: a script that configures a host can
 be run and still leave a capture compromised, whereas detection makes the compromise visible.
@@ -368,10 +400,10 @@ does today.
 | Unknown | Resolution |
 |---|---|
 | Journal container | pcapng, segmented, ns resolution (R1) |
-| Capture point | Wire-level `AF_PACKET`; relay optional and off by default (R2) |
+| Capture point | Wire-level, via Npcap; relay optional and off by default (R2) |
 | Sidecar format | `index.jsonl`, derived and regenerable (R3) |
 | Dual timestamps | pcapng wall-clock + index monotonic, tied by clock anchors (R4) |
-| Go stack | gopacket 1.7.1 afpacket/pcapgo/reassembly, `CGO_ENABLED=0` (R5) |
+| Go stack | gopacket 1.7.1 pcap/pcapgo/reassembly; cgo only behind `-tags npcap` (R5) |
 | Protocol implementation | Self-contained `pkg/scproto`, golden vectors from the archived reference (R6) |
 | Coverage store | Atomic-rename JSON, 404 elements embedded from `docs/protocol/` (R7) |
 | In-match UDP | Passive primary; relay is a spike (R8) |
@@ -379,7 +411,7 @@ does today.
 | Disk floor | Warn at 2 GiB, clean stop at 512 MiB (R10) |
 | Progress UI | One stderr status line, no TUI (R11) |
 | Session naming | Existing `SC_…` bundle convention (R12) |
-| At-rest protection | `0700`/`0600`, no encryption (R13) |
+| At-rest protection | Owner-only DACL, inheritance severed, no encryption (R13) |
 | Bundle compatibility | Superset of the manual's bundle; former `tools/` helpers absorbed or dropped (R14) |
 | Licence | MIT (R15) |
 | Host setup | Diagnosed by `sccap doctor`, never orchestrated; no scripts ship (R14, constitution v2.1.0) |

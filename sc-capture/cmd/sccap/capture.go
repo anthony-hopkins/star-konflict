@@ -443,8 +443,17 @@ func captureSession(o captureOpts) int {
 		}
 	}()
 
+	// Ctrl+C is how a session ends normally and is what the manual tells a
+	// contributor to press; Go surfaces it, and Ctrl+Break, as os.Interrupt.
+	// SIGTERM is listed for a supervisor that emulates it and costs nothing.
+	//
+	// Closing the console window is deliberately NOT handled, because it
+	// cannot be: Windows gives the process a couple of seconds and then kills
+	// it outright. That is the interrupted-session path, and it is built to
+	// produce a valid bundle rather than a clean one — see
+	// tests/e2e/abrupt_test.go.
 	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
+	signal.Notify(sigs, os.Interrupt, syscall.SIGTERM)
 
 	_, mono := clock.Now()
 	_, _ = beacon.Stamp(annotate.KindEvent, "capture started", start, mono)

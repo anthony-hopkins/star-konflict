@@ -21,6 +21,11 @@ description: "Task list for 001-capture-proxy"
 
 ## Path Conventions
 
+> **Retargeted to Windows by constitution v3.0.0 (2026-08-14).** This list is the record of how
+> the feature was delivered, and it was delivered on Linux. Entries whose deliverable changed
+> platform are annotated in place rather than rewritten, so the history stays readable. No task's
+> *intent* changed; several tasks' mechanisms did.
+
 New self-contained Go repository at `sc-capture/`, per plan.md Structure Decision:
 
 - `sc-capture/cmd/sccap/` — subcommand entry points
@@ -50,7 +55,7 @@ Spec priority is US1/US2 (P1) → US3/US4 (P2) → US5/US6 (P3). Delivery order 
 - [X] T002 Initialize module in `sc-capture/go.mod` as `github.com/anthony-hopkins/star-konflict/sc-capture`, Go 1.26, and add the sole dependency `github.com/gopacket/gopacket v1.7.1`
 - [X] T003 [P] Add MIT licence text to `sc-capture/LICENSE.txt` (research.md R15)
 - [X] T004 [P] Write `sc-capture/README.md` covering build, `CGO_ENABLED=0`, capability grant, and the four completeness checks
-- [X] T005 [P] Add CI in `sc-capture/.github/workflows/ci.yml`: `go vet`, `go test ./...`, and `CGO_ENABLED=0` cross-compile for linux/amd64 and linux/arm64
+- [X] T005 [P] Add CI in `.github/workflows/ci.yml`: `go vet`, `go test ./...`, and `CGO_ENABLED=0` build for windows/amd64 and windows/arm64, plus a job that compiles the `-tags npcap` capture backend against the Npcap SDK *(retargeted from linux/* under constitution v3.0.0)*
 - [X] T006 [P] Add `sc-capture/.github/pull_request_template.md` requiring every change to declare its effect on the archive — what is captured, what is persisted, whether the on-disk schema changed (constitution, Development Workflow)
 - [X] T007 [P] Copy the three element tables from `docs/protocol/` into `sc-capture/pkg/scproto/tables/` (`message-types.json`, `async-requests.json`, `notifications.json`) for `go:embed`
 
@@ -67,7 +72,7 @@ Spec priority is US1/US2 (P1) → US3/US4 (P2) → US5/US6 (P3). Delivery order 
 - [X] T010 [P] Implement the clock source in `sc-capture/internal/session/clock.go`: paired `CLOCK_REALTIME`/`CLOCK_MONOTONIC` anchors at start, every 30s and at end, plus step detection when realtime diverges from monotonic by more than 1s (research.md R4)
 - [X] T011 [P] Implement free-space monitoring in `sc-capture/internal/session/disk.go` with `--min-free` warn threshold and hard floor, leaving enough headroom to write `session.json` and `SHA256SUMS` (research.md R10)
 - [X] T012 [P] Implement the 1 Hz stderr status line in `sc-capture/internal/status/status.go` — elapsed, services, frames, journal size, **drops**, records, novel (research.md R11)
-- [X] T013 Implement host diagnosis in `sc-capture/internal/doctor/doctor.go`: `CAP_NET_RAW`/`CAP_NET_ADMIN`, interface inventory and carrier, NIC offload state, free disk, clock discipline, coverage dir writability, embedded table revision. Each failure prints the exact remedy; **never mutates host state**
+- [X] T013 Implement host diagnosis in `sc-capture/internal/doctor/doctor.go`: capture backend compiled in and process elevated, interface inventory and carrier, NIC offload state, free disk, clock discipline, coverage dir writability, embedded table revision. Each failure prints the exact remedy; **never mutates host state** *(capability checks became backend+elevation checks under constitution v3.0.0)*
 - [X] T014 Implement `--watch` traffic sampling in `sc-capture/internal/doctor/watch.go`, reporting which interfaces actually carry flows to game endpoints (plan Risk 4 — the only silent, total failure mode)
 - [X] T015 Wire `sccap doctor` in `sc-capture/cmd/sccap/doctor.go` per contracts/cli.md, exiting 3 when capture would be impossible
 - [X] T016 [P] Add architecture import rules in `sc-capture/tests/architecture/imports_test.go`: `internal/journal` must not import `internal/decode` (Principle II); `pkg/scproto` must import nothing from `internal/` and nothing outside the standard library (Principle VI)
@@ -84,11 +89,11 @@ Spec priority is US1/US2 (P1) → US3/US4 (P2) → US5/US6 (P3). Delivery order 
 
 ### Implementation for User Story 1
 
-- [X] T017 [US1] Implement the `AF_PACKET` v3 ring source in `sc-capture/internal/capture/afpacket.go` — no BPF filter and full snaplen by default; a non-default value for either is recorded and warned about (Principle I)
+- [X] T017 [US1] Implement the capture source in `sc-capture/internal/capture/source_npcap.go` — no BPF filter and full snaplen by default; a non-default value for either is recorded and warned about (Principle I) *(was an `AF_PACKET` v3 ring in `afpacket.go`; replaced by Npcap under constitution v3.0.0)*
 - [X] T018 [P] [US1] Implement kernel drop accounting in `sc-capture/internal/capture/stats.go`, exposing the counter that SC-002 and SC-003 assert on
 - [X] T019 [US1] Implement the pcapng writer in `sc-capture/internal/journal/pcapng.go`: one SHB per file, one IDB per interface with `if_tsresol = 9` and a role description, EPB only (contracts/session-bundle.md)
 - [X] T020 [US1] Implement segmentation and durability in `sc-capture/internal/journal/segment.go` — rotate at 200 MB or 10 min, flush and fsync every 1 s or 4 MB, fsync the outgoing segment before opening the next (research.md R9)
-- [X] T021 [US1] Implement bundle creation in `sc-capture/internal/session/bundle.go` — `SC_<UTC>__<SCENARIO>__<VOLUNTEER>__<REGION>__<SEQ>` naming, directory `0700` and files `0600` **set at creation, not chmod'ed afterwards** (research.md R12, R13)
+- [X] T021 [US1] Implement bundle creation in `sc-capture/internal/session/bundle.go` — `SC_<UTC>__<SCENARIO>__<VOLUNTEER>__<REGION>__<SEQ>` naming, owner-only DACL with inheritance severed **installed at creation, before any file is written into the directory** (research.md R12, R13) *(was `0700`/`0600`; a file mode protects nothing on Windows)*
 - [X] T022 [US1] Implement `session.json` in `sc-capture/internal/session/metadata.go` against `contracts/session.schema.json`: schema version written before capture begins, software and table versions, client, host, interfaces, clock anchors, termination state
 - [X] T023 [P] [US1] Implement `SHA256SUMS` generation over every bundle file in `sc-capture/internal/journal/hashes.go`, written last at clean close
 - [X] T024 [US1] Wire `sccap capture` in `sc-capture/cmd/sccap/capture.go` with the full flag set from contracts/cli.md, defaulting to passive, unfiltered, full-snaplen
@@ -103,7 +108,7 @@ Spec priority is US1/US2 (P1) → US3/US4 (P2) → US5/US6 (P3). Delivery order 
 
 - [X] T031 [P] [US1] Byte-exactness test in `sc-capture/tests/e2e/byteexact_test.go` — capture alongside an independent tool and assert identical packet bytes, including transport headers and checksums (SC-002, FR-004)
 - [X] T032 [P] [US1] Abrupt-termination test in `sc-capture/tests/e2e/abrupt_test.go` — SIGKILL mid-capture across 20 trials, asserting a valid, verifiable session in 100% (SC-008)
-- [X] T033 [P] [US1] Disk-floor test in `sc-capture/tests/e2e/diskfloor_test.go` against a small tmpfs — clean close, `termination: disk_floor`, exit 4, prior sessions untouched
+- [X] T033 [P] [US1] Disk-floor test in `sc-capture/tests/e2e/diskfloor_test.go`, thresholds set above actual free space — clean close, `termination: disk_floor`, exit 4, prior sessions untouched
 
 **Checkpoint**: 🎯 **MVP.** A contributor can archive a verified session. Everything after this is enrichment — if the servers shut down here, the tool was already collecting evidence.
 
@@ -118,7 +123,7 @@ Spec priority is US1/US2 (P1) → US3/US4 (P2) → US5/US6 (P3). Delivery order 
 **Why here**: safety is not a later feature. These properties must hold for the first byte written, so they land with the MVP rather than after it.
 
 - [X] T034 [US6] Set `sensitive: true` unconditionally with a plain-language `sensitivity_reason` in `sc-capture/internal/session/metadata.go` (FR-031)
-- [X] T035 [P] [US6] Permissions test in `sc-capture/tests/e2e/permissions_test.go` — directory `0700`, files `0600`, asserted at creation time rather than after the fact
+- [X] T035 [P] [US6] Permissions test in `sc-capture/tests/e2e/safety_test.go` — the bundle's DACL grants no broad principal (Everyone, Authenticated Users, BUILTIN\Users), walked independently of the code that wrote it
 - [X] T036 [P] [US6] Egress test in `sc-capture/tests/e2e/egress_test.go` — monitor all outbound traffic across a full session and assert nothing but game servers is contacted (SC-009)
 - [X] T037 [P] [US6] Passive-default test in `sc-capture/tests/e2e/passive_test.go` — with no flags, assert `mode: passive` and an empty `rewrites` array (FR-013, Principle IV)
 
@@ -186,7 +191,7 @@ Spec priority is US1/US2 (P1) → US3/US4 (P2) → US5/US6 (P3). Delivery order 
 
 **Independent Test**: Capture two sessions exercising different parts of the game. Assert the never-observed set shrinks by exactly the elements that appeared, persists across restarts, and aggregates across sessions.
 
-- [X] T060 [US3] Implement the coverage store in `sc-capture/internal/coverage/store.go` — single JSON document under `$XDG_DATA_HOME/sccap/`, written by temp-file plus atomic `rename(2)` (research.md R7)
+- [X] T060 [US3] Implement the coverage store in `sc-capture/internal/coverage/store.go` — single JSON document under `%LOCALAPPDATA%\sccap\`, written by temp-file plus atomic rename (research.md R7)
 - [X] T061 [US3] Implement the state lattice in `sc-capture/internal/coverage/state.go` — `never_observed → observed_undecoded → decoded`, strictly one-directional so a later failed decode never downgrades an element (FR-020, FR-024)
 - [X] T062 [P] [US3] Flag elements absent from the embedded universe as novel in `sc-capture/internal/coverage/novel.go`, and surface them during capture (FR-023)
 - [X] T063 [P] [US3] Write `coverage-delta.json` into each bundle so machine-wide coverage can be rebuilt from bundles alone
@@ -218,7 +223,7 @@ Spec priority is US1/US2 (P1) → US3/US4 (P2) → US5/US6 (P3). Delivery order 
 
 - [X] T072 [P] Wire `sccap status` in `sc-capture/cmd/sccap/status.go`, reading the live session state file without perturbing capture
 - [X] T073 [P] Document the bundle format and element universe in `sc-capture/README.md`, linking `docs/protocol/PROVENANCE.md`
-- [X] T074 [P] Produce cross-compiled release artifacts for linux/amd64 and linux/arm64 in CI
+- [X] T074 [P] Produce release artifacts for windows/amd64 and windows/arm64 in CI *(offline build; a capture-capable binary needs Npcap and cannot be cross-compiled)*
 - [ ] T075 Run the full [quickstart.md](./quickstart.md) validation, Scenarios 1–10
 - [ ] T076 Two-person validation for SC-010 (reconstruct an action sequence from a session alone) and SC-012 (open a bundle in third-party tooling on a machine with none of this project's software)
 
@@ -340,4 +345,4 @@ After Foundational, US1 is the bottleneck — everything reads the journal it pr
 - `[P]` = different files, no dependencies on incomplete work
 - Every increment must leave the tool able to produce a valid archived session (Principle VII)
 - Commit after each task or logical group; every PR declares its effect on the archive
-- **Capture something before T001.** The MVP is days away and the deadline is not; `dumpcap` on this machine already writes the same pcapng bytes that Phase 3 will
+- **Capture something before T001.** The MVP is days away and the deadline is not; `dumpcap` already writes the same pcapng bytes that Phase 3 will

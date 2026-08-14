@@ -56,11 +56,10 @@ func NewDiskMonitor(path string, minFree, floor uint64) *DiskMonitor {
 	return &DiskMonitor{path: path, minFree: minFree, floor: floor}
 }
 
-// Free returns bytes available to this (unprivileged) user.
+// Free returns bytes available to this user — see disk_windows.go.
 //
-// Implemented per platform: see disk_linux.go and disk_windows.go. Both must
-// report space actually usable by this user rather than total free space —
-// being optimistic here means running out mid-session, which is exactly the
+// Space actually usable by this account, not total free space on the volume.
+// Being optimistic here means running out mid-session, which is exactly the
 // moment the number matters.
 func (d *DiskMonitor) Free() (uint64, error) { return freeBytes(d.path) }
 

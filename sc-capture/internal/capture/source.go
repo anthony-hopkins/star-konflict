@@ -5,10 +5,11 @@
 // the property that makes Principle II structural. A decoder cannot lose a byte
 // it never sat in front of.
 //
-// The acquisition mechanism is per platform (AF_PACKET on Linux, Npcap on
-// Windows) but everything above this package sees one interface, so the
-// journal, the record index and every guarantee they carry are identical
-// wherever a session was recorded.
+// Acquisition is Npcap, and it is the only part of the tool that is not
+// portable Go. It sits behind this interface so that everything above it —
+// the journal, the record index and every guarantee they carry — is ordinary
+// platform-independent code that a decoder can be pointed at years from now on
+// any machine.
 package capture
 
 import (
@@ -31,8 +32,8 @@ type source interface {
 	// read returns the next frame. The slice may alias an internal buffer and
 	// is only valid until the next call.
 	read() ([]byte, gopacket.CaptureInfo, error)
-	// stats returns cumulative packets seen and packets dropped by the kernel
-	// or driver.
+	// stats returns cumulative packets seen and packets dropped by the driver
+	// or the interface.
 	stats() (packets, drops uint64, err error)
 	close()
 }

@@ -129,15 +129,18 @@ ability to recruit.
 **Settled architectural commitments.** Decided; not open for re-litigation without amendment:
 
 - **Everything this project builds is written in Go.** Not "primarily Go" — the deliverable is a
-  single static binary and there is no second language in the build, the tests, or the shipped
-  artifacts. No Python, no shell scripts, no helper utilities in another runtime. Chosen for
+  single binary and there is no second language in the build, the tests, or the shipped
+  artifacts. No Python, no PowerShell scripts, no helper utilities in another runtime. Chosen for
   concurrent network I/O, single-binary distribution to non-expert contributors, and
   cross-compilation.
-- **Platform-specific code is confined to acquisition and diagnosis.** Everything above the
-  capture backend — framing, journalling, decoding, indexing, coverage, the bundle format — MUST
-  be platform-independent, so a session recorded anywhere is identical to one recorded elsewhere.
-  A capture backend that cannot be built (see v2.3.0) MUST degrade to a binary that still reads
-  archives, never to one that refuses to run.
+- **The target platform is Windows** (see v3.0.0). Star Conflict is a Windows title and its
+  players are on Windows; the archive is bounded by how many of them can be recruited, so that is
+  where the tool runs. Contributors are assumed to have a normal gaming machine and nothing else.
+- **Platform-specific code is confined to acquisition, diagnosis and file protection.** Everything
+  above them — framing, journalling, decoding, indexing, coverage, the bundle format — MUST be
+  free of platform assumptions, so that a decoder written years from now can be pointed at an
+  archive from any machine. A capture backend that cannot be built MUST degrade to a binary that
+  still reads archives, never to one that refuses to run.
 - **No scripts ship, in any language.** Anything a contributor needs to run is a `sccap`
   subcommand. This is the operative rule that keeps the language commitment honest: a bash
   helper is how a second language gets in.
@@ -148,8 +151,8 @@ ability to recruit.
   that project recovered — dispatch tables, element names, Kaitai schemas, the framing and
   checksum reference — is public-domain prior art, snapshotted in `docs/protocol/`, to be
   honoured and verified rather than discarded or re-derived from scratch.
-- Host-level system orchestration that is genuinely shell work — package installation, NIC
-  offload control, network namespace setup — is **out of scope**. Reimplementing it in Go is a
+- Host-level system orchestration that is genuinely administrative work — driver installation, NIC
+  offload control, service configuration — is **out of scope**. Reimplementing it in Go is a
   downgrade, and shipping it as a script would break the rule above. The system therefore
   **diagnoses the host rather than configuring it**: it MUST detect and report every condition
   that would silently compromise a capture, name the exact remedy, and refuse to pretend a
@@ -315,4 +318,57 @@ access rather than a mode string that would be a lie.
 *Migration note for archived sessions.* None. No on-disk format, element id or bundle convention
 changes.
 
-**Version**: 2.3.0 | **Ratified**: 2026-08-13 | **Last Amended**: 2026-08-14
+**v3.0.0 — 2026-08-14 — Windows is the platform, not a second one.**
+
+*Rationale.* v2.3.0 added Windows beside Linux and framed it as a concession that cost the
+single-static-binary commitment. Holding both was the wrong reading of the deadline. Star Conflict
+is a Windows title; its players are on Windows; the archive is bounded by how many of them can be
+recruited, and every hour spent keeping a second platform working is an hour not spent recruiting
+or recording. The Linux path also carried a hidden tax that only shows up under scrutiny: it was
+the platform the manual was written for, so the entire onboarding document described a
+Proton-based setup that most contributors would never use and that measurably degrades what a
+capture is worth.
+
+That last point is the substantive one, and it is about evidence rather than convenience. Proton
+does not alter payload bytes, but everything beneath them is Linux's: the TCP stack, the timers,
+the MTU, the retransmission behaviour. Principle V requires per-record timestamps precisely so
+that tick rate, latency, keepalive cadence and retransmission can be answered later. Answering
+them from a Proton capture answers them about Wine's stack, not about the game's. Capturing where
+the game actually runs makes those recordings mean what they claim to mean.
+
+*What this makes possible.* One platform, one manual, one setup path, and a contributor who is
+already running the game can be recording within minutes of reading Part 2 — no compatibility
+layer, no second machine, no gateway. Sessions carry transport-level behaviour that is the game's
+own, which makes the timing questions answerable rather than merely recorded. `sccap doctor` can
+give exact, actionable remedies instead of hedging across platforms.
+
+*What this makes impossible.* The tool no longer builds or runs anywhere but Windows — not for
+capture, and not for reading an archive either. Anyone wanting to analyse a bundle on another
+system must either run the tool under Windows or write their own reader. That cost is real but
+small and it is bounded: the bundle format is deliberately ordinary — standard `pcapng` segments
+that Wireshark opens anywhere, plus JSON — so the evidence remains readable without this tool at
+all. What is lost is convenience, not access, and Principle II is what guarantees that.
+
+The single-static-binary commitment is likewise settled rather than mourned. Live capture requires
+Npcap, which requires cgo, which forfeits static linking and cross-compilation; Npcap's licence
+also forbids redistribution, so it cannot be bundled. This is now simply what the tool is, and the
+cost is contained the same way it was in v2.3.0: the capture backend sits behind a `npcap` build
+tag, a plain `go build` still produces a prerequisite-free binary that can verify, decode, index
+and report coverage on any archived session, and `sccap doctor` reports a missing backend as a
+first-class check naming the install rather than failing at capture time.
+
+*Contributor safety.* Principle VIII is unchanged and its enforcement is now the only one that
+exists: a file mode here means almost nothing — `os.Chmod` toggles the read-only attribute — so
+sessions get an explicit owner-only DACL with inheritance severed, and verification reports the
+principals that hold access rather than a mode string that would be a lie.
+
+*Migration note for archived sessions.* None for the format: no on-disk schema, element id or
+bundle convention changes, and a session recorded under the previous Linux build remains valid
+and verifiable. Two recorded *values* change meaning and are worth knowing about when comparing
+old sessions to new ones. `client.platform` now reads `windows` rather than `linux`.
+`client.binary_build_id` now carries a PE identity rather than a GNU build-id, and a new
+`client.binary_build_id_kind` field says which kind it is — `codeview` for a linker-stamped PDB
+GUID and age, `image` for a TimeDateStamp and SizeOfImage pair. Neither is comparable with an ELF
+build-id or with the other, which is exactly why the kind is recorded alongside the value.
+
+**Version**: 3.0.0 | **Ratified**: 2026-08-13 | **Last Amended**: 2026-08-14

@@ -1,17 +1,18 @@
-//go:build linux
+//go:build windows
 
 package e2e
 
 import (
-	"bufio"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"syscall"
 	"testing"
 	"time"
+	"unsafe"
+
+	"golang.org/x/sys/windows"
 )
 
 // TestPassiveIsTheDefault covers FR-013 and Principle IV.
@@ -31,22 +32,31 @@ func TestPassiveIsTheDefault(t *testing.T) {
 	}
 }
 
-// TestBundlePermissionsAreOwnerOnly covers FR-031.
+// TestBundleAccessIsOwnerOnly covers FR-031.
 //
-// Checked on a real bundle rather than by reading the constant, because the
-// value that matters is the mode on disk after umask and every intervening
-// syscall have had their say.
-func TestBundlePermissionsAreOwnerOnly(t *testing.T) {
+// The file mode is NOT what is checked, because here it would prove nothing:
+// os.Chmod toggles the read-only attribute and Go reports a synthesised 0666
+// for almost everything. A test asserting 0700 would pass on a directory the
+// entire Users group can read — which is precisely the state a session
+// inheriting its parent's ACL lands in.
+//
+// So this reads the DACL and asserts no broad principal appears in it. The ACL
+// is walked here independently of the code that wrote it: reusing
+// session.CheckPermissions would only prove that function agrees with itself.
+func TestBundleAccessIsOwnerOnly(t *testing.T) {
 	bundle := captureBriefly(t, nil)
 
-	fi, err := os.Stat(bundle)
-	if err != nil {
-		t.Fatalf("stat bundle: %v", err)
+	check := func(path, label string) {
+		t.Helper()
+		for _, sid := range accessSIDs(t, path) {
+			if broadPrincipals[sid] {
+				t.Errorf("%s grants access to %s (%s) — a session may contain login "+
+					"credentials in the clear", label, sidName(sid), sid)
+			}
+		}
 	}
-	if perm := fi.Mode().Perm(); perm != 0o700 {
-		t.Errorf("bundle directory mode = %04o, want 0700 — a session may contain "+
-			"login credentials in the clear", perm)
-	}
+
+	check(bundle, "the bundle directory")
 
 	entries, err := os.ReadDir(bundle)
 	if err != nil {
@@ -56,14 +66,70 @@ func TestBundlePermissionsAreOwnerOnly(t *testing.T) {
 		t.Fatal("bundle is empty")
 	}
 	for _, e := range entries {
-		info, err := e.Info()
-		if err != nil {
-			t.Fatalf("stat %s: %v", e.Name(), err)
-		}
-		if perm := info.Mode().Perm(); perm&0o077 != 0 {
-			t.Errorf("%s mode = %04o, want owner-only", e.Name(), perm)
-		}
+		check(filepath.Join(bundle, e.Name()), e.Name())
 	}
+}
+
+// broadPrincipals are the well-known SIDs that would make a session readable
+// by someone other than its author. Compared as SID strings because the
+// display names are localised and a machine in another language would silently
+// stop matching.
+var broadPrincipals = map[string]bool{
+	"S-1-1-0":      true, // Everyone
+	"S-1-5-11":     true, // Authenticated Users
+	"S-1-5-32-545": true, // BUILTIN\Users
+	"S-1-5-32-546": true, // BUILTIN\Guests
+	"S-1-5-7":      true, // Anonymous Logon
+	"S-1-5-32-547": true, // BUILTIN\Power Users
+}
+
+// accessSIDs returns the SIDs of every allow entry on a path's DACL.
+func accessSIDs(t *testing.T, path string) []string {
+	t.Helper()
+	sd, err := windows.GetNamedSecurityInfo(path, windows.SE_FILE_OBJECT,
+		windows.DACL_SECURITY_INFORMATION)
+	if err != nil {
+		t.Fatalf("reading the ACL of %s: %v", path, err)
+	}
+	dacl, _, err := sd.DACL()
+	if err != nil {
+		t.Fatalf("reading the DACL of %s: %v", path, err)
+	}
+	if dacl == nil {
+		// A nil DACL grants everyone everything. It must never read as clean.
+		t.Fatalf("%s has no DACL at all, which grants unrestricted access", path)
+	}
+
+	var out []string
+	for i := uint32(0); i < uint32(dacl.AceCount); i++ {
+		var ace *windows.ACCESS_ALLOWED_ACE
+		if err := windows.GetAce(dacl, i, &ace); err != nil {
+			continue
+		}
+		if ace.Header.AceType != windows.ACCESS_ALLOWED_ACE_TYPE {
+			continue // deny entries do not widen access
+		}
+		// The SID is laid out inline at the end of the ACE; SidStart is its
+		// first word rather than a pointer to it.
+		sid := (*windows.SID)(unsafe.Pointer(&ace.SidStart))
+		out = append(out, sid.String())
+	}
+	return out
+}
+
+func sidName(sidStr string) string {
+	sid, err := windows.StringToSid(sidStr)
+	if err != nil {
+		return "unknown"
+	}
+	account, domain, _, err := sid.LookupAccount("")
+	if err != nil {
+		return "unknown"
+	}
+	if domain != "" {
+		return domain + "\\" + account
+	}
+	return account
 }
 
 // TestSessionIsMarkedSensitive covers FR-031: the contributor should not have
@@ -98,12 +164,10 @@ func TestNoEgress(t *testing.T) {
 
 	dir := t.TempDir()
 	out := filepath.Join(dir, "captures")
-	cmd := exec.Command(bin, "capture", "--scenario", "BASE-01", "--interface", iface, "--out", out)
-	if err := cmd.Start(); err != nil {
-		t.Fatalf("start: %v", err)
-	}
+	cmd := command(t, bin, "capture", "--scenario", "BASE-01", "--interface", iface, "--out", out)
+	startInOwnGroup(t, cmd)
 	defer func() {
-		_ = cmd.Process.Signal(syscall.SIGINT)
+		_ = interrupt(cmd)
 		_ = cmd.Wait()
 	}()
 
@@ -120,52 +184,39 @@ func TestNoEgress(t *testing.T) {
 	}
 }
 
-// tcpConnections lists remote endpoints this pid has TCP sockets to.
+// tcpConnections lists remote endpoints this pid has non-listening TCP sockets
+// to, via netstat.
+//
+// netstat is an independent oracle: it is not our code, and it reports what the
+// operating system believes rather than what this process is willing to admit.
+// Only the data rows are parsed, never the headers, which are localised.
 func tcpConnections(t *testing.T, pid int) []string {
 	t.Helper()
 
-	inodes := map[string]bool{}
-	fdDir := filepath.Join("/proc", strconv.Itoa(pid), "fd")
-	entries, err := os.ReadDir(fdDir)
+	// -a all connections, -n numeric (no DNS, which would itself be egress),
+	// -o owning pid, -p TCP to skip the UDP beacon we legitimately hold.
+	out, err := exec.Command("netstat", "-a", "-n", "-o", "-p", "TCP").Output()
 	if err != nil {
-		return nil // process gone, or not readable — not a failure signal
-	}
-	for _, e := range entries {
-		link, err := os.Readlink(filepath.Join(fdDir, e.Name()))
-		if err != nil {
-			continue
-		}
-		if strings.HasPrefix(link, "socket:[") {
-			inodes[strings.TrimSuffix(strings.TrimPrefix(link, "socket:["), "]")] = true
-		}
-	}
-	if len(inodes) == 0 {
-		return nil
+		return nil // netstat unavailable — not a failure signal
 	}
 
+	want := strconv.Itoa(pid)
 	var found []string
-	for _, table := range []string{"/proc/net/tcp", "/proc/net/tcp6"} {
-		f, err := os.Open(table)
-		if err != nil {
+	for _, line := range strings.Split(string(out), "\n") {
+		f := strings.Fields(line)
+		// Proto, Local, Foreign, State, PID — a listening row on some builds
+		// omits nothing, but be defensive about the column count.
+		if len(f) < 5 || !strings.EqualFold(f[0], "TCP") {
 			continue
 		}
-		sc := bufio.NewScanner(f)
-		sc.Scan() // header
-		for sc.Scan() {
-			fields := strings.Fields(sc.Text())
-			if len(fields) < 10 {
-				continue
-			}
-			// fields[3] is the connection state; 0A is LISTEN, 01 ESTABLISHED.
-			if !inodes[fields[9]] {
-				continue
-			}
-			if fields[3] == "0A" {
-				continue // a listening socket is not egress
-			}
-			found = append(found, fields[2])
+		if f[len(f)-1] != want {
+			continue
 		}
-		f.Close()
+		state := f[3]
+		if strings.EqualFold(state, "LISTENING") {
+			continue // a listening socket is not egress
+		}
+		found = append(found, f[2])
 	}
 	return found
 }
@@ -181,14 +232,12 @@ func captureBriefly(t *testing.T, extraArgs []string) string {
 	args := append([]string{"capture", "--scenario", "BASE-01",
 		"--interface", iface, "--out", out}, extraArgs...)
 
-	cmd := exec.Command(bin, args...)
-	if err := cmd.Start(); err != nil {
-		t.Fatalf("start capture: %v", err)
-	}
+	cmd := command(t, bin, args...)
+	startInOwnGroup(t, cmd)
 	generateTraffic()
 	time.Sleep(1200 * time.Millisecond)
-	if err := cmd.Process.Signal(syscall.SIGINT); err != nil {
-		t.Fatalf("signal: %v", err)
+	if err := interrupt(cmd); err != nil {
+		t.Fatalf("interrupt: %v", err)
 	}
 	if err := cmd.Wait(); err != nil {
 		t.Fatalf("capture failed: %v", err)

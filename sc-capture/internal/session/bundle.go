@@ -9,11 +9,16 @@ import (
 	"time"
 )
 
-// Bundle directory and file permissions.
+// Bundle directory and file modes, passed to every create call.
 //
-// Set at creation rather than chmod'ed afterwards. The difference matters: a
-// chmod leaves a window, however brief, in which a session containing login
-// credentials is readable by every process on the machine.
+// These are NOT what protects a session here. os.Chmod on Windows toggles the
+// read-only attribute and nothing else, so a mode is close to decorative: the
+// real enforcement is the owner-only DACL that secureDir installs, and which
+// files created inside the bundle inherit. The constants are kept because the
+// standard library wants a mode and because a bundle copied to any other
+// system should land with sane bits rather than 0666.
+//
+// See perm_windows.go for what actually holds the door shut.
 const (
 	DirMode  os.FileMode = 0o700
 	FileMode os.FileMode = 0o600
@@ -82,10 +87,10 @@ func CreateBundle(parent string, start time.Time, scenario, volunteer, region st
 		dir := filepath.Join(parent, id)
 		err := os.Mkdir(dir, DirMode)
 		if err == nil {
-			// Assert the intended protection rather than trusting the creation
-			// mode. On Unix this re-applies 0700 in case of an odd umask; on
-			// Windows it installs an owner-only ACL, because a file mode there
-			// means almost nothing.
+			// Install the owner-only DACL immediately, before a single byte is
+			// written into the directory. The mode passed to Mkdir above did
+			// not protect anything, and every file the capture is about to
+			// create inherits its access from this call.
 			if err := secureDir(dir); err != nil {
 				return nil, fmt.Errorf("securing %s: %w", dir, err)
 			}
@@ -108,9 +113,9 @@ func (b *Bundle) Path(name string) string { return filepath.Join(b.Dir, name) }
 // deliberately in order to share, and refusing to verify a bundle they can no
 // longer fix would help nobody.
 //
-// `summary` describes the protection in whatever terms the platform uses, so a
-// reader is not left guessing what "0700" means on a machine that has no such
-// concept.
+// `summary` names the principals that actually hold access, because a mode
+// string here would be a lie — it would report 0700 on a directory the whole
+// Users group can read.
 func CheckPermissions(dir string) (summary string, loose []string, err error) {
 	return inspectPermissions(dir)
 }

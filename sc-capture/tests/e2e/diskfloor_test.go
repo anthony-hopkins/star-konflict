@@ -1,4 +1,4 @@
-//go:build linux
+//go:build windows
 
 package e2e
 
@@ -7,8 +7,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"syscall"
 	"testing"
+
+	"golang.org/x/sys/windows"
 )
 
 // TestDiskFloorClosesCleanly covers FR-036, FR-037 and the disk-exhaustion edge
@@ -19,9 +20,9 @@ import (
 // corrupt. It must stop — and stop with enough headroom left to finish writing
 // the metadata that makes the session readable.
 //
-// The thresholds are set above actual free space rather than mounting a small
-// filesystem, so the test exercises the real decision path without touching
-// host state.
+// The thresholds are set above actual free space rather than creating a small
+// volume, so the test exercises the real decision path without touching host
+// state — no VHD to mount, nothing to clean up if the run is killed.
 func TestDiskFloorClosesCleanly(t *testing.T) {
 	bin := requireCapture(t)
 	iface := liveInterface(t)
@@ -37,7 +38,7 @@ func TestDiskFloorClosesCleanly(t *testing.T) {
 	floor := free + (1 << 30)
 	minFree := floor + (1 << 30)
 
-	cmd := exec.Command(bin, "capture",
+	cmd := command(t, bin, "capture",
 		"--scenario", "BASE-01",
 		"--interface", iface,
 		"--out", out,
@@ -71,7 +72,7 @@ func TestDiskFloorClosesCleanly(t *testing.T) {
 	}
 
 	// And the resulting session must verify.
-	vout, verr := exec.Command(bin, "verify", bundle).CombinedOutput()
+	vout, verr := command(t, bin, "verify", bundle).CombinedOutput()
 	if verr != nil {
 		t.Errorf("verify rejected a disk-floor session (exit %v)\n%s", verr, vout)
 	}
@@ -98,7 +99,7 @@ func TestPriorSessionsAreNeverReclaimed(t *testing.T) {
 
 	free := freeBytes(t, dir)
 	floor := free + (1 << 30)
-	cmd := exec.Command(bin, "capture", "--scenario", "BASE-01", "--interface", iface,
+	cmd := command(t, bin, "capture", "--scenario", "BASE-01", "--interface", iface,
 		"--out", out, "--min-free", itoaBytes(floor+(1<<30)), "--floor", itoaBytes(floor))
 	_, _ = cmd.CombinedOutput()
 
@@ -111,13 +112,22 @@ func TestPriorSessionsAreNeverReclaimed(t *testing.T) {
 	}
 }
 
+// freeBytes reports space available to this user on the volume holding path.
+//
+// The caller-quota-aware figure, matching what the tool itself measures: if the
+// two disagreed the test would be setting its thresholds against a different
+// number than the code under test compares them to.
 func freeBytes(t *testing.T, path string) uint64 {
 	t.Helper()
-	var st syscall.Statfs_t
-	if err := syscall.Statfs(path, &st); err != nil {
+	p, err := windows.UTF16PtrFromString(path)
+	if err != nil {
 		return 0
 	}
-	return st.Bavail * uint64(st.Bsize)
+	var freeToCaller, total, totalFree uint64
+	if err := windows.GetDiskFreeSpaceEx(p, &freeToCaller, &total, &totalFree); err != nil {
+		return 0
+	}
+	return freeToCaller
 }
 
 func itoaBytes(n uint64) string {

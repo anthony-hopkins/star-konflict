@@ -13,8 +13,6 @@ package client
 
 import (
 	"crypto/sha256"
-	"debug/elf"
-	"encoding/binary"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -38,11 +36,18 @@ type Info struct {
 	InstallPath string            `json:"install_path,omitempty"`
 	LastUpdated *time.Time        `json:"last_updated,omitempty"`
 
-	BinaryName    string `json:"binary_name,omitempty"`
-	BinarySize    int64  `json:"binary_size,omitempty"`
-	BinarySHA256  string `json:"binary_sha256,omitempty"`
-	BinaryBuildID string `json:"binary_build_id,omitempty"`
-	BinaryArch    string `json:"binary_arch,omitempty"`
+	BinaryName   string `json:"binary_name,omitempty"`
+	BinarySize   int64  `json:"binary_size,omitempty"`
+	BinarySHA256 string `json:"binary_sha256,omitempty"`
+
+	// BinaryBuildID is the executable's own identity, and BinaryBuildIDKind
+	// says which kind it is: "codeview" for a linker-stamped PDB GUID and age,
+	// "image" for the TimeDateStamp and SizeOfImage pair. The two are not
+	// comparable with each other, so a reader must be told which they hold
+	// rather than left to guess from the shape of the string.
+	BinaryBuildID     string `json:"binary_build_id,omitempty"`
+	BinaryBuildIDKind string `json:"binary_build_id_kind,omitempty"`
+	BinaryArch        string `json:"binary_arch,omitempty"`
 
 	Platform string `json:"platform,omitempty"`
 	Launcher string `json:"launcher,omitempty"`
@@ -113,49 +118,6 @@ func Detect(o Options) *Info {
 		return info
 	}
 	return nil
-}
-
-// steamLibraries returns every Steam library root worth checking.
-func steamLibraries() []string {
-	home, err := os.UserHomeDir()
-	if err != nil {
-		return nil
-	}
-
-	roots := []string{
-		filepath.Join(home, ".local", "share", "Steam"),
-		filepath.Join(home, ".steam", "steam"),
-		filepath.Join(home, ".steam", "root"),
-		filepath.Join(home, ".var", "app", "com.valvesoftware.Steam", ".local", "share", "Steam"),
-	}
-
-	seen := map[string]bool{}
-	var out []string
-	add := func(p string) {
-		if p == "" {
-			return
-		}
-		if resolved, err := filepath.EvalSymlinks(p); err == nil {
-			p = resolved
-		}
-		if seen[p] {
-			return
-		}
-		if fi, err := os.Stat(filepath.Join(p, "steamapps")); err == nil && fi.IsDir() {
-			seen[p] = true
-			out = append(out, p)
-		}
-	}
-
-	for _, r := range roots {
-		add(r)
-		// Additional libraries — a second drive is common, and the game is
-		// as likely to be there as in the default location.
-		for _, extra := range libraryFolders(filepath.Join(r, "steamapps", "libraryfolders.vdf")) {
-			add(extra)
-		}
-	}
-	return out
 }
 
 // libraryFolders pulls library paths out of libraryfolders.vdf.
@@ -237,6 +199,12 @@ func parseACF(path string) (map[string]string, map[string]string, error) {
 }
 
 // kvLine parses `"key"  "value"`.
+//
+// Values are unescaped. This matters for exactly one field and it is a field
+// that matters: library paths in libraryfolders.vdf are written with doubled
+// separators — "D:\\SteamLibrary" — and a path taken literally from that would
+// never resolve, silently costing every second-drive install its build
+// identity.
 func kvLine(s string) (key, val string, ok bool) {
 	s = strings.TrimSpace(s)
 	if !strings.HasPrefix(s, `"`) {
@@ -257,7 +225,37 @@ func kvLine(s string) (key, val string, ok bool) {
 	if j < 0 {
 		return "", "", false
 	}
-	return key, rest[:j], true
+	return key, unescapeVDF(rest[:j]), true
+}
+
+// unescapeVDF resolves the escape sequences Valve's KeyValues format uses.
+func unescapeVDF(s string) string {
+	if !strings.Contains(s, `\`) {
+		return s
+	}
+	var b strings.Builder
+	b.Grow(len(s))
+	for i := 0; i < len(s); i++ {
+		if s[i] != '\\' || i+1 >= len(s) {
+			b.WriteByte(s[i])
+			continue
+		}
+		i++
+		switch s[i] {
+		case 'n':
+			b.WriteByte('\n')
+		case 't':
+			b.WriteByte('\t')
+		case '\\', '"':
+			b.WriteByte(s[i])
+		default:
+			// Not an escape we know. Keep both bytes rather than eating the
+			// backslash — a path is more likely than a novel escape.
+			b.WriteByte('\\')
+			b.WriteByte(s[i])
+		}
+	}
+	return b.String()
 }
 
 // bareToken parses a lone `"name"` that introduces a section.
@@ -292,15 +290,17 @@ func describeInstall(info *Info, hash bool) {
 	if fi, err := os.Stat(exe); err == nil {
 		info.BinarySize = fi.Size()
 	}
-	if arch, buildID, err := readELF(exe); err == nil {
+	if arch, buildID, kind, err := readPE(exe); err == nil {
 		info.BinaryArch = arch
 		info.BinaryBuildID = buildID
-		// A native ELF client means no Wine or Proton is in the picture, which
-		// changes what a reader should expect of the capture — notably that
-		// TLS key extraction is straightforward rather than a Wine-specific
-		// exercise.
+		info.BinaryBuildIDKind = kind
+		// The client is a Windows title running on Windows: no compatibility
+		// layer sits between it and the socket. That is worth stating in the
+		// session rather than leaving a reader to infer it, because it is
+		// exactly what a capture taken through Proton could not claim — there,
+		// the TCP stack, timers and MTU below the payload are someone else's.
 		info.Runtime = "native"
-		info.Platform = "linux"
+		info.Platform = "windows"
 	}
 	if hash {
 		if sum, err := hashFile(exe); err == nil {
@@ -309,12 +309,36 @@ func describeInstall(info *Info, hash bool) {
 	}
 }
 
-// findExecutable picks the client binary: the largest executable regular file
-// at the top of the install directory.
+// launcherNames are helper executables that ship alongside the client and must
+// never be mistaken for it.
 //
-// A heuristic, but a stable one — game clients are an order of magnitude larger
-// than their helper binaries, and the alternative is hardcoding a name that
-// changes between platforms and builds.
+// Size alone is not quite enough of a discriminator: a launcher or crash
+// reporter is normally far smaller than the client, but a bundled runtime
+// installer is not, and picking one would stamp every session with the build
+// identity of a redistributable.
+var launcherNames = map[string]bool{
+	"steam.exe":           true,
+	"launcher.exe":        true,
+	"crashreporter.exe":   true,
+	"crashsender.exe":     true,
+	"vcredist.exe":        true,
+	"vc_redist.x86.exe":   true,
+	"vc_redist.x64.exe":   true,
+	"dxwebsetup.exe":      true,
+	"unins000.exe":        true,
+	"uninstall.exe":       true,
+	"dotnetfx.exe":        true,
+	"directx_jun2010.exe": true,
+}
+
+// findExecutable picks the client binary: the largest .exe at the top of the
+// install directory that is not a known helper.
+//
+// A heuristic, but a stable one — a game client is an order of magnitude larger
+// than the launchers and installers beside it, and the alternative is
+// hardcoding a name that changes between builds. The extension filter is what
+// keeps it honest here: an install directory holds far more DLLs than
+// executables, and several of them are bigger than the client.
 func findExecutable(dir string) string {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
@@ -334,10 +358,10 @@ func findExecutable(dir string) string {
 			continue
 		}
 		name := e.Name()
-		if strings.HasSuffix(name, ".so") || strings.Contains(name, ".so.") {
+		if !strings.EqualFold(filepath.Ext(name), ".exe") {
 			continue
 		}
-		if info.Mode()&0o111 == 0 || info.Size() < 1<<20 {
+		if launcherNames[strings.ToLower(name)] || info.Size() < 1<<20 {
 			continue
 		}
 		cands = append(cands, cand{filepath.Join(dir, name), info.Size()})
@@ -349,50 +373,7 @@ func findExecutable(dir string) string {
 	return cands[0].path
 }
 
-// readELF returns the architecture and GNU build-id.
-//
-// The GNU build-id is the binary's canonical identity — the compiler stamped it
-// and nothing else will collide with it. It is what lets somebody in 2031
-// confirm they are looking at the same executable that produced a capture.
-func readELF(path string) (arch, buildID string, err error) {
-	f, err := elf.Open(path)
-	if err != nil {
-		return "", "", err
-	}
-	defer f.Close()
-
-	arch = f.Machine.String()
-	if f.Class == elf.ELFCLASS32 {
-		arch += " (32-bit)"
-	} else {
-		arch += " (64-bit)"
-	}
-
-	sec := f.Section(".note.gnu.build-id")
-	if sec == nil {
-		return arch, "", nil
-	}
-	data, err := sec.Data()
-	if err != nil || len(data) < 16 {
-		return arch, "", nil
-	}
-
-	// ELF note: namesz, descsz, type, then name and desc, each padded to 4.
-	nameSz := binary.LittleEndian.Uint32(data[0:4])
-	descSz := binary.LittleEndian.Uint32(data[4:8])
-	noteType := binary.LittleEndian.Uint32(data[8:12])
-	const ntGNUBuildID = 3
-	if noteType != ntGNUBuildID {
-		return arch, "", nil
-	}
-	off := 12 + int((nameSz+3)&^uint32(3))
-	if off+int(descSz) > len(data) {
-		return arch, "", nil
-	}
-	return arch, hex.EncodeToString(data[off : off+int(descSz)]), nil
-}
-
-// tildify replaces the user's home directory with ~.
+// tildify replaces the user's profile directory with ~.
 //
 // Which Steam library the game lives in is worth recording — it explains a
 // second-drive install or an unusual layout. The account name that happens to
@@ -443,6 +424,12 @@ func (i *Info) Summary() string {
 		short := i.BinaryBuildID
 		if len(short) > 12 {
 			short = short[:12]
+		}
+		// The kind is part of the value, not decoration: a truncated CodeView
+		// GUID and a truncated image identity look alike and mean different
+		// things.
+		if i.BinaryBuildIDKind != "" {
+			short += " (" + i.BinaryBuildIDKind + ")"
 		}
 		parts = append(parts, "binary "+short)
 	}

@@ -12,10 +12,10 @@ import (
 	"golang.org/x/sys/windows"
 )
 
-// Windows has no file mode worth the name: os.Chmod there only toggles the
-// read-only attribute, which stops nothing. A session contains login
-// credentials in the clear, so Principle VIII needs real enforcement, and on
-// this platform that means an explicit DACL.
+// Windows has no file mode worth the name: os.Chmod only toggles the read-only
+// attribute, which stops nothing. A session contains login credentials in the
+// clear, so Principle VIII needs real enforcement, and here that means an
+// explicit DACL. This file is the whole of it.
 //
 // The ACL installed grants full control to the owning user and to SYSTEM, and
 // to nobody else. SYSTEM is kept deliberately: excluding it breaks backup,
@@ -100,9 +100,9 @@ func currentUserSID() (*windows.SID, error) {
 // inspectPermissions reports who can reach the bundle.
 //
 // Anything granted to a trustee other than the owner or SYSTEM is reported as
-// loose. Unlike the Unix path this cannot be reduced to a mode string, so the
-// summary names the principals instead — a reader should not have to guess
-// what protection a Windows bundle actually had.
+// loose. This cannot be reduced to a mode string, so the summary names the
+// principals instead — a reader years from now should be able to see who could
+// have touched a bundle, not a number that never described it.
 func inspectPermissions(dir string) (summary string, loose []string, err error) {
 	self, err := currentUserSID()
 	if err != nil {

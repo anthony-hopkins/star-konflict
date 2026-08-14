@@ -1,11 +1,10 @@
-//go:build linux
+//go:build windows
 
 package e2e
 
 import (
 	"encoding/json"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -14,10 +13,12 @@ import (
 
 // TestAbruptTerminationLeavesValidSession covers FR-006 and SC-008.
 //
-// SIGKILL is not an error path to be tolerated — it is how a capture ends when
-// a machine loses power mid-match, which is precisely when the traffic was most
-// interesting. A session killed this way must remain valid and verifiable up to
-// the point of failure, every time.
+// Being terminated outright is not an error path to be tolerated — it is how a
+// capture ends when a machine loses power mid-match, or when a contributor
+// closes the console window, which Windows answers by killing the process after
+// a couple of seconds with nothing this tool can intercept. That is precisely
+// when the traffic was most interesting. A session killed this way must remain
+// valid and verifiable up to the point of failure, every time.
 func TestAbruptTerminationLeavesValidSession(t *testing.T) {
 	bin := requireCapture(t)
 	iface := liveInterface(t)
@@ -31,7 +32,7 @@ func TestAbruptTerminationLeavesValidSession(t *testing.T) {
 		dir := t.TempDir()
 		out := filepath.Join(dir, "captures")
 
-		cmd := exec.Command(bin, "capture", "--scenario", "BASE-01",
+		cmd := command(t, bin, "capture", "--scenario", "BASE-01",
 			"--interface", iface, "--out", out)
 		if err := cmd.Start(); err != nil {
 			t.Fatalf("trial %d: start: %v", i, err)
@@ -40,7 +41,8 @@ func TestAbruptTerminationLeavesValidSession(t *testing.T) {
 		generateTraffic()
 		time.Sleep(1500 * time.Millisecond)
 
-		// SIGKILL: no deferred close, no signal handler, no flush.
+		// TerminateProcess: no deferred close, no handler, no flush. The
+		// process does not get to run another instruction.
 		if err := cmd.Process.Kill(); err != nil {
 			t.Fatalf("trial %d: kill: %v", i, err)
 		}
@@ -79,7 +81,7 @@ func TestAbruptTerminationLeavesValidSession(t *testing.T) {
 		}
 
 		// And verify must accept it — as interrupted, not as failed.
-		vcmd := exec.Command(bin, "verify", bundle)
+		vcmd := command(t, bin, "verify", bundle)
 		vout, verr := vcmd.CombinedOutput()
 		if verr != nil {
 			t.Errorf("trial %d: verify rejected an interrupted session (exit %v)\n%s",

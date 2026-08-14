@@ -156,12 +156,15 @@ func TestKVLine(t *testing.T) {
 
 // TestTildifyHidesTheUsername: the Steam library matters, the account name on
 // the machine does not.
+//
+// C:\Users\<name> is the default home for a Steam install that was never
+// moved, so this is the common case rather than an edge one.
 func TestTildifyHidesTheUsername(t *testing.T) {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		t.Skip("no home directory")
 	}
-	in := filepath.Join(home, ".local", "share", "Steam", "steamapps", "common", "x")
+	in := filepath.Join(home, "Steam", "steamapps", "common", "star conflict")
 	got := tildify(in)
 	if got[0] != '~' {
 		t.Errorf("tildify(%q) = %q, want a ~ prefix", in, got)
@@ -169,10 +172,66 @@ func TestTildifyHidesTheUsername(t *testing.T) {
 	if contains(got, filepath.Base(home)) {
 		t.Errorf("tildify left the username in %q", got)
 	}
-	// Paths outside home are left alone — a second-drive library is not
+	// Paths outside the profile are left alone — a second-drive library is not
 	// sensitive and its real path is useful.
-	if got := tildify("/mnt/games/Steam"); got != "/mnt/games/Steam" {
+	const secondDrive = `D:\Games\Steam`
+	if got := tildify(secondDrive); got != secondDrive {
 		t.Errorf("tildify rewrote a non-home path to %q", got)
+	}
+}
+
+// TestLibraryPathsAreUnescaped guards the field most likely to be silently
+// wrong: libraryfolders.vdf writes "D:\\SteamLibrary", and a path taken
+// literally from that resolves to nothing. The failure is invisible — the
+// library is skipped, detection falls through, and the session records no
+// client build at all.
+func TestLibraryPathsAreUnescaped(t *testing.T) {
+	dir := t.TempDir()
+	vdf := filepath.Join(dir, "libraryfolders.vdf")
+	content := `"libraryfolders"
+{
+	"0"
+	{
+		"path"		"C:\\Program Files (x86)\\Steam"
+	}
+	"1"
+	{
+		"path"		"D:\\SteamLibrary"
+	}
+}
+`
+	if err := os.WriteFile(vdf, []byte(content), 0o600); err != nil {
+		t.Fatalf("write: %v", err)
+	}
+
+	got := libraryFolders(vdf)
+	want := []string{`C:\Program Files (x86)\Steam`, `D:\SteamLibrary`}
+	if len(got) != len(want) {
+		t.Fatalf("got %d paths %v, want %d", len(got), got, len(want))
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Errorf("path %d = %q, want %q", i, got[i], want[i])
+		}
+	}
+}
+
+func TestUnescapeVDF(t *testing.T) {
+	for _, tc := range []struct{ in, want string }{
+		{`D:\\SteamLibrary`, `D:\SteamLibrary`},
+		{`no escapes here`, `no escapes here`},
+		{`C:\\a\\b\\c`, `C:\a\b\c`},
+		{`say \"hi\"`, `say "hi"`},
+		// An unknown escape keeps both bytes: a stray backslash in a path is
+		// far more likely than a sequence Valve invented after this was
+		// written, and eating it would corrupt the path silently.
+		{`D:\q`, `D:\q`},
+		// A trailing backslash has nothing to escape and must survive.
+		{`D:\`, `D:\`},
+	} {
+		if got := unescapeVDF(tc.in); got != tc.want {
+			t.Errorf("unescapeVDF(%q) = %q, want %q", tc.in, got, tc.want)
+		}
 	}
 }
 

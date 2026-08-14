@@ -1,4 +1,4 @@
-//go:build linux
+//go:build windows
 
 package e2e
 
@@ -8,7 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"syscall"
+	"strings"
 	"testing"
 	"time"
 
@@ -32,16 +32,15 @@ func TestByteExactAgainstIndependentCapture(t *testing.T) {
 	iface := liveInterface(t)
 
 	dumpcap := independentCaptureTool(t)
+	device := npcapDevice(t, dumpcap, iface)
 
 	dir := t.TempDir()
 	independent := filepath.Join(dir, "independent.pcapng")
 
-	dc := exec.Command(dumpcap, "-i", iface, "-n", "-s", "0", "-q", "-w", independent)
-	if err := dc.Start(); err != nil {
-		t.Skipf("cannot run dumpcap: %v", err)
-	}
+	dc := exec.Command(dumpcap, "-i", device, "-n", "-s", "0", "-q", "-w", independent)
+	startInOwnGroup(t, dc)
 	defer func() {
-		_ = dc.Process.Signal(syscall.SIGINT)
+		_ = interrupt(dc)
 		_, _ = dc.Process.Wait()
 	}()
 
@@ -50,27 +49,25 @@ func TestByteExactAgainstIndependentCapture(t *testing.T) {
 	time.Sleep(1500 * time.Millisecond)
 
 	out := filepath.Join(dir, "captures")
-	sc := exec.Command(bin, "capture", "--scenario", "BASE-01", "--interface", iface, "--out", out)
-	if err := sc.Start(); err != nil {
-		t.Fatalf("start sccap: %v", err)
-	}
+	sc := command(t, bin, "capture", "--scenario", "BASE-01", "--interface", iface, "--out", out)
+	startInOwnGroup(t, sc)
 
 	generateTraffic()
 	time.Sleep(2 * time.Second)
 	generateTraffic()
 
-	if err := sc.Process.Signal(syscall.SIGINT); err != nil {
-		t.Fatalf("signal sccap: %v", err)
+	if err := interrupt(sc); err != nil {
+		t.Fatalf("interrupt sccap: %v", err)
 	}
 	if err := sc.Wait(); err != nil {
 		t.Fatalf("sccap capture failed: %v", err)
 	}
 
 	time.Sleep(1500 * time.Millisecond)
-	_ = dc.Process.Signal(syscall.SIGINT)
+	_ = interrupt(dc)
 	_, _ = dc.Process.Wait()
 
-	ours := readFrames(t, filepath.Join(findBundle(t, out), ""))
+	ours := readFrames(t, findBundle(t, out))
 	theirs := readFramesFromFile(t, independent)
 
 	if len(ours) == 0 {
@@ -109,10 +106,10 @@ func TestByteExactAgainstIndependentCapture(t *testing.T) {
 
 // independentCaptureTool locates a capture tool we did not write.
 //
-// SCCAP_INDEPENDENT_CAPTURE lets a host point at a dumpcap that is present but
-// not executable by this user — a common Ubuntu state, since dumpcap ships
-// root:wireshark mode 0754 and grants execution by group membership only. The
-// test needs a tool it did not write; it does not need that tool to be on PATH.
+// Wireshark's installer does not put dumpcap on PATH, so the default install
+// location is checked directly. SCCAP_INDEPENDENT_CAPTURE overrides both, for a
+// portable Wireshark or a tool that is not Wireshark at all — independence is
+// the requirement, not any particular program.
 func independentCaptureTool(t *testing.T) string {
 	t.Helper()
 	if p := os.Getenv("SCCAP_INDEPENDENT_CAPTURE"); p != "" {
@@ -124,9 +121,59 @@ func independentCaptureTool(t *testing.T) string {
 	if p, err := exec.LookPath("dumpcap"); err == nil {
 		return p
 	}
-	t.Skip("no independent capture tool available. Install wireshark-common and join " +
-		"the wireshark group, or set SCCAP_INDEPENDENT_CAPTURE to a capture binary. " +
-		"Independence is the point — comparing against ourselves would prove nothing.")
+	for _, env := range []string{"ProgramFiles", "ProgramFiles(x86)"} {
+		base := os.Getenv(env)
+		if base == "" {
+			continue
+		}
+		p := filepath.Join(base, "Wireshark", "dumpcap.exe")
+		if _, err := os.Stat(p); err == nil {
+			return p
+		}
+	}
+	t.Skip("no independent capture tool available. Install Wireshark, or set " +
+		"SCCAP_INDEPENDENT_CAPTURE to a capture binary. Independence is the point — " +
+		"comparing against ourselves would prove nothing.")
+	return ""
+}
+
+// npcapDevice maps a Windows adapter name to the device name dumpcap wants.
+//
+// dumpcap does not accept "Ethernet" any more than Npcap does; it wants
+// \Device\NPF_{GUID}. Asking dumpcap itself which device that is keeps the
+// mapping out of this test — it is the tool's own answer, from its own
+// enumeration, so the two captures are provably bound to the same wire.
+//
+// `dumpcap -D` prints lines shaped like:
+//
+//  1. \Device\NPF_{2C1A...} (Ethernet)
+func npcapDevice(t *testing.T, dumpcap, iface string) string {
+	t.Helper()
+	out, err := exec.Command(dumpcap, "-D").Output()
+	if err != nil {
+		t.Skipf("dumpcap -D failed, so the two tools cannot be pointed at the same "+
+			"interface: %v", err)
+	}
+	for _, line := range strings.Split(string(out), "\n") {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		// Strip the "N. " index prefix.
+		if dot := strings.Index(line, ". "); dot > 0 && dot <= 3 {
+			line = line[dot+2:]
+		}
+		open := strings.LastIndex(line, " (")
+		if open < 0 || !strings.HasSuffix(line, ")") {
+			continue
+		}
+		friendly := line[open+2 : len(line)-1]
+		if strings.EqualFold(friendly, iface) {
+			return line[:open]
+		}
+	}
+	t.Skipf("dumpcap does not list an interface named %q; without a shared device name "+
+		"the comparison would be between two different wires.\n%s", iface, out)
 	return ""
 }
 
@@ -167,7 +214,7 @@ func readFramesFromFile(t *testing.T, path string) [][]byte {
 		}
 		if err != nil {
 			// A torn tail is acceptable in the independent capture, which we
-			// kill rather than close.
+			// stop rather than close.
 			return out
 		}
 		cp := make([]byte, len(data))

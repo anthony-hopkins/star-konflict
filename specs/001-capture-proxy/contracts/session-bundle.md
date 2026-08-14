@@ -16,7 +16,7 @@ SC_20260814T203015Z__AUTH-02__vol-042__EU__000/
 ├── index.jsonl                            # derived — one record per protocol unit
 ├── coverage-delta.json                    # derived — what this session contributed
 ├── markers.log                            # contributor + derived annotations
-├── capture.log                            # AF_PACKET stats; proves captured/dropped counts
+├── coverage-delta.json                    # derived; what this session contributed
 ├── client_version.txt                     # game build identity
 ├── notes.md                               # optional, contributor free text
 └── SHA256SUMS                             # written last, at clean close
@@ -40,8 +40,13 @@ manual. UTC always, ASCII only, no spaces or colons. The directory name is the s
 | `markers.log` | Evidence-adjacent | No (contributor testimony) | Timeline loses human context; capture still valid |
 | `index.jsonl` | Derived | Yes — `sccap index --rebuild` | None |
 | `coverage-delta.json` | Derived | Yes — re-ingest | None |
-| `capture.log` | Derived | No, but non-essential | Cannot prove zero drops |
 | `SHA256SUMS` | Derived | Yes — `verify --write-sums` | Integrity unprovable until regenerated |
+
+The captured and dropped counts live in `session.json` → `host`, taken from the capture driver's
+own statistics. There is no separate log file to keep, and there deliberately is not one: a
+drop count is a claim about the archive's completeness, so it belongs inside the sidecar whose
+hash is covered by `SHA256SUMS` rather than in a side file that can be lost or edited
+independently.
 
 The boundary is the contract: **a bundle with only pcapng segments and a valid `session.json` is
 a valid session.** Everything else can be absent, truncated or rebuilt.
@@ -85,9 +90,26 @@ close, so the distinction is never lost.
 
 ## Permissions
 
-Directory `0700`, all files `0600`, set at creation (FR-031). `verify` treats looser permissions
-as a warning, not a failure — the contributor may have deliberately relaxed them to share, and
-refusing to verify a bundle they can no longer fix would be unhelpful.
+An explicit owner-only DACL — the owning user and `NT AUTHORITY\SYSTEM`, with inheritance
+severed — installed on the session directory at creation, before any file is written into it
+(FR-031). Files created inside inherit it.
+
+Inheritance is severed deliberately: without that, a session written under a directory whose ACL
+grants `BUILTIN\Users` read access stays readable by every account on the machine regardless of
+what is added. SYSTEM is kept deliberately too — excluding it breaks backup, indexing and
+antivirus in ways that get the tool uninstalled rather than making anyone safer, and SYSTEM can
+read the file regardless of what any ACL says.
+
+A file mode is not the mechanism and is not checked. `os.Chmod` toggles the read-only attribute
+and stops nothing, so the `0700`/`0600` modes passed to the standard library are a courtesy to
+any other system a bundle is later copied to, not protection here.
+
+`verify` reports the principals that hold access, and treats anything beyond owner and SYSTEM as
+a warning rather than a failure — the contributor may have deliberately relaxed access to share,
+and refusing to verify a bundle they can no longer fix would be unhelpful.
+
+**Copying a bundle does not carry its DACL.** An archive built for submission is an ordinary file
+containing credentials in the clear; treat it as sensitive from the moment it is created.
 
 ## Sensitivity
 

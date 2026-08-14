@@ -60,14 +60,18 @@ type InterfaceRecord struct {
 }
 
 type Host struct {
-	Interfaces      []InterfaceRecord `json:"interfaces"`
-	NetnsIsolated   bool              `json:"netns_isolated"`
-	CaptureTool     string            `json:"capture_tool"`
-	CaptureFilter   string            `json:"capture_filter"`
-	Snaplen         int               `json:"snaplen"`
-	PacketsCaptured uint64            `json:"packets_captured"`
-	PacketsDropped  uint64            `json:"packets_dropped"`
-	Platform        string            `json:"platform,omitempty"`
+	Interfaces []InterfaceRecord `json:"interfaces"`
+	// Tap records that frames were observed off-box — a switch mirror port or
+	// a bridging capture host — rather than on the machine running the game.
+	// Worth knowing: an off-box capture carries no NIC offload artifacts from
+	// the gaming machine, so its frame boundaries are the wire's.
+	Tap             bool   `json:"tap"`
+	CaptureTool     string `json:"capture_tool"`
+	CaptureFilter   string `json:"capture_filter"`
+	Snaplen         int    `json:"snaplen"`
+	PacketsCaptured uint64 `json:"packets_captured"`
+	PacketsDropped  uint64 `json:"packets_dropped"`
+	Platform        string `json:"platform,omitempty"`
 }
 
 // Client identifies the game build a session was captured against.

@@ -33,9 +33,15 @@ first command** — SC-001's 15-minute budget dies on a permission failure disco
 sccap doctor [--interface <if>] [--watch <duration>] [--json]
 ```
 
-Checks: `CAP_NET_RAW`/`CAP_NET_ADMIN` presence; interface inventory, link state and carrier; NIC
-offload state; free disk against the warn threshold; clock discipline; writability of the
-coverage directory; embedded protocol table revision.
+Checks: a capture backend is compiled in (`-tags npcap`) and the process is elevated — reported
+as two distinct checks, because they fail for unrelated reasons with unrelated remedies;
+interface inventory, link state and routable-address carrier; NIC offload state; free disk
+against the warn threshold; Windows Time service state; writability of the coverage directory;
+identification of the installed game client; embedded protocol table revision.
+
+Offload state is reported as **unknown with the commands to check it**, never guessed: LSO and
+RSC live behind per-driver properties with no stable names across vendors, and a diagnostic that
+sometimes lies about frame fidelity is worse than one that admits what it cannot see.
 
 `--watch <duration>` samples live traffic and reports **which interfaces actually carry flows to
 game endpoints**. This is the check that matters most: capturing on the wrong interface yields a
@@ -120,7 +126,11 @@ sccap verify <bundle-dir> [--json] [--write-sums]
 Checks, in order: `session.json` parses and its schema MAJOR is readable; every file in
 `SHA256SUMS` exists and hashes match; every pcapng segment walks structurally end to end; the
 recorded `packets_dropped` is 0; `index.jsonl` (if present) references only frames that exist;
-clock anchors are monotonic; bundle directory and file permissions are `0700`/`0600`.
+clock anchors are monotonic; the bundle's DACL grants no principal beyond the owner and SYSTEM.
+
+The permissions check reports **which accounts hold access**, not a mode. A mode would be a lie
+here — `os.Chmod` toggles the read-only attribute and nothing else, so a bundle reporting `0700`
+could still be readable by every account on the machine.
 
 An interrupted session **passes** with an explicit `interrupted` status, reporting the last
 consistent point. Exit `2` on any hash mismatch or structural failure.
@@ -200,4 +210,4 @@ session's live state file; does not attach to or perturb the capture.
 | `sccap prune` / `gc` | The system must never delete or overwrite prior sessions to reclaim space (FR-036). Removal is the contributor's `rm`. |
 | `sccap replay` / `fuzz` | Forbidden outright (FR-014, Principle IV). |
 | `sccap edit` | Editing a captured session would destroy the evidence property. Derived data is rebuilt, never edited. |
-| `sccap setup` / `netns` | Host configuration is out of scope and reimplementing shell work in Go is a downgrade. `doctor` detects and names every condition these would have configured. |
+| `sccap setup` | Host configuration is out of scope and reimplementing administrative work in Go is a downgrade. `doctor` detects and names every condition it would have configured. |

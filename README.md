@@ -4,9 +4,9 @@ Record everything **Star Conflict**'s servers say, before they are switched off 
 be understood, and eventually reimplemented, afterwards.
 
 This repository contains one tool, `sccap`, plus the reference material it needs. It is **Go
-only**: no interpreter, no scripts, no second language anywhere. Runs on **Linux and Windows** —
-one static binary on Linux, and on Windows one extra install ([Npcap](https://npcap.com)) if you
-want to record rather than just read recordings.
+only**: no interpreter, no scripts, no second language anywhere. It runs on **Windows**, where the
+game runs — one binary, plus one extra install ([Npcap](https://npcap.com)) if you want to record
+rather than just read recordings.
 
 > **If you read nothing else:** capturing is the only part of this project with a deadline.
 > Every session you play without recording is gone permanently. The tool works today — jump to
@@ -110,6 +110,10 @@ So: go make the game do unusual things. Don't worry about whether we understand 
 
 - **The game's web traffic is encrypted.** We keep the scrambled bytes. The main game protocol has
   no encryption at all, so the valuable part is readable.
+- **Anything below the payload is your machine's, not the game's.** Packet boundaries, timing and
+  retransmission come from your network stack. That's why we record on the machine the game
+  actually runs on, and why the offload warning in [Part 2](#part-2--setup-once-per-machine)
+  matters more than it looks.
 - **Things that only happen once.** A brand-new account's first login. Nobody can produce that
   again, including you, once you've played.
 - **Rare server-side events.** Bans, maintenance notices, seasonal events — you catch them or you
@@ -122,96 +126,105 @@ So: go make the game do unusual things. Don't worry about whether we understand 
 
 ## Part 2 — Setup (once per machine)
 
-You need **Go 1.26+**, a working Star Conflict install, and either Linux or Windows.
+You need **Windows 10 or 11**, **Go 1.26+**, and a working Star Conflict install. The game and the
+recorder run on the same machine — that's the whole setup. Everything below is PowerShell.
 
-### 2.1 Build the tool
+### 2.1 Install Npcap
 
-**Linux** — one static binary, nothing to install:
+[Npcap](https://npcap.com) is the driver that lets a program see packets. Install it first, and
+**leave "Restrict Npcap driver's access to Administrators only" at its default** — the tool runs
+elevated anyway, and the restricted setting is the safer of the two.
 
-```bash
-cd sc-capture
-CGO_ENABLED=0 go build -o out/sccap ./cmd/sccap
-```
+You only need this to **record**. Skip it if you just want to read somebody else's recordings.
 
-**Windows** — install [Npcap](https://npcap.com) first, then:
+### 2.2 Build the tool
 
 ```powershell
 cd sc-capture
 go build -tags npcap -o out\sccap.exe .\cmd\sccap
 ```
 
-> Npcap is needed only for **recording**. Building without `-tags npcap` gives you a binary that
-> reads and analyses archived sessions with nothing extra installed — useful if you want to
-> examine somebody else's captures. `sccap doctor` tells you which build you have.
+> `-tags npcap` is what compiles the recorder in. Building without it gives you a binary that
+> reads and analyses archived sessions with nothing extra installed — no Npcap, no C compiler.
+> That build runs `verify`, `decode`, `index` and `coverage` perfectly well; it just can't record.
+> `sccap doctor` tells you which one you have.
 
-### 2.2 Give it permission to see the network
+### 2.3 Run your terminal as Administrator
 
-Recording packets is privileged on both platforms.
+Npcap refuses capture handles to unprivileged processes. Right-click PowerShell → **Run as
+administrator**. Do this every time you record; there's no way around it and no permission to
+grant once.
 
-**Linux** — grant the capability to the binary once:
+### 2.4 Check the machine is ready
 
-```bash
-sudo setcap cap_net_raw,cap_net_admin=eip out/sccap
-```
-
-**Windows** — run your terminal **as Administrator**. Npcap refuses capture handles to
-unprivileged processes.
-
-### 2.3 Check the machine is ready
-
-```bash
-./out/sccap doctor
+```powershell
+.\out\sccap.exe doctor
 ```
 
 It tells you what's wrong and the exact command to fix each thing. It **never changes your system
-itself** — configuring your host is your call, not a tool's.
+itself** — configuring your machine is your call, not a tool's.
 
-You want every line `OK` before continuing. A typical first run finds one thing:
+You want every line `OK` before continuing. A typical first run looks like this:
 
 ```
-[OK  ] capabilities           CAP_NET_RAW and CAP_NET_ADMIN present
-[OK  ] interfaces             one live interface: eno1
-[WARN] offloads (eno1)        enabled: gso,gro — captured frame boundaries will be synthetic
-         sudo ethtool -K eno1 tso off gso off gro off lro off
-[OK  ] clock                  system clock is disciplined
-[OK  ] coverage store         /home/you/.local/share/sccap is writable
-[OK  ] game client            Star Conflict, build 24666578, binary a2ccf9bcda13, EM_386 (32-bit)
+[OK  ] capture backend        Npcap backend compiled in
+[OK  ] privileges             running elevated
+[OK  ] interfaces             one live interface: Ethernet
+[WARN] offloads (Ethernet)    cannot be determined here — if LSO or RSC is on, captured frame
+                              boundaries and timings will be the driver's reconstruction
+         Get-NetAdapterLso -Name "Ethernet"; Get-NetAdapterRsc -Name "Ethernet"
+         Disable-NetAdapterLso -Name "Ethernet"; Disable-NetAdapterRsc -Name "Ethernet"
+[OK  ] clock                  the Windows Time service is running
+[OK  ] coverage store         C:\Users\you\AppData\Local\sccap is writable
+[OK  ] game client            Star Conflict, build 24666578, binary 3F2A9C10BE44 (codeview), I386 (32-bit)
 [OK  ] protocol tables        embedded element universe revision sc-proxy@968f1a3f
 ```
 
-**About that offload warning** — worth fixing before real captures. Your network card is gluing
-packets together before your computer sees them, so what gets recorded is your driver's
+**About that offload warning** — deal with it before your first real capture. Your network card
+can glue packets together before Windows sees them, so what gets recorded is your driver's
 reconstruction rather than what actually crossed the wire. The bytes are all there; the packet
-boundaries and timings are fiction. Run the command it prints.
+boundaries and timings are fiction, which quietly ruins any later question about tick rate,
+latency or retransmission.
 
-On Windows the equivalent settings are per-driver and have no stable names, so `doctor` does not
-guess at them — it prints the PowerShell commands to check and disable them yourself
-(`Disable-NetAdapterLso`, `Disable-NetAdapterRsc`). Being told to look is better than being told
-a wrong answer.
+`doctor` won't tell you whether they're on. These settings live behind per-driver properties with
+no stable names across vendors, so a tool that answered would sometimes answer wrongly — and a
+diagnostic that lies is worse than one that admits it doesn't know. Run the two `Get-` commands it
+prints, and if either reports `Enabled`, run the matching `Disable-`. Being told to look beats
+being told a wrong answer.
 
-### 2.4 Make a throwaway game account
+> If your adapter has no LSO/RSC support at all, `Get-NetAdapterLso` errors instead of printing
+> `False`. That's fine — nothing to disable.
+
+### 2.5 Make a throwaway game account
 
 Recordings contain your **login credentials in the clear** — the game protocol has no encryption.
 Use an account you don't care about. Never a primary account.
 
-### 2.5 Archive your game client
+### 2.6 Archive your game client
 
 The client contains the code that reads every server message, which makes it the **only way to
 recover a message's structure if you never recorded that message**. Recordings without the
 matching client build are often undecodable. Archive it.
 
-The essential part is small — the executable and its libraries, not the multi-gigabyte assets:
+The essential part is small — the executables and DLLs, not the multi-gigabyte assets:
 
-```bash
-mkdir -p ~/sc-archive
-cd ~/.local/share/Steam/steamapps/common/"star conflict"
-tar czf ~/sc-archive/sc-client-$(date -u +%Y%m%d).tar.gz \
-    --exclude=data StarConflict crashreporter *.so* datasources.txt
-cp ~/.local/share/Steam/steamapps/appmanifest_212070.acf ~/sc-archive/
-sha256sum ~/sc-archive/* > ~/sc-archive/SHA256SUMS
+```powershell
+$src  = "C:\Program Files (x86)\Steam\steamapps\common\star conflict"
+$dest = "$HOME\sc-archive"
+New-Item -ItemType Directory -Force -Path $dest | Out-Null
+
+# Everything except the assets directory.
+Get-ChildItem $src -Exclude data |
+    Compress-Archive -DestinationPath "$dest\sc-client-$(Get-Date -UFormat %Y%m%d).zip"
+
+Copy-Item "C:\Program Files (x86)\Steam\steamapps\appmanifest_212070.acf" $dest
+Get-FileHash "$dest\*" -Algorithm SHA256 | Format-List | Out-File "$dest\SHA256SUMS.txt"
 ```
 
-Keep the full install on disk too if you have room — `data/gamedata.pak` may hold item and ship
+If Steam put the game on another drive, `sccap doctor` prints the real path in its `game client`
+line — use that instead.
+
+Keep the full install on disk too if you have room — `data\gamedata.pak` may hold item and ship
 tables worth having — but the archive above is the urgent part.
 
 **You don't need to write the version down.** `sccap` identifies the client automatically and
@@ -222,32 +235,46 @@ records it in every session:
   "name": "Star Conflict",
   "build_id": "24666578",
   "depot_manifests": { "212072": "3741217375342066373" },
-  "install_path": "~/.local/share/Steam/steamapps/common/star conflict",
+  "install_path": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\star conflict",
+  "binary_name": "StarConflict.exe",
   "binary_sha256": "830f9e5b21c9612d...",
-  "binary_build_id": "a2ccf9bcda13b2adc208b43b19d335862444333d",
-  "binary_arch": "EM_386 (32-bit)",
+  "binary_build_id": "3F2A9C10BE4411D7A9F30060B0EC3D3901",
+  "binary_build_id_kind": "codeview",
+  "binary_arch": "I386 (32-bit)",
+  "platform": "windows",
   "runtime": "native"
 }
 ```
 
-The SHA-256 and the compiler's own GNU build-id are the identities that matter — a Steam build id
-can be reused, a hash cannot. If autodetection fails, pass `--client-dir <path>`; the session
-records an explicit anomaly rather than quietly omitting it.
+The SHA-256 and the build id are the identities that matter — a Steam build id can be reused, a
+hash cannot. `binary_build_id_kind` says which kind of build id you're looking at: `codeview` is
+the GUID the linker stamped in (the strong one), `image` is a timestamp-and-size pair used when
+the linker left no debug record. They are not comparable with each other, which is why the kind is
+recorded next to the value.
 
-The install path is stored with your home directory replaced by `~`, and your Steam account id is
-never recorded. Which library the game sits in is worth knowing; who you are is not.
+If autodetection fails, pass `--client-dir <path>`; the session records an explicit anomaly rather
+than quietly omitting it.
+
+Your Steam account id is never recorded, and an install under your user profile is stored with
+that profile replaced by `~`. Which drive the game sits on is worth knowing; who you are is not.
+
+`runtime: native` is worth a moment. It means no compatibility layer sits between the game and the
+socket, so the packet timing and boundaries in your recording are the game's own behaviour. A
+capture taken through Proton or Wine couldn't claim that — the payload bytes would be identical,
+but everything beneath them would belong to a different network stack.
 
 See [§6.1 of the capture manual](docs/Star-Conflict-Capture-Protocol.md).
 
 **Setup checklist**
 
+- [ ] Npcap installed
 - [ ] Go 1.26+ installed (`go version`)
-- [ ] `sccap` built (Windows: with `-tags npcap`, after installing Npcap)
-- [ ] Capture permitted — Linux: `getcap out/sccap`; Windows: terminal running as Administrator
+- [ ] `sccap.exe` built with `-tags npcap`
+- [ ] PowerShell running **as Administrator**
 - [ ] `sccap doctor` shows no `FAIL` — including a `game client` line
-- [ ] Network card offloads turned off
+- [ ] LSO and RSC checked, and disabled if they were on
 - [ ] Throwaway game account created
-- [ ] Game client binary archived somewhere safe
+- [ ] Game client archived somewhere safe
 
 ---
 
@@ -257,19 +284,23 @@ See [§6.1 of the capture manual](docs/Star-Conflict-Capture-Protocol.md).
 
 **Do this every time your network setup changes.** Start the game, get to the hangar, then:
 
-```bash
-./out/sccap doctor --watch 30s
+```powershell
+.\out\sccap.exe doctor --watch 30s
 ```
 
 It reports which network connections actually carry game traffic:
 
 ```
- * eno1         packets=1841    game=212    services=shard(180),chat(32)
-   wlp3s0       packets=12      game=0
+ * Ethernet     packets=1841    game=212    services=shard(180),chat(32)
+   Wi-Fi        packets=12      game=0
 ```
 
-The starred line is the one to record. If **nothing** shows game traffic, stop and work out why —
-recording anyway produces a file that passes every other check and contains nothing useful.
+These are the adapter names Windows itself uses — the ones in Settings and `ipconfig`. The starred
+line is the one to record. If **nothing** shows game traffic, stop and work out why — recording
+anyway produces a file that passes every other check and contains nothing useful.
+
+> A laptop docked over Ethernet while Wi-Fi is still associated is the usual way to get this
+> wrong, and it looks completely normal until you open the file.
 
 ### 3.2 Quieten the machine
 
@@ -296,11 +327,11 @@ hard to interpret later.
 
 ### 4.1 Start
 
-```bash
-./out/sccap capture --scenario AUTH-02 --region EU --out ~/captures
+```powershell
+.\out\sccap.exe capture --scenario AUTH-02 --region EU --out $HOME\captures
 ```
 
-Use the scenario ID from the checklist, without the `SC-` prefix. Add `--interface eno1` if
+Use the scenario ID from the checklist, without the `SC-` prefix. Add `--interface Ethernet` if
 `doctor --watch` showed more than one live connection.
 
 You'll see a status line updating once a second:
@@ -321,13 +352,13 @@ This structure is what makes recordings comparable to each other:
 
 1. **Wait 10 seconds doing absolutely nothing.** This captures the idle "background hum" your
    action will be compared against. Don't skip it; it's what makes the rest readable.
-2. **Mark the start.** In a second terminal:
-   ```bash
-   ./out/sccap mark "BEGIN AUTH-02"
+2. **Mark the start.** In a second Administrator terminal:
+   ```powershell
+   .\out\sccap.exe mark "BEGIN AUTH-02"
    ```
 3. **Do the thing**, marking before and after each distinct action:
-   ```bash
-   ./out/sccap mark --console      # then type labels and press Enter, repeatedly
+   ```powershell
+   .\out\sccap.exe mark --console     # type labels, Enter after each; Ctrl+Z then Enter to finish
    ```
    Mark generously. A label costs nothing and turns "some packets happened here" into "this is
    where I bought a shield booster".
@@ -363,8 +394,8 @@ informative recordings in the archive.
 
 ### 5.1 Verify it
 
-```bash
-./out/sccap verify ~/captures/SC_*
+```powershell
+.\out\sccap.exe verify $HOME\captures\SC_*
 ```
 
 Every line should read `ok`:
@@ -376,7 +407,7 @@ Every line should read `ok`:
 [  ok  ] segments     capture_00001_20260814060855.pcapng: 453 frames
 [  ok  ] drops        no packets dropped
 [  ok  ] clock        2 anchors, monotonic
-[  ok  ] permissions  owner-only
+[  ok  ] permissions  owner-only ACL (owner + SYSTEM)
 [  ok  ] index        494 records, all frame references resolve
 
 VERIFIED — 453 frames across 1 segment(s), mode=passive.
@@ -388,8 +419,8 @@ is absolutely worth keeping.
 
 ### 5.2 See what you found
 
-```bash
-./out/sccap coverage
+```powershell
+.\out\sccap.exe coverage
 ```
 
 ```
@@ -404,8 +435,8 @@ Never observed: 318 — these die with the servers if nobody captures them.
 **That last number is the score.** It should go down after every session. It's tracked across all
 your recordings and survives restarts.
 
-```bash
-./out/sccap coverage --state never_observed    # the full list of what's still missing
+```powershell
+.\out\sccap.exe coverage --state never_observed   # the full list of what's still missing
 ```
 
 ### 5.3 Write down what you did
@@ -447,7 +478,7 @@ relevant section there for the detail on any one of them. Copy this list and tic
 - [ ] **7.** TLS key material for the auth flow — manual §1.9
 - [ ] **8.** Disconnect / reconnect / timeout / kick — `SC-EDGE-*`
 - [ ] **9.** Two clients recording the same match simultaneously — `SC-T3-01`
-- [ ] **10.** Client binaries, Proton prefix, version manifest — manual §6.1
+- [ ] **10.** Client binaries and version manifest — manual §6.1
 
 ### Baselines — cheap, fast, make everything else readable
 
@@ -545,10 +576,14 @@ Record `SC-BASE-02` first, on the same map, in the same session. Use non-competi
 
 ## Part 7 — Progress tracking
 
+**Which scenario to record next, and in what order, is [docs/CAPTURE-PHASES.md](docs/CAPTURE-PHASES.md)** —
+nine phases from "can this machine record" to "decoding, forever", each with a finish line you can
+check rather than guess at. It also holds the ledger of what has already been recorded.
+
 ### The number that matters
 
-```bash
-./out/sccap coverage
+```powershell
+.\out\sccap.exe coverage
 ```
 
 `Never observed` is the countdown. 404 at the start; every recording should reduce it.
@@ -591,6 +626,7 @@ star-konflict/
 
 | Where | What's in it |
 |---|---|
+| [docs/CAPTURE-PHASES.md](docs/CAPTURE-PHASES.md) | The running order and the scoreboard — nine phases, what's done, what's next |
 | [docs/Star-Conflict-Capture-Protocol.md](docs/Star-Conflict-Capture-Protocol.md) | The full manual behind [Part 6](#part-6--the-capture-checklist) — what to do for each of the 52 scenarios |
 | [docs/protocol/PROVENANCE.md](docs/protocol/PROVENANCE.md) | Where the 404 element names came from, and their licence |
 | [sc-capture/README.md](sc-capture/README.md) | The tool's own reference — commands, flags, module layout |
@@ -633,6 +669,11 @@ SC_20260814T203015Z__AUTH-02__vol-042__EU__000/
 
 Only the `.pcapng` files and `session.json` are irreplaceable. Everything else can be deleted and
 regenerated.
+
+Recordings are protected by an owner-only ACL with inheritance switched off, not by a file mode —
+on Windows a mode toggles the read-only attribute and stops nothing. `sccap verify` reports the
+accounts that actually hold access, so you can see who could read a session rather than trusting a
+number that never described it. Copying a bundle elsewhere does **not** carry the ACL with it.
 
 ### The game's networking
 
