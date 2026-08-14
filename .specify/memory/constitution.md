@@ -133,6 +133,11 @@ ability to recruit.
   artifacts. No Python, no shell scripts, no helper utilities in another runtime. Chosen for
   concurrent network I/O, single-binary distribution to non-expert contributors, and
   cross-compilation.
+- **Platform-specific code is confined to acquisition and diagnosis.** Everything above the
+  capture backend — framing, journalling, decoding, indexing, coverage, the bundle format — MUST
+  be platform-independent, so a session recorded anywhere is identical to one recorded elsewhere.
+  A capture backend that cannot be built (see v2.3.0) MUST degrade to a binary that still reads
+  archives, never to one that refuses to run.
 - **No scripts ship, in any language.** Anything a contributor needs to run is a `sccap`
   subcommand. This is the operative rule that keeps the language commitment honest: a bash
   helper is how a second language gets in.
@@ -277,4 +282,37 @@ standalone history.
 *Migration note for archived sessions.* None. No on-disk format, element id or bundle convention
 changes.
 
-**Version**: 2.2.0 | **Ratified**: 2026-08-13 | **Last Amended**: 2026-08-14
+**v2.3.0 — 2026-08-14 — Windows support, and the one commitment it costs.**
+
+*Rationale.* Coverage is bounded by how many contributors can be recruited, and most Star Conflict
+players are on Windows. A Linux-only tool caps the archive at the size of the Linux-playing
+population, which is the wrong constraint to accept against a deadline.
+
+*What this makes possible.* A Windows contributor can record, verify, decode and report coverage.
+The on-disk bundle format, element ids and every guarantee attached to them are identical across
+platforms, so captures from either are interchangeable at intake.
+
+*What this costs.* The settled commitment to "a single static binary with no runtime
+prerequisites" **no longer holds on Windows**. Live capture there requires Npcap, which requires
+cgo, which forfeits static linking and cross-compilation — the three properties Go was chosen
+for. Npcap's licence also forbids redistribution, so it cannot be bundled.
+
+The cost is contained rather than accepted wholesale:
+
+- The capture backend is behind a `npcap` build tag. A plain `go build` on Windows still produces
+  a static binary with no prerequisites; it simply cannot record. Every offline command —
+  `verify`, `decode`, `index`, `coverage` — works in that build, so the prerequisite is charged
+  only to contributors who actually capture.
+- `sccap doctor` reports a missing backend as a first-class check naming the install, rather than
+  failing at capture time.
+- On Linux nothing changes: still pure Go, still `CGO_ENABLED=0`, still one static binary.
+
+*Contributor safety on Windows.* Principle VIII is not weakened. A file mode there means almost
+nothing — `os.Chmod` toggles only the read-only attribute — so sessions get an explicit
+owner-only DACL with inheritance severed, and verification reports the principals that hold
+access rather than a mode string that would be a lie.
+
+*Migration note for archived sessions.* None. No on-disk format, element id or bundle convention
+changes.
+
+**Version**: 2.3.0 | **Ratified**: 2026-08-13 | **Last Amended**: 2026-08-14

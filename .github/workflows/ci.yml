@@ -34,11 +34,41 @@ jobs:
       - name: Fault injection (constitution, Development Workflow)
         run: go test -v ./tests/faultinjection/...
 
+  # Everything except live capture is platform-independent, so the offline
+  # commands must build and their tests must pass on Windows without Npcap.
+  # This is what keeps a Windows contributor able to verify, decode, index and
+  # report coverage on an archived session with nothing extra installed.
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache-dependency-path: sc-capture/go.sum
+      - name: Vet
+        run: go vet ./...
+      - name: Build (offline commands, no capture backend)
+        env:
+          CGO_ENABLED: '0'
+        run: go build -o out/sccap.exe ./cmd/sccap
+      - name: Platform-independent suites
+        run: go test ./pkg/... ./internal/... ./tests/architecture/... ./tests/faultinjection/...
+
   build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        goarch: [amd64, arm64]
+        include:
+          - goos: linux
+            goarch: amd64
+            ext: ''
+          - goos: linux
+            goarch: arm64
+            ext: ''
+          - goos: windows
+            goarch: amd64
+            ext: '.exe'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -47,14 +77,17 @@ jobs:
           cache-dependency-path: sc-capture/go.sum
       # CGO_ENABLED=0 is not incidental: a static binary with no runtime
       # prerequisites is the entire distribution story for non-expert
-      # contributors (constitution, Additional Constraints).
-      - name: Build ${{ matrix.goarch }}
+      # contributors (constitution, Additional Constraints). The Windows
+      # artifact is therefore the offline build; a capture-capable Windows
+      # binary needs Npcap and `-tags npcap`, which cannot be cross-compiled
+      # and is not produced here.
+      - name: Build ${{ matrix.goos }}/${{ matrix.goarch }}
         env:
           CGO_ENABLED: '0'
-          GOOS: linux
+          GOOS: ${{ matrix.goos }}
           GOARCH: ${{ matrix.goarch }}
-        run: go build -o out/sccap-linux-${{ matrix.goarch }} ./cmd/sccap
+        run: go build -o out/sccap-${{ matrix.goos }}-${{ matrix.goarch }}${{ matrix.ext }} ./cmd/sccap
       - uses: actions/upload-artifact@v4
         with:
-          name: sccap-linux-${{ matrix.goarch }}
+          name: sccap-${{ matrix.goos }}-${{ matrix.goarch }}
           path: sc-capture/out/

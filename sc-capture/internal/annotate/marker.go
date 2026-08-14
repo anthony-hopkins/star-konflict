@@ -134,7 +134,7 @@ func openBroadcast(port int) (net.PacketConn, *net.UDPAddr) {
 		Control: func(_, _ string, c syscall.RawConn) error {
 			var serr error
 			if err := c.Control(func(fd uintptr) {
-				serr = syscall.SetsockoptInt(int(fd), syscall.SOL_SOCKET, syscall.SO_BROADCAST, 1)
+				serr = enableBroadcast(fd)
 			}); err != nil {
 				return err
 			}

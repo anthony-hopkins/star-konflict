@@ -1,4 +1,17 @@
+//go:build linux
+
 // Package e2e exercises the real sccap binary against a real interface.
+//
+// Linux-only, and deliberately so. These tests read /proc to prove the capture
+// process opens no TCP socket, call statfs for the disk-floor thresholds, and
+// drive an AF_PACKET capture — none of which have a meaningful Windows
+// equivalent. Tagging them is more honest than writing a version that compiles
+// everywhere and asserts nothing on most of it.
+//
+// The platform-independent guarantees are covered by suites that DO run
+// everywhere: tests/faultinjection (Principle II, byte-loss under every failure
+// mode), tests/architecture (the import rules), and pkg/scproto (protocol
+// parity against the archived reference).
 //
 // These tests run the built artifact rather than importing packages, because
 // capture capability lives on the binary file. That also means they test what a

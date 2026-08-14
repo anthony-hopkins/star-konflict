@@ -82,10 +82,12 @@ func CreateBundle(parent string, start time.Time, scenario, volunteer, region st
 		dir := filepath.Join(parent, id)
 		err := os.Mkdir(dir, DirMode)
 		if err == nil {
-			// Guard against a permissive umask having stripped nothing but a
-			// pre-existing directory mode surviving: assert what we intended.
-			if err := os.Chmod(dir, DirMode); err != nil {
-				return nil, err
+			// Assert the intended protection rather than trusting the creation
+			// mode. On Unix this re-applies 0700 in case of an odd umask; on
+			// Windows it installs an owner-only ACL, because a file mode there
+			// means almost nothing.
+			if err := secureDir(dir); err != nil {
+				return nil, fmt.Errorf("securing %s: %w", dir, err)
 			}
 			return &Bundle{Dir: dir, ID: id}, nil
 		}
@@ -99,31 +101,16 @@ func CreateBundle(parent string, start time.Time, scenario, volunteer, region st
 // Path returns the path of a file inside the bundle.
 func (b *Bundle) Path(name string) string { return filepath.Join(b.Dir, name) }
 
-// CheckPermissions reports whether the bundle is owner-only. Looser
-// permissions are reported but are not a verification failure — a contributor
-// may have relaxed them deliberately in order to share.
-func CheckPermissions(dir string) (dirMode os.FileMode, loose []string, err error) {
-	fi, err := os.Stat(dir)
-	if err != nil {
-		return 0, nil, err
-	}
-	dirMode = fi.Mode().Perm()
-	if dirMode&0o077 != 0 {
-		loose = append(loose, filepath.Base(dir)+"/")
-	}
-
-	entries, err := os.ReadDir(dir)
-	if err != nil {
-		return dirMode, loose, err
-	}
-	for _, e := range entries {
-		info, err := e.Info()
-		if err != nil {
-			continue
-		}
-		if info.Mode().Perm()&0o077 != 0 {
-			loose = append(loose, e.Name())
-		}
-	}
-	return dirMode, loose, nil
+// CheckPermissions reports whether the bundle is readable only by its owner.
+//
+// `loose` names anything readable by others. Looser permissions are reported
+// but are not a verification failure — a contributor may have relaxed them
+// deliberately in order to share, and refusing to verify a bundle they can no
+// longer fix would help nobody.
+//
+// `summary` describes the protection in whatever terms the platform uses, so a
+// reader is not left guessing what "0700" means on a machine that has no such
+// concept.
+func CheckPermissions(dir string) (summary string, loose []string, err error) {
+	return inspectPermissions(dir)
 }

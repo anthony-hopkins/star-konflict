@@ -137,12 +137,15 @@ func Verify(dir string) (*Result, error) {
 	// 8. Permissions. Loose is a warning: a contributor may have relaxed them
 	//    deliberately in order to share, and refusing to verify a bundle they
 	//    can no longer fix would help nobody.
-	if _, loose, err := session.CheckPermissions(dir); err == nil && len(loose) > 0 {
+	if summary, loose, err := session.CheckPermissions(dir); err == nil && len(loose) > 0 {
 		res.add("permissions", "warn",
-			"group/other-readable: %s — this session may contain credentials",
-			strings.Join(loose, ", "))
+			"readable beyond the owner (%s): %s — this session may contain credentials",
+			summary, strings.Join(loose, ", "))
 	} else if err == nil {
-		res.add("permissions", "ok", "owner-only")
+		// The summary is platform-specific wording: a Unix mode, or the set of
+		// principals a Windows ACL grants. A reader should not have to know
+		// which platform produced a bundle to understand how it was protected.
+		res.add("permissions", "ok", "%s", summary)
 	}
 
 	// 9. Sensitivity must be marked.

@@ -7,11 +7,41 @@ One static Go binary. No interpreter, no libraries to install, no scripts.
 
 ## Build
 
+### Linux
+
 ```bash
 CGO_ENABLED=0 go build -o out/sccap ./cmd/sccap
 sudo setcap cap_net_raw,cap_net_admin=eip out/sccap
 ./out/sccap doctor
 ```
+
+Pure Go, no cgo, one static binary, no prerequisites.
+
+### Windows
+
+Capture needs [Npcap](https://npcap.com) — install it first, then:
+
+```powershell
+go build -tags npcap -o out\sccap.exe .\cmd\sccap
+.\out\sccap.exe doctor          # run the terminal as Administrator
+```
+
+Without `-tags npcap` you still get a working binary — it just cannot record:
+
+```powershell
+go build -o out\sccap.exe .\cmd\sccap
+```
+
+That build runs `verify`, `decode`, `index` and `coverage` on any archived session with nothing
+extra installed, which is enough to analyse captures somebody else recorded. `sccap doctor` says
+plainly which kind of binary you have.
+
+**Why the tag.** Npcap requires cgo, which forfeits static linking and cross-compilation — the
+reasons Go was chosen — and its licence forbids redistribution, so it cannot be bundled. Charging
+that cost only to contributors who actually capture keeps the offline half free.
+
+Bundles are byte-identical across platforms. A session recorded on Windows and one recorded on
+Linux are interchangeable at intake.
 
 `doctor` must exit 0 before anything else is worth trying. It reports what is missing and the
 exact command to fix it — it never changes host state itself.

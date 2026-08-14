@@ -6,8 +6,9 @@ import (
 	"net"
 	"sort"
 	"sync"
-	"syscall"
 	"time"
+
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/capture"
 )
 
 // Master-server ports. Presence of traffic on these is strong evidence that an
@@ -36,7 +37,15 @@ type InterfaceTraffic struct {
 // valid bundle, clean verification — and contains none of the game's traffic.
 // It is the only failure mode here that is both silent and total, and it is
 // what the network-namespace scripts used to prevent by construction.
+//
+// It deliberately uses the same capture backend a real session would, so
+// "doctor says this interface works" and "capture works on this interface" can
+// never disagree.
 func Watch(d time.Duration, only string) ([]InterfaceTraffic, error) {
+	if ok, why := capture.Available(); !ok {
+		return nil, fmt.Errorf("%s", why)
+	}
+
 	ifs, err := Interfaces()
 	if err != nil {
 		return nil, err
@@ -88,50 +97,25 @@ func sample(iface string, d time.Duration) InterfaceTraffic {
 		UDPPeers: map[string]int{},
 	}
 
-	ni, err := net.InterfaceByName(iface)
+	src, err := capture.Open(iface, 0)
 	if err != nil {
 		out.Err = err.Error()
 		return out
 	}
+	defer src.Close()
 
-	// ETH_P_ALL in network byte order.
-	const ethPAll = 0x0003
-	proto := int(uint16(ethPAll<<8) | uint16(ethPAll>>8))
-	fd, err := syscall.Socket(syscall.AF_PACKET, syscall.SOCK_RAW, proto)
-	if err != nil {
-		out.Err = "socket: " + err.Error() + " (missing CAP_NET_RAW?)"
-		return out
-	}
-	defer syscall.Close(fd)
-
-	if err := syscall.Bind(fd, &syscall.SockaddrLinklayer{
-		Protocol: uint16(proto),
-		Ifindex:  ni.Index,
-	}); err != nil {
-		out.Err = "bind: " + err.Error()
-		return out
-	}
-
-	// Read timeout so we can stop at the deadline even on a silent link.
-	tv := syscall.Timeval{Sec: 0, Usec: 200_000}
-	_ = syscall.SetsockoptTimeval(fd, syscall.SOL_SOCKET, syscall.SO_RCVTIMEO, &tv)
-
-	buf := make([]byte, 65536)
 	deadline := time.Now().Add(d)
 	for time.Now().Before(deadline) {
-		n, _, err := syscall.Recvfrom(fd, buf, 0)
+		data, _, err := src.Read()
 		if err != nil {
-			if err == syscall.EAGAIN || err == syscall.EWOULDBLOCK || err == syscall.EINTR {
-				continue
-			}
-			out.Err = "recv: " + err.Error()
-			return out
+			// A read timeout on a quiet link is normal, not a failure.
+			continue
 		}
-		if n <= 0 {
+		if len(data) == 0 {
 			continue
 		}
 		out.Packets++
-		classify(buf[:n], &out)
+		classify(data, &out)
 	}
 	return out
 }

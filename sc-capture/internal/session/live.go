@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"syscall"
 	"time"
 )
 
@@ -73,18 +72,6 @@ func ClearLive() error {
 		return err
 	}
 	return nil
-}
-
-func processAlive(pid int) bool {
-	if pid <= 0 {
-		return false
-	}
-	p, err := os.FindProcess(pid)
-	if err != nil {
-		return false
-	}
-	// On Linux FindProcess always succeeds; signal 0 is the actual test.
-	return p.Signal(syscall.Signal(0)) == nil
 }
 
 // ErrNoLiveSession is returned when a command needs a running capture.

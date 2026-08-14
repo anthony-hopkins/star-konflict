@@ -4,7 +4,9 @@ Record everything **Star Conflict**'s servers say, before they are switched off 
 be understood, and eventually reimplemented, afterwards.
 
 This repository contains one tool, `sccap`, plus the reference material it needs. It is **Go
-only**: one static binary, no interpreter, no libraries to install, no scripts.
+only**: no interpreter, no scripts, no second language anywhere. Runs on **Linux and Windows** —
+one static binary on Linux, and on Windows one extra install ([Npcap](https://npcap.com)) if you
+want to record rather than just read recordings.
 
 > **If you read nothing else:** capturing is the only part of this project with a deadline.
 > Every session you play without recording is gone permanently. The tool works today — jump to
@@ -120,24 +122,40 @@ So: go make the game do unusual things. Don't worry about whether we understand 
 
 ## Part 2 — Setup (once per machine)
 
-You need **Ubuntu** (or similar Linux), **Go 1.26+**, and a working Star Conflict install.
+You need **Go 1.26+**, a working Star Conflict install, and either Linux or Windows.
 
 ### 2.1 Build the tool
+
+**Linux** — one static binary, nothing to install:
 
 ```bash
 cd sc-capture
 CGO_ENABLED=0 go build -o out/sccap ./cmd/sccap
 ```
 
-One static binary. Nothing to install, no dependencies to fetch at runtime.
+**Windows** — install [Npcap](https://npcap.com) first, then:
+
+```powershell
+cd sc-capture
+go build -tags npcap -o out\sccap.exe .\cmd\sccap
+```
+
+> Npcap is needed only for **recording**. Building without `-tags npcap` gives you a binary that
+> reads and analyses archived sessions with nothing extra installed — useful if you want to
+> examine somebody else's captures. `sccap doctor` tells you which build you have.
 
 ### 2.2 Give it permission to see the network
 
-Recording packets is a privileged operation. Grant it to the binary once:
+Recording packets is privileged on both platforms.
+
+**Linux** — grant the capability to the binary once:
 
 ```bash
 sudo setcap cap_net_raw,cap_net_admin=eip out/sccap
 ```
+
+**Windows** — run your terminal **as Administrator**. Npcap refuses capture handles to
+unprivileged processes.
 
 ### 2.3 Check the machine is ready
 
@@ -165,6 +183,11 @@ You want every line `OK` before continuing. A typical first run finds one thing:
 packets together before your computer sees them, so what gets recorded is your driver's
 reconstruction rather than what actually crossed the wire. The bytes are all there; the packet
 boundaries and timings are fiction. Run the command it prints.
+
+On Windows the equivalent settings are per-driver and have no stable names, so `doctor` does not
+guess at them — it prints the PowerShell commands to check and disable them yourself
+(`Disable-NetAdapterLso`, `Disable-NetAdapterRsc`). Being told to look is better than being told
+a wrong answer.
 
 ### 2.4 Make a throwaway game account
 
@@ -219,8 +242,8 @@ See [§6.1 of the capture manual](docs/Star-Conflict-Capture-Protocol.md).
 **Setup checklist**
 
 - [ ] Go 1.26+ installed (`go version`)
-- [ ] `sccap` built
-- [ ] Capability granted (`getcap out/sccap`)
+- [ ] `sccap` built (Windows: with `-tags npcap`, after installing Npcap)
+- [ ] Capture permitted — Linux: `getcap out/sccap`; Windows: terminal running as Administrator
 - [ ] `sccap doctor` shows no `FAIL` — including a `game client` line
 - [ ] Network card offloads turned off
 - [ ] Throwaway game account created

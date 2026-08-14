@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	"syscall"
 )
 
 // Disk thresholds. Defaults chosen so that reaching the floor still leaves
@@ -58,16 +57,12 @@ func NewDiskMonitor(path string, minFree, floor uint64) *DiskMonitor {
 }
 
 // Free returns bytes available to this (unprivileged) user.
-func (d *DiskMonitor) Free() (uint64, error) {
-	var st syscall.Statfs_t
-	if err := syscall.Statfs(d.path, &st); err != nil {
-		return 0, fmt.Errorf("statfs %s: %w", d.path, err)
-	}
-	// Bavail, not Bfree: Bfree includes blocks reserved for root, which we
-	// cannot actually use and which would make us optimistic at exactly the
-	// wrong moment.
-	return st.Bavail * uint64(st.Bsize), nil
-}
+//
+// Implemented per platform: see disk_linux.go and disk_windows.go. Both must
+// report space actually usable by this user rather than total free space —
+// being optimistic here means running out mid-session, which is exactly the
+// moment the number matters.
+func (d *DiskMonitor) Free() (uint64, error) { return freeBytes(d.path) }
 
 // Check reports the current state and the free byte count.
 func (d *DiskMonitor) Check() (DiskState, uint64, error) {
