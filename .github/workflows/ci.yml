@@ -1,0 +1,60 @@
+name: CI
+
+on: [push, pull_request]
+
+# The Go module lives in sc-capture/, not at the repository root, so every job
+# runs from there.
+defaults:
+  run:
+    working-directory: sc-capture
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache-dependency-path: sc-capture/go.sum
+      - name: Vet
+        run: go vet ./...
+      - name: Test
+        run: go test ./...
+      # The architecture tests are the enforcement mechanism for two
+      # constitutional principles. Run them explicitly so a failure is
+      # unmistakable in the log rather than buried in the suite.
+      - name: Architecture rules (Principles II and VI)
+        run: go test -v ./tests/architecture/...
+      # Capture tests need CAP_NET_RAW and a live interface; they skip
+      # themselves on a runner rather than failing, so this asserts the
+      # offline suites really ran.
+      - name: Protocol parity against the archived reference
+        run: go test -v ./pkg/scproto/... -run Golden
+      - name: Fault injection (constitution, Development Workflow)
+        run: go test -v ./tests/faultinjection/...
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        goarch: [amd64, arm64]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache-dependency-path: sc-capture/go.sum
+      # CGO_ENABLED=0 is not incidental: a static binary with no runtime
+      # prerequisites is the entire distribution story for non-expert
+      # contributors (constitution, Additional Constraints).
+      - name: Build ${{ matrix.goarch }}
+        env:
+          CGO_ENABLED: '0'
+          GOOS: linux
+          GOARCH: ${{ matrix.goarch }}
+        run: go build -o out/sccap-linux-${{ matrix.goarch }} ./cmd/sccap
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sccap-linux-${{ matrix.goarch }}
+          path: sc-capture/out/

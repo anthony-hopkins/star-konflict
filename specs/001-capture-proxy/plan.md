@@ -133,12 +133,13 @@ New sibling repository in the workspace, per the constitution's settled commitme
 tooling lives in its own repo:
 
 ```text
-star-conflict-clone/                    # workspace (not a repo)
+star-conflict-clone/                    # the repository
+├── .github/workflows/ci.yml            # runs from the root, over sc-capture/
 ├── docs/
 │   ├── Star-Conflict-Capture-Protocol.md
 │   └── protocol/                       # frozen public-domain element universe (404) + sources
 ├── packet-caps/                        # submitted capture bundles
-└── sc-capture/                         # NEW — Go capture tooling, self-contained
+└── sc-capture/                         # Go capture tooling — self-contained module
     ├── go.mod                          # single external dep: gopacket
     ├── LICENSE.txt                     # MIT
     ├── README.md
@@ -177,7 +178,7 @@ star-conflict-clone/                    # workspace (not a repo)
         └── architecture/               # import rules: journal ⊅ decode, scproto ⊅ everything
 ```
 
-**Structure Decision**: A new self-contained `sc-capture/` repository at the workspace root.
+**Structure Decision**: A self-contained `sc-capture/` Go module inside this repository.
 `pkg/scproto` is the one exported package — it is the single protocol implementation Principle VI
 requires, kept free of capture, storage and transport dependencies so a future server
 reimplementation can consume it unchanged. Everything else is `internal/`, because nothing else

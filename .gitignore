@@ -1,6 +1,8 @@
-# sc-capture is an independent repository with its own history and licence,
-# checked out inside this workspace. Commit to it separately.
-sc-capture/
+# Go build output (sc-capture/ is part of this repository)
+sc-capture/out/
+*.exe
+*.test
+*.out
 
 # Captured traffic NEVER goes in git. Recordings contain login credentials in
 # the clear — the master-server protocol has no transport encryption.

@@ -136,8 +136,9 @@ ability to recruit.
 - **No scripts ship, in any language.** Anything a contributor needs to run is a `sccap`
   subcommand. This is the operative rule that keeps the language commitment honest: a bash
   helper is how a second language gets in.
-- New capture tooling lives in **its own repository** in this workspace and is self-contained: it
-  MUST build from a fresh clone with no sibling checkout present.
+- New capture tooling lives in `sc-capture/` within this repository and is self-contained: it
+  MUST build from a fresh clone with no sibling checkout and no external module present. The
+  Go module boundary, not a repository boundary, is what keeps it independently buildable.
 - The new tooling **supersedes the Python proxy's capture role entirely**. Protocol knowledge
   that project recovered — dispatch tables, element names, Kaitai schemas, the framing and
   checksum reference — is public-domain prior art, snapshotted in `docs/protocol/`, to be
@@ -253,4 +254,27 @@ problem is not.
 *Migration note for archived sessions.* None. No on-disk format, element id, or bundle
 convention changes.
 
-**Version**: 2.1.0 | **Ratified**: 2026-08-13 | **Last Amended**: 2026-08-14
+**v2.2.0 — 2026-08-14 — capture tooling lives in this repository rather than its own.**
+
+*Rationale.* The separate-repository rule was inherited from a workspace that held three
+independent checkouts with different licences and maintainers. That workspace no longer exists:
+there is one project, one licence, and one set of contributors. A second repository for a
+subdirectory of it bought nothing and cost real friction — two clones to get started, two commits
+for one change, and a README that had to explain why the tool it documents was not in the
+repository the reader had just cloned.
+
+*What this makes possible.* One clone gets a contributor everything: the manual, the checklist,
+the protocol reference and the tool that uses them. A change spanning the spec and the code is one
+commit with one review. CI runs from the repository root over both.
+
+*What this makes impossible.* The tool can no longer be depended on as a standalone repository,
+and its history is no longer separable from the project's. The independence that actually matters
+is preserved by the Go module boundary rather than a repository boundary — `sc-capture/` still
+builds from a fresh clone with no external module, and `pkg/scproto` still depends on nothing else
+(Principle VI). Should the tool ever need to ship separately, `git subtree split` recovers a
+standalone history.
+
+*Migration note for archived sessions.* None. No on-disk format, element id or bundle convention
+changes.
+
+**Version**: 2.2.0 | **Ratified**: 2026-08-13 | **Last Amended**: 2026-08-14

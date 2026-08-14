@@ -1,0 +1,26 @@
+# Go
+*.exe
+*.test
+*.out
+vendor/
+out/
+dist/
+
+# Capture output — never commit a real session, they contain credentials.
+# Scoped so that small reference bundles under testdata/bundles/ stay committed.
+captures/
+SC_*__*/
+*.pcapng
+!testdata/bundles/**/*.pcapng
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+
+# Env
+.env
+.env.*

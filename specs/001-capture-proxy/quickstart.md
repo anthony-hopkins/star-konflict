@@ -43,8 +43,8 @@ sudo setcap cap_net_raw,cap_net_admin=eip out/sccap
 ./out/sccap doctor
 ```
 
-The repository is self-contained: it builds from a fresh clone with no sibling checkout, one
-external dependency (`gopacket`), and no cgo.
+The module is self-contained: it builds from a fresh clone with no external module, one
+dependency (`gopacket`), and no cgo.
 
 **Protocol parity check** — run before trusting any decode output:
 

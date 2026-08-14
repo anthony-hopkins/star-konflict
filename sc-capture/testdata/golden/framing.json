@@ -1,0 +1,196 @@
+{
+ "_source": "Generated once, by hand, from docs/protocol/source/protocol.py (sc-proxy @968f1a3f, Unlicense). Do not regenerate casually: these vectors are the only independent check that our framing and checksum match the observed protocol. The header is big-endian on the wire but hashed little-endian.",
+ "seed": 322392893,
+ "cases": [
+  {
+   "name": "empty body",
+   "body_len": 0,
+   "seq": 1,
+   "echo_seq": 0,
+   "cmd_type": 13,
+   "body_hex": "",
+   "checksum": 44900,
+   "packet_hex": "0000000000010000000daf64"
+  },
+  {
+   "name": "one byte tail",
+   "body_len": 1,
+   "seq": 1,
+   "echo_seq": 0,
+   "cmd_type": 13,
+   "body_hex": "01",
+   "checksum": 37668,
+   "packet_hex": "0000000100010000000d932401"
+  },
+  {
+   "name": "two byte tail",
+   "body_len": 2,
+   "seq": 2,
+   "echo_seq": 1,
+   "cmd_type": 14,
+   "body_hex": "0102",
+   "checksum": 27859,
+   "packet_hex": "0000000200020001000e6cd30102"
+  },
+  {
+   "name": "three byte tail",
+   "body_len": 3,
+   "seq": 3,
+   "echo_seq": 0,
+   "cmd_type": 13,
+   "body_hex": "010203",
+   "checksum": 25252,
+   "packet_hex": "0000000300030000000d62a4010203"
+  },
+  {
+   "name": "aligned 4",
+   "body_len": 4,
+   "seq": 4,
+   "echo_seq": 0,
+   "cmd_type": 13,
+   "body_hex": "deadbeef",
+   "checksum": 29252,
+   "packet_hex": "0000000400040000000d7244deadbeef"
+  },
+  {
+   "name": "aligned 8",
+   "body_len": 8,
+   "seq": 5,
+   "echo_seq": 2,
+   "cmd_type": 14,
+   "body_hex": "0001020304050607",
+   "checksum": 63268,
+   "packet_hex": "0000000800050002000ef7240001020304050607"
+  },
+  {
+   "name": "tail 5",
+   "body_len": 5,
+   "seq": 6,
+   "echo_seq": 0,
+   "cmd_type": 0,
+   "body_hex": "68656c6c6f",
+   "checksum": 18011,
+   "packet_hex": "00000005000600000000465b68656c6c6f"
+  },
+  {
+   "name": "tail 7",
+   "body_len": 7,
+   "seq": 7,
+   "echo_seq": 0,
+   "cmd_type": 11,
+   "body_hex": "00000000000000",
+   "checksum": 42055,
+   "packet_hex": "0000000700070000000ba44700000000000000"
+  },
+  {
+   "name": "high seq",
+   "body_len": 6,
+   "seq": 58093,
+   "echo_seq": 65535,
+   "cmd_type": 38,
+   "body_hex": "616263646566",
+   "checksum": 13749,
+   "packet_hex": "00000006e2edffff002635b5616263646566"
+  },
+  {
+   "name": "async req opcode 9",
+   "body_len": 6,
+   "seq": 4660,
+   "echo_seq": 22136,
+   "cmd_type": 13,
+   "body_hex": "0009aabbccdd",
+   "checksum": 41925,
+   "packet_hex": "0000000612345678000da3c50009aabbccdd"
+  },
+  {
+   "name": "notification opcode 0",
+   "body_len": 4,
+   "seq": 1,
+   "echo_seq": 0,
+   "cmd_type": 14,
+   "body_hex": "00001020",
+   "checksum": 29771,
+   "packet_hex": "0000000400010000000e744b00001020"
+  },
+  {
+   "name": "random 0 (len 34)",
+   "body_len": 34,
+   "seq": 43786,
+   "echo_seq": 22813,
+   "cmd_type": 25,
+   "body_hex": "b55d9295bb2ac6d35562a2ca5cebfe4e64feb234c2a8dde95d1b6cd2a266e61081b2",
+   "checksum": 1115,
+   "packet_hex": "00000022ab0a591d0019045bb55d9295bb2ac6d35562a2ca5cebfe4e64feb234c2a8dde95d1b6cd2a266e61081b2"
+  },
+  {
+   "name": "random 1 (len 25)",
+   "body_len": 25,
+   "seq": 52690,
+   "echo_seq": 13171,
+   "cmd_type": 35,
+   "body_hex": "cdbccc4fa904d55a981e753ff52bcbda50adb0ebea9a759a43",
+   "checksum": 31496,
+   "packet_hex": "00000019cdd2337300237b08cdbccc4fa904d55a981e753ff52bcbda50adb0ebea9a759a43"
+  },
+  {
+   "name": "random 2 (len 4)",
+   "body_len": 4,
+   "seq": 63555,
+   "echo_seq": 37833,
+   "cmd_type": 2,
+   "body_hex": "a386f89e",
+   "checksum": 789,
+   "packet_hex": "00000004f84393c900020315a386f89e"
+  },
+  {
+   "name": "random 3 (len 4)",
+   "body_len": 4,
+   "seq": 40615,
+   "echo_seq": 3527,
+   "cmd_type": 1,
+   "body_hex": "68f6a7e6",
+   "checksum": 59989,
+   "packet_hex": "000000049ea70dc70001ea5568f6a7e6"
+  },
+  {
+   "name": "random 4 (len 12)",
+   "body_len": 12,
+   "seq": 52127,
+   "echo_seq": 61398,
+   "cmd_type": 21,
+   "body_hex": "321a483273bfeaffcc915003",
+   "checksum": 16649,
+   "packet_hex": "0000000ccb9fefd600154109321a483273bfeaffcc915003"
+  },
+  {
+   "name": "random 5 (len 27)",
+   "body_len": 27,
+   "seq": 48267,
+   "echo_seq": 38257,
+   "cmd_type": 29,
+   "body_hex": "92ca3a8c0bc6fa8eb9a54ed9e4369cf92e8786872fc6a90cbf7eb4",
+   "checksum": 10676,
+   "packet_hex": "0000001bbc8b9571001d29b492ca3a8c0bc6fa8eb9a54ed9e4369cf92e8786872fc6a90cbf7eb4"
+  },
+  {
+   "name": "random 6 (len 1)",
+   "body_len": 1,
+   "seq": 34229,
+   "echo_seq": 31954,
+   "cmd_type": 34,
+   "body_hex": "ce",
+   "checksum": 25067,
+   "packet_hex": "0000000185b57cd2002261ebce"
+  },
+  {
+   "name": "random 7 (len 22)",
+   "body_len": 22,
+   "seq": 16583,
+   "echo_seq": 57513,
+   "cmd_type": 3,
+   "body_hex": "bc8ecc91a5414311b521f20fe72b50d1143170f38ad5",
+   "checksum": 154,
+   "packet_hex": "0000001640c7e0a90003009abc8ecc91a5414311b521f20fe72b50d1143170f38ad5"
+  }
+ ]
+}

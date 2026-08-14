@@ -565,9 +565,9 @@ star-conflict-clone/
 └── sc-capture/                      # the tool (Go, MIT)
 ```
 
-`sc-capture/` is an **independent repository** checked out inside this workspace and ignored by
-it — commit and push to it separately:
-[github.com/anthony-hopkins/sc-capture](https://github.com/anthony-hopkins/sc-capture)
+One repository, one clone. `sc-capture/` is a self-contained Go module — it builds on its own with
+no external dependency beyond `gopacket` — but it lives here, so a single `git clone` gets you the
+manual, the checklist, the protocol reference and the tool that uses them.
 
 ### Commands
 
