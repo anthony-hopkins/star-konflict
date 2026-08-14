@@ -19,13 +19,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/decode"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/decode/isolate"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/flow"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/pkg/scproto"
 	"github.com/gopacket/gopacket"
 	"github.com/gopacket/gopacket/layers"
 	"github.com/gopacket/gopacket/pcapgo"
-	"github.com/sc-re/sc-capture/internal/decode"
-	"github.com/sc-re/sc-capture/internal/decode/isolate"
-	"github.com/sc-re/sc-capture/internal/flow"
-	"github.com/sc-re/sc-capture/pkg/scproto"
 )
 
 const (

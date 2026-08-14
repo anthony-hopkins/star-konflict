@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/sc-re/sc-capture/schemas/session.schema.json",
+  "$id": "https://github.com/anthony-hopkins/star-konflict/sc-capture/schemas/session.schema.json",
   "title": "sccap session metadata",
   "description": "Metadata sidecar for a capture bundle. Superset of docs/Star-Conflict-Capture-Protocol.md 2.4. A bundle with only pcapng segments and a valid instance of this document is a valid session.",
   "type": "object",

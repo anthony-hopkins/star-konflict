@@ -10,8 +10,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sc-re/sc-capture/internal/client"
-	"github.com/sc-re/sc-capture/internal/flow"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/client"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/flow"
 )
 
 // SchemaVersion of the on-disk bundle format.

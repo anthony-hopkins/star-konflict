@@ -15,7 +15,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sc-re/sc-capture/internal/decode"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/decode"
 )
 
 // File is the conventional name inside a bundle.

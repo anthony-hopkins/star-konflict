@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/flow"
 	"github.com/gopacket/gopacket/pcapgo"
-	"github.com/sc-re/sc-capture/internal/flow"
 )
 
 // Replay re-runs decoding over an archived bundle's raw journal.

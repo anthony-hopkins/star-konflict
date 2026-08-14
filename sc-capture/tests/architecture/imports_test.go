@@ -17,7 +17,7 @@ import (
 	"testing"
 )
 
-const modulePath = "github.com/sc-re/sc-capture"
+const modulePath = "github.com/anthony-hopkins/star-konflict/sc-capture"
 
 // repoRoot walks up from this test file to the module root.
 func repoRoot(t *testing.T) string {

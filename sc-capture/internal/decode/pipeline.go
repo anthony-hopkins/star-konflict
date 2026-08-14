@@ -6,11 +6,11 @@ import (
 	"sync"
 	"time"
 
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/decode/isolate"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/flow"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/pkg/scproto"
 	"github.com/gopacket/gopacket"
 	"github.com/gopacket/gopacket/layers"
-	"github.com/sc-re/sc-capture/internal/decode/isolate"
-	"github.com/sc-re/sc-capture/internal/flow"
-	"github.com/sc-re/sc-capture/pkg/scproto"
 )
 
 // DecoderVersion stamps every result, so a re-decode years later can be

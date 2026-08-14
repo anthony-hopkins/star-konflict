@@ -18,9 +18,9 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/journal"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/session"
 	"github.com/gopacket/gopacket/pcapgo"
-	"github.com/sc-re/sc-capture/internal/journal"
-	"github.com/sc-re/sc-capture/internal/session"
 )
 
 // Status of a verified bundle.

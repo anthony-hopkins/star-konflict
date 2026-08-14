@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sc-re/sc-capture/pkg/scproto"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/pkg/scproto"
 )
 
 // TestStateNeverRegresses is the property the whole metric depends on.

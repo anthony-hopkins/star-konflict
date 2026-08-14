@@ -3,7 +3,7 @@
 Record everything **Star Conflict**'s servers say, before they are switched off — so the game can
 be understood, and eventually reimplemented, afterwards.
 
-This workspace contains one tool, `sccap`, plus the reference material it needs. It is **Go
+This repository contains one tool, `sccap`, plus the reference material it needs. It is **Go
 only**: one static binary, no interpreter, no libraries to install, no scripts.
 
 > **If you read nothing else:** capturing is the only part of this project with a deadline.
@@ -555,8 +555,9 @@ path, tested against non-competitive modes only.
 ### Layout
 
 ```
-star-conflict-clone/
-├── README.md                        # this file
+star-konflict/
+├── README.md                        # this file — start here
+├── .github/workflows/ci.yml         # runs from the root, over sc-capture/
 ├── docs/
 │   ├── Star-Conflict-Capture-Protocol.md   # the full scenario manual
 │   └── protocol/                    # 404 known elements + original sources
@@ -565,8 +566,16 @@ star-conflict-clone/
 └── sc-capture/                      # the tool (Go, MIT)
 ```
 
+| Where | What's in it |
+|---|---|
+| [docs/Star-Conflict-Capture-Protocol.md](docs/Star-Conflict-Capture-Protocol.md) | The full manual behind [Part 6](#part-6--the-capture-checklist) — what to do for each of the 52 scenarios |
+| [docs/protocol/PROVENANCE.md](docs/protocol/PROVENANCE.md) | Where the 404 element names came from, and their licence |
+| [sc-capture/README.md](sc-capture/README.md) | The tool's own reference — commands, flags, module layout |
+| [specs/001-capture-proxy/](specs/001-capture-proxy/) | Why it is built this way: [spec](specs/001-capture-proxy/spec.md), [plan](specs/001-capture-proxy/plan.md), [contracts](specs/001-capture-proxy/contracts/) |
+| [.specify/memory/constitution.md](.specify/memory/constitution.md) | The principles every decision here answers to |
+
 One repository, one clone. `sc-capture/` is a self-contained Go module — it builds on its own with
-no external dependency beyond `gopacket` — but it lives here, so a single `git clone` gets you the
+no external module and one dependency — but it lives here, so a single `git clone` gets you the
 manual, the checklist, the protocol reference and the tool that uses them.
 
 ### Commands

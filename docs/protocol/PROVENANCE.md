@@ -4,7 +4,7 @@
 
 This directory holds the known protocol element universe and the reference material it was
 derived from. It exists so that `sc-capture` can bootstrap its never-observed set (Principle III,
-FR-020–024) without depending on any repository outside this workspace.
+FR-020–024) without depending on any repository outside this one.
 
 ## Source
 
@@ -13,7 +13,7 @@ FR-020–024) without depending on any repository outside this workspace.
 | Origin | `https://github.com/sc-re/sc-proxy` |
 | Commit | `968f1a3f1127a6b1ef3da010cadab895dac4dd33` (2026-06-25) |
 | Licence | **Unlicense** — public domain, no attribution or copyleft obligation |
-| Imported by | One-time `git clone --depth 1`; the repository is no longer part of this workspace |
+| Imported by | One-time `git clone --depth 1`; nothing here depends on that repository remaining reachable |
 
 The Unlicense is why this import is friction-free: the tables are data released into the public
 domain and may be copied, modified and redistributed under any licence `sc-capture` later

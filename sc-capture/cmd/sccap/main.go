@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/sc-re/sc-capture/internal/exitcode"
-	"github.com/sc-re/sc-capture/internal/version"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/exitcode"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/version"
 )
 
 const usage = `sccap — Star Conflict capture tooling (%s)

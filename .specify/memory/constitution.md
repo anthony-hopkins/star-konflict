@@ -1,9 +1,9 @@
 # Star Conflict Preservation Constitution
 
-Governing principles for work in this workspace: capturing, decoding and reimplementing the
+Governing principles for work in this repository: capturing, decoding and reimplementing the
 Star Conflict network protocol before the official servers shut down.
 
-**Scope.** This constitution binds work authored here. As of v2.0.0 this workspace is
+**Scope.** This constitution binds work authored here. As of v2.0.0 this project is
 self-contained: the Python decoder (`sc-re/sc-proxy`, Unlicense) and the Go server
 reimplementation (`sc-re/star-conflict-revitalized`, EUPL-1.2) are external projects that no
 longer live here and that this document does not govern. Protocol knowledge recovered by them
@@ -89,7 +89,7 @@ timestamps.
 ### VI. One Protocol Implementation
 
 There MUST be exactly one implementation of framing, message typing, and common value encodings
-in this workspace. It MUST live in a single package with no dependency on capture, storage, or
+in this repository. It MUST live in a single package with no dependency on capture, storage, or
 transport, so that a future server reimplementation can consume it unchanged. A second parser of
 the same construct — for tests, for tooling, for convenience — is a defect.
 

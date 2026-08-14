@@ -1,4 +1,4 @@
-module github.com/sc-re/sc-capture
+module github.com/anthony-hopkins/star-konflict/sc-capture
 
 go 1.26.5
 

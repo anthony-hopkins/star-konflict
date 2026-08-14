@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sc-re/sc-capture/internal/decode"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/decode"
 )
 
 // Deriver turns decoded traffic into timeline annotations.

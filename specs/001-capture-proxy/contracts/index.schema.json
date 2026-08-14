@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/sc-re/sc-capture/schemas/index.schema.json",
+  "$id": "https://github.com/anthony-hopkins/star-konflict/sc-capture/schemas/index.schema.json",
   "title": "sccap record index line",
   "description": "One line of index.jsonl. DERIVED DATA: fully regenerable from the pcapng segments via `sccap index --rebuild`. A missing, truncated or corrupt index never invalidates a session. A truncated final line after abrupt termination is expected and detected on parse.",
   "type": "object",

@@ -21,7 +21,7 @@ import (
 	"syscall"
 	"unsafe"
 
-	"github.com/sc-re/sc-capture/internal/client"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/client"
 )
 
 // Severity of a single check result.

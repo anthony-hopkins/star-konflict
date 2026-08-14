@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/sc-re/sc-capture/internal/decode"
-	"github.com/sc-re/sc-capture/pkg/scproto"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/decode"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/pkg/scproto"
 )
 
 // TestOfflineDecodeIsReproducible covers US5, FR-029, FR-030 and SC-007.

@@ -7,10 +7,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/sc-re/sc-capture/internal/exitcode"
-	"github.com/sc-re/sc-capture/internal/journal"
-	"github.com/sc-re/sc-capture/internal/session"
-	"github.com/sc-re/sc-capture/internal/verify"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/exitcode"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/journal"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/session"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/verify"
 )
 
 func runVerify(args []string) int {

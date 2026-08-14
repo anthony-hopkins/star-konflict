@@ -123,7 +123,24 @@ Sessions contain authentication material — the master-server protocol has no t
 encryption. Every session is marked sensitive, created `0700`/`0600`, and nothing leaves your
 machine unless you send it yourself. Use a throwaway game account.
 
+## Where this sits
+
+`sc-capture/` is a self-contained Go module inside the
+[star-konflict](https://github.com/anthony-hopkins/star-konflict) repository. It builds on its own
+— one dependency, no cgo, no sibling module — but it lives alongside the capture manual, the
+scenario checklist and the protocol reference it depends on, so one clone gets you everything.
+
+Start at the [repository README](../README.md) for the step-by-step capture guide.
+
+`pkg/scproto` is the one exported package: the single implementation of framing, message typing
+and value encodings, deliberately free of any dependency on the rest of the tree so a future
+server reimplementation can consume it unchanged.
+
+```go
+import "github.com/anthony-hopkins/star-konflict/sc-capture/pkg/scproto"
+```
+
 ## Licence
 
 MIT, see `LICENSE.txt`. Protocol element tables are public-domain in origin; see
-`docs/protocol/PROVENANCE.md` in the parent workspace.
+[`docs/protocol/PROVENANCE.md`](../docs/protocol/PROVENANCE.md).

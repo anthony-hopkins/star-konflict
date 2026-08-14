@@ -6,7 +6,7 @@
 
 ## Summary
 
-Build `sc-capture` — a new Go repository producing a single static binary, `sccap` — that
+Build `sc-capture` — a Go module producing a single static binary, `sccap` — that
 archives the complete network footprint of a Star Conflict play session as a self-describing,
 verifiable bundle, and knows enough about what it captured to report what has never been seen.
 
@@ -34,7 +34,7 @@ dedicated-server relay is scoped to a time-boxed feasibility spike.
 **Primary Dependencies**: `github.com/gopacket/gopacket` v1.7.1 (`afpacket`, `pcapgo`,
 `reassembly`) — the only external dependency. Protocol framing, message typing and value
 encodings are implemented in-repo in `pkg/scproto` (Principle VI as amended). No cgo —
-`CGO_ENABLED=0`. No sibling checkout required: the repository builds from a fresh clone.
+`CGO_ENABLED=0`. No external module required: it builds from a fresh clone of this repository.
 
 **Storage**: Filesystem bundles. pcapng segments (raw journal) + `index.jsonl` (derived record
 index) + `session.json` (metadata) + `markers.log` + `SHA256SUMS`. Cross-session coverage state
@@ -90,7 +90,7 @@ to a few GB. Known protocol element universe ≈ 404 (39 message types, 249 `AC_
 shape) — honoured by treating `docs/protocol/` as a hypothesis to verify, never as ground truth;
 feasibility spikes precede design — the UDP relay is scoped as a spike (R8); fault injection is a
 required test — first-class in the test plan; every change states its archive effect — enforced
-by a PR template in the new repo.
+by the repository's pull request template.
 
 **Result: no violations.** Complexity Tracking is empty.
 
@@ -129,8 +129,8 @@ specs/001-capture-proxy/
 
 ### Source Code (repository root)
 
-New sibling repository in the workspace, per the constitution's settled commitment that capture
-tooling lives in its own repo:
+A self-contained Go module inside this repository, per the constitution's settled commitment
+that capture tooling is independently buildable:
 
 ```text
 star-conflict-clone/                    # the repository

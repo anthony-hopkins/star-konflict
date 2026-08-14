@@ -394,7 +394,7 @@ to know it should be.
   — framing, message type table, opcode names — and is available as public-domain prior art. A
   frozen snapshot is held in `docs/protocol/` (404 named elements). It is treated as a starting
   hypothesis to verify, not as ground truth.
-- **The system is self-contained.** It builds and runs with no sibling repository present, and
+- **The system is self-contained.** It builds and runs with no external module present, and
   holds exactly one implementation of framing, message typing and value encodings, per
   Constitution Principle VI as amended on 2026-08-13.
 - **Contributors use throwaway game accounts.** The system marks sessions sensitive regardless,

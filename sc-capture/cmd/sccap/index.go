@@ -6,11 +6,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/sc-re/sc-capture/internal/decode"
-	"github.com/sc-re/sc-capture/internal/exitcode"
-	"github.com/sc-re/sc-capture/internal/index"
-	"github.com/sc-re/sc-capture/internal/journal"
-	"github.com/sc-re/sc-capture/internal/session"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/decode"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/exitcode"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/index"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/journal"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/session"
 )
 
 // runIndex rebuilds the derived record index from the raw journal.

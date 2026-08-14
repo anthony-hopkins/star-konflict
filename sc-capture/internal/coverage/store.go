@@ -16,7 +16,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/sc-re/sc-capture/pkg/scproto"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/pkg/scproto"
 )
 
 // SchemaVersion of the coverage document.

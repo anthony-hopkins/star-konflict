@@ -7,10 +7,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/sc-re/sc-capture/internal/doctor"
-	"github.com/sc-re/sc-capture/internal/exitcode"
-	"github.com/sc-re/sc-capture/internal/session"
-	"github.com/sc-re/sc-capture/internal/version"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/doctor"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/exitcode"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/session"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/version"
 )
 
 func runDoctor(args []string) int {

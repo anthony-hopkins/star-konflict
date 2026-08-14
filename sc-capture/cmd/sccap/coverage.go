@@ -8,10 +8,10 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/sc-re/sc-capture/internal/coverage"
-	"github.com/sc-re/sc-capture/internal/exitcode"
-	"github.com/sc-re/sc-capture/internal/session"
-	"github.com/sc-re/sc-capture/pkg/scproto"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/coverage"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/exitcode"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/session"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/pkg/scproto"
 )
 
 func runCoverage(args []string) int {

@@ -47,7 +47,7 @@ Spec priority is US1/US2 (P1) → US3/US4 (P2) → US5/US6 (P3). Delivery order 
 **Purpose**: Create the repository and its build
 
 - [X] T001 Create `sc-capture/` directory tree per plan.md Structure Decision (`cmd/sccap/`, `pkg/scproto/tables/`, `internal/{capture,journal,session,flow,decode/isolate,index,coverage,annotate,verify,doctor,relay,status}/`, `testdata/{golden,corpus,bundles}/`, `tests/{architecture,faultinjection,e2e}/`)
-- [X] T002 Initialize module in `sc-capture/go.mod` as `github.com/sc-re/sc-capture`, Go 1.26, and add the sole dependency `github.com/gopacket/gopacket v1.7.1`
+- [X] T002 Initialize module in `sc-capture/go.mod` as `github.com/anthony-hopkins/star-konflict/sc-capture`, Go 1.26, and add the sole dependency `github.com/gopacket/gopacket v1.7.1`
 - [X] T003 [P] Add MIT licence text to `sc-capture/LICENSE.txt` (research.md R15)
 - [X] T004 [P] Write `sc-capture/README.md` covering build, `CGO_ENABLED=0`, capability grant, and the four completeness checks
 - [X] T005 [P] Add CI in `sc-capture/.github/workflows/ci.yml`: `go vet`, `go test ./...`, and `CGO_ENABLED=0` cross-compile for linux/amd64 and linux/arm64
