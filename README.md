@@ -565,6 +565,10 @@ star-conflict-clone/
 └── sc-capture/                      # the tool (Go, MIT)
 ```
 
+`sc-capture/` is an **independent repository** checked out inside this workspace and ignored by
+it — commit and push to it separately:
+[github.com/anthony-hopkins/sc-capture](https://github.com/anthony-hopkins/sc-capture)
+
 ### Commands
 
 | Command | Purpose |
