@@ -157,6 +157,7 @@ You want every line `OK` before continuing. A typical first run finds one thing:
          sudo ethtool -K eno1 tso off gso off gro off lro off
 [OK  ] clock                  system clock is disciplined
 [OK  ] coverage store         /home/you/.local/share/sccap is writable
+[OK  ] game client            Star Conflict, build 24666578, binary a2ccf9bcda13, EM_386 (32-bit)
 [OK  ] protocol tables        embedded element universe revision sc-proxy@968f1a3f
 ```
 
@@ -172,10 +173,46 @@ Use an account you don't care about. Never a primary account.
 
 ### 2.5 Archive your game client
 
-Copy your entire Star Conflict install somewhere safe and note the version. This is not optional
-housekeeping: the client contains the code that reads every server message, which makes it the
-**only way to recover a message's structure if you never recorded that message**. Recordings
-without the matching client build are often undecodable.
+The client contains the code that reads every server message, which makes it the **only way to
+recover a message's structure if you never recorded that message**. Recordings without the
+matching client build are often undecodable. Archive it.
+
+The essential part is small — the executable and its libraries, not the multi-gigabyte assets:
+
+```bash
+mkdir -p ~/sc-archive
+cd ~/.local/share/Steam/steamapps/common/"star conflict"
+tar czf ~/sc-archive/sc-client-$(date -u +%Y%m%d).tar.gz \
+    --exclude=data StarConflict crashreporter *.so* datasources.txt
+cp ~/.local/share/Steam/steamapps/appmanifest_212070.acf ~/sc-archive/
+sha256sum ~/sc-archive/* > ~/sc-archive/SHA256SUMS
+```
+
+Keep the full install on disk too if you have room — `data/gamedata.pak` may hold item and ship
+tables worth having — but the archive above is the urgent part.
+
+**You don't need to write the version down.** `sccap` identifies the client automatically and
+records it in every session:
+
+```json
+"client": {
+  "name": "Star Conflict",
+  "build_id": "24666578",
+  "depot_manifests": { "212072": "3741217375342066373" },
+  "install_path": "~/.local/share/Steam/steamapps/common/star conflict",
+  "binary_sha256": "830f9e5b21c9612d...",
+  "binary_build_id": "a2ccf9bcda13b2adc208b43b19d335862444333d",
+  "binary_arch": "EM_386 (32-bit)",
+  "runtime": "native"
+}
+```
+
+The SHA-256 and the compiler's own GNU build-id are the identities that matter — a Steam build id
+can be reused, a hash cannot. If autodetection fails, pass `--client-dir <path>`; the session
+records an explicit anomaly rather than quietly omitting it.
+
+The install path is stored with your home directory replaced by `~`, and your Steam account id is
+never recorded. Which library the game sits in is worth knowing; who you are is not.
 
 See [§6.1 of the capture manual](docs/Star-Conflict-Capture-Protocol.md).
 
@@ -184,10 +221,10 @@ See [§6.1 of the capture manual](docs/Star-Conflict-Capture-Protocol.md).
 - [ ] Go 1.26+ installed (`go version`)
 - [ ] `sccap` built
 - [ ] Capability granted (`getcap out/sccap`)
-- [ ] `sccap doctor` shows no `FAIL`
+- [ ] `sccap doctor` shows no `FAIL` — including a `game client` line
 - [ ] Network card offloads turned off
 - [ ] Throwaway game account created
-- [ ] Game client + version archived somewhere safe
+- [ ] Game client binary archived somewhere safe
 
 ---
 

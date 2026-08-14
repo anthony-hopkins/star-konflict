@@ -104,14 +104,45 @@
 
     "client": {
       "type": "object",
+      "description": "Identity of the game build this session was captured against, detected automatically from the platform's application manifest and the client executable. A recording without its matching client build is frequently undecodable, so this is what lets a reader years later confirm they hold the same executable that produced these bytes. Absent when no install could be found; the session records an anomaly saying so.",
       "properties": {
-        "game_version": { "type": "string" },
-        "build_id": { "type": "string" },
+        "app_id": { "type": "string" },
+        "name": { "type": "string" },
+        "build_id": {
+          "type": "string",
+          "description": "Platform build id (e.g. Steam buildid). Identifies the release, but may be reused; binary_sha256 is the unambiguous identity."
+        },
+        "depot_manifests": {
+          "type": "object",
+          "description": "Depot id to content manifest id. Pins the exact installed content, and unlike an owner id refers to content rather than a person.",
+          "additionalProperties": { "type": "string" }
+        },
+        "install_path": {
+          "type": "string",
+          "description": "Install location with the user's home directory replaced by '~'. Which library the game sits in is worth recording; the account name on the machine is not, and sessions get shared."
+        },
+        "last_updated": { "type": "string", "format": "date-time" },
+        "binary_name": { "type": "string" },
+        "binary_size": { "type": "integer", "minimum": 0 },
+        "binary_sha256": {
+          "type": "string",
+          "description": "Hash of the client executable. The strongest build identity available: a build id can be reused, a hash cannot."
+        },
+        "binary_build_id": {
+          "type": "string",
+          "description": "GNU build-id from the executable's ELF notes — the compiler's own stamp on this exact binary."
+        },
+        "binary_arch": { "type": "string" },
         "platform": { "type": "string" },
-        "runtime": { "type": "string" },
+        "runtime": {
+          "type": "string",
+          "description": "e.g. 'native' or a Wine/Proton build. Changes what a reader should expect of the capture, notably how TLS key material could have been obtained."
+        },
         "launcher": { "type": "string" },
-        "process_name": { "type": "string" },
-        "locale": { "type": "string" }
+        "source": {
+          "type": "string",
+          "description": "How the client was identified, so a reader can weigh an autodetected install against a hand-supplied path."
+        }
       }
     },
 
