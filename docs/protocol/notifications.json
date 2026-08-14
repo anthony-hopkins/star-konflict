@@ -1,0 +1,466 @@
+[
+ {
+  "id": 0,
+  "name": "SN_VESSELS_AUTO_REPAIRED"
+ },
+ {
+  "id": 1,
+  "name": "SN_VESSELS_AUTO_REPAIR_FAILED"
+ },
+ {
+  "id": 2,
+  "name": "SN_VESSEL_REPAIRED"
+ },
+ {
+  "id": 3,
+  "name": "SN_DURABILITY_RESTORED"
+ },
+ {
+  "id": 4,
+  "name": "SN_FREE_REPAIR_USED"
+ },
+ {
+  "id": 5,
+  "name": "SN_VESSELS_AUTO_REFILLED"
+ },
+ {
+  "id": 6,
+  "name": "SN_VESSELS_AUTO_REFILL_FAILED"
+ },
+ {
+  "id": 7,
+  "name": "SN_VESSEL_REFILLED"
+ },
+ {
+  "id": 8,
+  "name": "SN_ITEM_PURCHASED"
+ },
+ {
+  "id": 9,
+  "name": "SN_ITEM_BURNED"
+ },
+ {
+  "id": 10,
+  "name": "SN_CREDITS_PURCHASED"
+ },
+ {
+  "id": 11,
+  "name": "SN_PREMIUM_TIME_PURCHASED"
+ },
+ {
+  "id": 12,
+  "name": "SN_INVENTORY_EXT_PURCHASED"
+ },
+ {
+  "id": 13,
+  "name": "SN_ITEM_SOLD"
+ },
+ {
+  "id": 14,
+  "name": "SN_ITEM_SALVAGED"
+ },
+ {
+  "id": 15,
+  "name": "SN_LIKE_ADDED"
+ },
+ {
+  "id": 16,
+  "name": "SN_UPDATE_DLC_OWNERSHIP"
+ },
+ {
+  "id": 17,
+  "name": "SN_WAR_THUNDER_PROMO"
+ },
+ {
+  "id": 18,
+  "name": "SN_VK_GROUP_REWARD_PROMO"
+ },
+ {
+  "id": 19,
+  "name": "SN_VESSEL_LEVELUP"
+ },
+ {
+  "id": 20,
+  "name": "SN_BATTLE_SLOT_AVAILABLE"
+ },
+ {
+  "id": 21,
+  "name": "SN_SKILL_LEARNED"
+ },
+ {
+  "id": 22,
+  "name": "SN_SKILL_RESET"
+ },
+ {
+  "id": 23,
+  "name": "SN_MODULE_EQUIPPED"
+ },
+ {
+  "id": 24,
+  "name": "SN_MODULE_UNEQUIPPED"
+ },
+ {
+  "id": 25,
+  "name": "SN_MODULE_UNEQUIPPED_MULTI"
+ },
+ {
+  "id": 26,
+  "name": "SN_MUNITION_EQUIPPED"
+ },
+ {
+  "id": 27,
+  "name": "SN_MUNITION_UNEQUIPPED"
+ },
+ {
+  "id": 28,
+  "name": "SN_BATTLE_SLOT_VESSEL_INSTALLED"
+ },
+ {
+  "id": 29,
+  "name": "SN_BATTLE_SLOT_VESSEL_REMOVED"
+ },
+ {
+  "id": 30,
+  "name": "SN_GAME_REWARDED"
+ },
+ {
+  "id": 31,
+  "name": "SN_LEADERBOARD_SOMETHING"
+ },
+ {
+  "id": 32,
+  "name": "SN_ACHIEVEMENT_UNLOCKED"
+ },
+ {
+  "id": 33,
+  "name": "SN_SQUAD_NOTIFICATION"
+ },
+ {
+  "id": 34,
+  "name": "SN_RACE_RANK"
+ },
+ {
+  "id": 35,
+  "name": "SN_SOCIAL_NOTIFICATION"
+ },
+ {
+  "id": 36,
+  "name": "SN_YUP_PURCHASE"
+ },
+ {
+  "id": 37,
+  "name": "SN_GOLD_REVOKE"
+ },
+ {
+  "id": 38,
+  "name": "SN_GOLD_EMISSION"
+ },
+ {
+  "id": 39,
+  "name": "SN_STEAM_PURCHASE"
+ },
+ {
+  "id": 40,
+  "name": "SN_BONUS_BUNDLE"
+ },
+ {
+  "id": 41,
+  "name": "SN_STRIPPED_UNAVAILABLE_ITEMS"
+ },
+ {
+  "id": 42,
+  "name": "SN_MAINTENANCE_COUNTDOWN"
+ },
+ {
+  "id": 43,
+  "name": "SN_MAINTENANCE_CANCELLED"
+ },
+ {
+  "id": 44,
+  "name": "SN_STEAM_DLC_PURCHASED"
+ },
+ {
+  "id": 45,
+  "name": "SN_PREMIUM_ACCESS"
+ },
+ {
+  "id": 46,
+  "name": "SN_VESSEL_CUSTOM_ELEMENTS_CHANGED"
+ },
+ {
+  "id": 47,
+  "name": "SN_VESSEL_CUSTOM_ELEMENTS_EXPIRED"
+ },
+ {
+  "id": 48,
+  "name": "SN_VESSEL_CUSTOM_ELEMENTS_NEW_FREE"
+ },
+ {
+  "id": 49,
+  "name": "SN_WELCOME_MSG"
+ },
+ {
+  "id": 50,
+  "name": "SN_MOTD"
+ },
+ {
+  "id": 51,
+  "name": "SN_ITEM_ADVERT"
+ },
+ {
+  "id": 52,
+  "name": "SN_GOLD_POOL_ADVERT"
+ },
+ {
+  "id": 53,
+  "name": "SN_LOBBY_NOTIFICATION"
+ },
+ {
+  "id": 54,
+  "name": "SN_DAILY_LOGIN"
+ },
+ {
+  "id": 55,
+  "name": "SN_NEW_LETTER"
+ },
+ {
+  "id": 56,
+  "name": "SN_STEAM_GROUP_PROMO"
+ },
+ {
+  "id": 57,
+  "name": "SN_QUEST_ACCEPTED"
+ },
+ {
+  "id": 58,
+  "name": "SN_QUEST_PROGRESS"
+ },
+ {
+  "id": 59,
+  "name": "SN_QUEST_COMPLETED"
+ },
+ {
+  "id": 60,
+  "name": "SN_TITLE_ACQUIRED"
+ },
+ {
+  "id": 61,
+  "name": "SN_AVATAR_ACQUIRED"
+ },
+ {
+  "id": 62,
+  "name": "SN_MOTTO_ACQUIRED"
+ },
+ {
+  "id": 63,
+  "name": "SN_REFEREE_ADDED"
+ },
+ {
+  "id": 64,
+  "name": "SN_REFERRER_BONUS_GOLD"
+ },
+ {
+  "id": 65,
+  "name": "SN_STEAM_PRIVATE_PROFILE"
+ },
+ {
+  "id": 66,
+  "name": "SN_PRESTIGE_CHANGED"
+ },
+ {
+  "id": 67,
+  "name": "SN_RESOURCE_VESSEL_DEACTIVATE"
+ },
+ {
+  "id": 68,
+  "name": "SN_ZONE_OWNAGE_REWARD"
+ },
+ {
+  "id": 69,
+  "name": "SN_CLAN_NOTIFICATION"
+ },
+ {
+  "id": 70,
+  "name": "SN_PLAYER_CRAFTED_VESSEL"
+ },
+ {
+  "id": 71,
+  "name": "SN_PLAYER_BOUGHT_PREMIUM_VESSEL"
+ },
+ {
+  "id": 72,
+  "name": "SN_ADMIN_TASK_RESULT"
+ },
+ {
+  "id": 73,
+  "name": "SN_TEACHING_NOTIFICATION"
+ },
+ {
+  "id": 74,
+  "name": "SN_CRAFT_RESULT"
+ },
+ {
+  "id": 75,
+  "name": "SN_ARC_PURCHASE"
+ },
+ {
+  "id": 76,
+  "name": "SN_TALENT_NOTIFICATION"
+ },
+ {
+  "id": 77,
+  "name": "SN_GAME_REWARDED_PREMIUM"
+ },
+ {
+  "id": 78,
+  "name": "SN_SHIP_QUEST_STARTED"
+ },
+ {
+  "id": 79,
+  "name": "SN_SHIP_QUEST_ENDED"
+ },
+ {
+  "id": 80,
+  "name": "SN_TOURNAMENT_REWARDS"
+ },
+ {
+  "id": 81,
+  "name": "SN_ZONE_OWNER_CHANGED"
+ },
+ {
+  "id": 82,
+  "name": "SN_CLANSHIP_BUILDING_FINISHED"
+ },
+ {
+  "id": 83,
+  "name": "SN_NEW_LETTERS"
+ },
+ {
+  "id": 84,
+  "name": "SN_ITEM_CONVERTED"
+ },
+ {
+  "id": 85,
+  "name": "SN_PLAYER_UNLOCKED_ACHIEVEMENT"
+ },
+ {
+  "id": 86,
+  "name": "SN_MASSIVE_SALE"
+ },
+ {
+  "id": 87,
+  "name": "SN_MASSIVE_RESOURCE_SALE"
+ },
+ {
+  "id": 88,
+  "name": "SN_LETTER_PAYMENT"
+ },
+ {
+  "id": 89,
+  "name": "SN_LETTER_REJECTED"
+ },
+ {
+  "id": 90,
+  "name": "SN_LETTER_EXPIRED"
+ },
+ {
+  "id": 91,
+  "name": "SN_ADMIN_LETTERS"
+ },
+ {
+  "id": 92,
+  "name": "SN_LETTER_ITEMS"
+ },
+ {
+  "id": 93,
+  "name": "SN_LETTER_GOODS"
+ },
+ {
+  "id": 94,
+  "name": "SN_UPGRADE_RESULT"
+ },
+ {
+  "id": 95,
+  "name": "SN_EMM_EXIST_OPPONENT"
+ },
+ {
+  "id": 96,
+  "name": "SN_ATLAS_INIT"
+ },
+ {
+  "id": 97,
+  "name": "SN_ACCOUNT_RANK_UP"
+ },
+ {
+  "id": 98,
+  "name": "SN_MILITARY_EXP_ADD"
+ },
+ {
+  "id": 99,
+  "name": "SN_ADVERT_DELETE"
+ },
+ {
+  "id": 100,
+  "name": "SN_SELL_PRODUCT_FROM_ADVERT"
+ },
+ {
+  "id": 101,
+  "name": "SN_UNLIM_PVE_UPGRADE_PLAYER_LEVEL"
+ },
+ {
+  "id": 102,
+  "name": "SN_AUTOGEN_INVENTORY_EXT_PURCHASED"
+ },
+ {
+  "id": 103,
+  "name": "SN_AUTOGEN_UPGRADE_RESULT"
+ },
+ {
+  "id": 104,
+  "name": "SN_EQUIPMENT_CHANGE_MULTI"
+ },
+ {
+  "id": 105,
+  "name": "SN_BATTLE_PASS_UNLOCK"
+ },
+ {
+  "id": 106,
+  "name": "SN_IMAGINARY_QUEST_REWARD"
+ },
+ {
+  "id": 107,
+  "name": "SN_LOBBY_GROUP_CREATED"
+ },
+ {
+  "id": 108,
+  "name": "SN_AUTOGEN_DESTROYED"
+ },
+ {
+  "id": 109,
+  "name": "SN_AUTOGEN_DISMANTLED"
+ },
+ {
+  "id": 110,
+  "name": "SN_QUEST_KEY_CHANGE"
+ },
+ {
+  "id": 111,
+  "name": "SN_GAME_EVENT_STATE_CHANGED"
+ },
+ {
+  "id": 112,
+  "name": "SN_DLC_PURCHASED"
+ },
+ {
+  "id": 113,
+  "name": "SN_ADVENTURE_FINAL"
+ },
+ {
+  "id": 114,
+  "name": "SN_ADVENTURE_PROGRESS"
+ },
+ {
+  "id": 115,
+  "name": "SN_NUM"
+ }
+]

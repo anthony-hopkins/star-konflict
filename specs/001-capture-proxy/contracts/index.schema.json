@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sc-re/sc-capture/schemas/index.schema.json",
+  "title": "sccap record index line",
+  "description": "One line of index.jsonl. DERIVED DATA: fully regenerable from the pcapng segments via `sccap index --rebuild`. A missing, truncated or corrupt index never invalidates a session. A truncated final line after abrupt termination is expected and detected on parse.",
+  "type": "object",
+  "required": ["seq", "conn_id", "dir", "t_wall", "t_mono", "frames", "byte_len"],
+  "additionalProperties": false,
+  "properties": {
+    "seq": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Monotonic within the session."
+    },
+    "conn_id": {
+      "type": "string",
+      "description": "References session.json.connections[].conn_id."
+    },
+    "dir": {
+      "type": "string",
+      "enum": ["c2s", "s2c"],
+      "description": "Direction of travel (FR-007)."
+    },
+    "t_wall": {
+      "type": "string",
+      "format": "date-time",
+      "description": "UTC wall-clock, nanosecond precision (FR-003)."
+    },
+    "t_mono": {
+      "type": "integer",
+      "description": "Nanoseconds since session start, from CLOCK_MONOTONIC. Survives a wall-clock step (FR-003)."
+    },
+    "frames": {
+      "type": "array",
+      "minItems": 1,
+      "description": "The pcapng frames this record spans — the link back to evidence. A record that cannot cite its frames is a bug, not a record.",
+      "items": {
+        "type": "object",
+        "required": ["segment", "index"],
+        "additionalProperties": false,
+        "properties": {
+          "segment": {
+            "type": "string",
+            "description": "pcapng segment filename. Frame references are (segment, index) rather than globally numbered, so a lost segment does not invalidate references into the others."
+          },
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Zero-based frame index within that segment."
+          }
+        }
+      }
+    },
+    "byte_len": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Length in bytes of the protocol-level unit (datagram, or one framed message on a reassembled stream)."
+    },
+    "decode": {
+      "type": ["object", "null"],
+      "description": "Interpretation of the record. null means decode was not attempted (e.g. --no-decode). Never a substitute for the bytes.",
+      "required": ["status"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["decoded", "undecoded", "unknown_element", "failed"],
+          "description": "decoded = type and body understood. undecoded = element recognised, body layout unknown. unknown_element = opcode/type absent from the known universe, flagged as novel (FR-023). failed = decoder errored or panicked; contained, capture unaffected (FR-016)."
+        },
+        "message_type": {
+          "type": ["string", "null"],
+          "description": "e.g. CSCMD_ASYNC_REQ, SCMD_NOTIFICATION (FR-015)."
+        },
+        "message_type_id": { "type": ["integer", "null"], "minimum": 0 },
+        "element": {
+          "type": ["string", "null"],
+          "description": "Sub-type name: an AC_* opcode or SN_* notification type (FR-015)."
+        },
+        "element_id": { "type": ["integer", "null"], "minimum": 0 },
+        "element_kind": {
+          "type": ["string", "null"],
+          "enum": ["message_type", "async_request", "notification", null]
+        },
+        "fields": {
+          "type": ["object", "null"],
+          "description": "Decoded fields. Present only when status is 'decoded'. A partial interpretation is never presented as complete — anything short of a full decode is 'undecoded' (FR-017)."
+        },
+        "reason": {
+          "type": ["string", "null"],
+          "description": "Why decoding stopped, for undecoded/failed."
+        },
+        "novel": {
+          "type": "boolean",
+          "description": "Element is unknown to this build's element universe. Surfaced to the contributor during capture (FR-023)."
+        },
+        "decoder_version": {
+          "type": ["string", "null"],
+          "description": "Which decoder produced this result. Lets a re-decode years later be compared against what was recorded at capture time (FR-030, SC-007)."
+        }
+      }
+    },
+    "annotation_seq": {
+      "type": ["integer", "null"],
+      "description": "Marker sequence nearest this record, when a contributor or derived annotation applies (FR-018, FR-019)."
+    }
+  }
+}

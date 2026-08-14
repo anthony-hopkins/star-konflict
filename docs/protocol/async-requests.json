@@ -1,0 +1,1247 @@
+[
+ {
+  "id": 0,
+  "name": "AC_LOAD_INITIAL_PLAYER_DATA",
+  "handler_vma": "0x0823103b"
+ },
+ {
+  "id": 1,
+  "name": "AC_SERVER_INFO",
+  "handler_vma": "0x0822ddea"
+ },
+ {
+  "id": 2,
+  "name": "AC_ENTER_MM_QUEUE",
+  "handler_vma": "0x08231e51"
+ },
+ {
+  "id": 3,
+  "name": "AC_LEAVE_MM_QUEUE",
+  "handler_vma": "0x08231acc"
+ },
+ {
+  "id": 4,
+  "name": "AC_MM_INFO",
+  "handler_vma": "0x08231dbc"
+ },
+ {
+  "id": 5,
+  "name": "AC_ENTER_TOURNAMENT",
+  "handler_vma": "0x0822c02e"
+ },
+ {
+  "id": 6,
+  "name": "AC_LEAVE_TOURNAMENT",
+  "handler_vma": "0x08232361"
+ },
+ {
+  "id": 7,
+  "name": "AC_GET_USERDATA",
+  "handler_vma": "0x08232189"
+ },
+ {
+  "id": 8,
+  "name": "AC_SET_USERDATA",
+  "handler_vma": "0x082322ab"
+ },
+ {
+  "id": 9,
+  "name": "AC_PLAYER_CREDENTIALS",
+  "handler_vma": "0x082305c7"
+ },
+ {
+  "id": 10,
+  "name": "AC_PLAYER_CREDITS",
+  "handler_vma": "0x08231c56"
+ },
+ {
+  "id": 11,
+  "name": "AC_PLAYER_STATS",
+  "handler_vma": "0x08231bf4"
+ },
+ {
+  "id": 12,
+  "name": "AC_PLAYER_ARC_BALANCE",
+  "handler_vma": "0x08232318"
+ },
+ {
+  "id": 13,
+  "name": "AC_TITLES_SET_ACTIVE",
+  "handler_vma": "0x0822c6ed"
+ },
+ {
+  "id": 14,
+  "name": "AC_AVATARS_SET_ACTIVE",
+  "handler_vma": "0x0822c752"
+ },
+ {
+  "id": 15,
+  "name": "AC_MOTTOS_SET_ACTIVE",
+  "handler_vma": "0x0822f77d"
+ },
+ {
+  "id": 16,
+  "name": "AC_CHOOSE_STARTING_STATION",
+  "handler_vma": "0x0822ecbb"
+ },
+ {
+  "id": 17,
+  "name": "AC_CHANGE_PLAYER_NICKNAME",
+  "handler_vma": "0x0822ebd8"
+ },
+ {
+  "id": 18,
+  "name": "AC_STEAM_USER_INFO",
+  "handler_vma": "0x0822eb94"
+ },
+ {
+  "id": 19,
+  "name": "AC_PREMIUM_INFO",
+  "handler_vma": "0x0822fa96"
+ },
+ {
+  "id": 20,
+  "name": "AC_PREMIUM_BUY",
+  "handler_vma": "0x0822f442"
+ },
+ {
+  "id": 21,
+  "name": "AC_ACCOUNT_AURAS",
+  "handler_vma": "0x0822f87d"
+ },
+ {
+  "id": 22,
+  "name": "AC_ADD_ACCOUNT_AURA",
+  "handler_vma": "0x0822d36f"
+ },
+ {
+  "id": 23,
+  "name": "AC_CANCEL_ACCOUNT_AURA",
+  "handler_vma": "0x0822dc26"
+ },
+ {
+  "id": 24,
+  "name": "AC_QUESTS",
+  "handler_vma": "0x0822d960"
+ },
+ {
+  "id": 25,
+  "name": "AC_QUEST_ACCEPT",
+  "handler_vma": "0x0822dc6b"
+ },
+ {
+  "id": 26,
+  "name": "AC_QUEST_CHANGE",
+  "handler_vma": "0x0822bce1"
+ },
+ {
+  "id": 27,
+  "name": "AC_QUEST_COMPLETE",
+  "handler_vma": "0x0822bc58"
+ },
+ {
+  "id": 29,
+  "name": "AC_SHIP_QUESTS",
+  "handler_vma": "0x0822bdf8"
+ },
+ {
+  "id": 30,
+  "name": "AC_SHIP_QUEST_START",
+  "handler_vma": "0x082340f8"
+ },
+ {
+  "id": 31,
+  "name": "AC_SHIP_QUEST_CHANGE",
+  "handler_vma": "0x082340b4"
+ },
+ {
+  "id": 32,
+  "name": "AC_SHIP_QUEST_END",
+  "handler_vma": "0x082341a8"
+ },
+ {
+  "id": 33,
+  "name": "AC_REWARDED_TUTORIALS",
+  "handler_vma": "0x08230703"
+ },
+ {
+  "id": 34,
+  "name": "AC_REWARD_TUTORIAL",
+  "handler_vma": "0x0823444a"
+ },
+ {
+  "id": 35,
+  "name": "AC_PLAYER_INVENTORY",
+  "handler_vma": "0x08233968"
+ },
+ {
+  "id": 36,
+  "name": "AC_PLAYER_AUTOGEN_INVENTORY",
+  "handler_vma": "0x082342e0"
+ },
+ {
+  "id": 37,
+  "name": "AC_PLAYER_VESSELS",
+  "handler_vma": "0x0822e436"
+ },
+ {
+  "id": 38,
+  "name": "AC_VESSEL_EQUIPMENT",
+  "handler_vma": "0x082352c8"
+ },
+ {
+  "id": 39,
+  "name": "AC_BUY_ITEM",
+  "handler_vma": "0x08233dd0"
+ },
+ {
+  "id": 40,
+  "name": "AC_SELL_ITEM",
+  "handler_vma": "0x08234a1b"
+ },
+ {
+  "id": 41,
+  "name": "AC_SELL_ITEMS",
+  "handler_vma": "0x0822fa48"
+ },
+ {
+  "id": 42,
+  "name": "AC_ENCHANT_ITEM",
+  "handler_vma": "0x08234d86"
+ },
+ {
+  "id": 43,
+  "name": "AC_SALVAGE_ITEM",
+  "handler_vma": "0x08234a1b"
+ },
+ {
+  "id": 44,
+  "name": "AC_SALVAGE_ITEMS",
+  "handler_vma": "0x0822fa48"
+ },
+ {
+  "id": 45,
+  "name": "AC_UPGRADE_ITEMS",
+  "handler_vma": "0x08232ed8"
+ },
+ {
+  "id": 46,
+  "name": "AC_UPGRADE_AUTOGEN_ITEM",
+  "handler_vma": "0x082348e0"
+ },
+ {
+  "id": 47,
+  "name": "AC_CRAFT_UPGRADE_ITEM",
+  "handler_vma": "0x0822d32b"
+ },
+ {
+  "id": 48,
+  "name": "AC_FIND_AUTOGEN_ITEM",
+  "handler_vma": "0x08234001"
+ },
+ {
+  "id": 49,
+  "name": "AC_ACTIVATE_RESOURCE_VESSEL",
+  "handler_vma": "0x08233fbd"
+ },
+ {
+  "id": 50,
+  "name": "AC_SELL_VESSEL",
+  "handler_vma": "0x08234b30"
+ },
+ {
+  "id": 51,
+  "name": "AC_VESSEL_CHANGE_EQUIP",
+  "handler_vma": "0x082352c8"
+ },
+ {
+  "id": 52,
+  "name": "AC_VESSEL_CHANGE_EQUIP_MULTI",
+  "handler_vma": "0x082352c8"
+ },
+ {
+  "id": 53,
+  "name": "AC_VESSEL_CHEAT_CHANGE_EQUIP",
+  "handler_vma": "0x0823010c"
+ },
+ {
+  "id": 54,
+  "name": "AC_VESSEL_TRANSFER_EQUIP",
+  "handler_vma": "0x08234e48"
+ },
+ {
+  "id": 55,
+  "name": "AC_VESSEL_STRIP_EQUIP",
+  "handler_vma": "0x0823353e"
+ },
+ {
+  "id": 56,
+  "name": "AC_VESSEL_CHANGE_MUNITION",
+  "handler_vma": "0x08234924"
+ },
+ {
+  "id": 57,
+  "name": "AC_VESSEL_REFILL_MUNITION",
+  "handler_vma": "0x0822d887"
+ },
+ {
+  "id": 58,
+  "name": "AC_VESSEL_TRANSFER_MUNITION",
+  "handler_vma": "0x0823453a"
+ },
+ {
+  "id": 59,
+  "name": "AC_VESSEL_AUTOGEN_DESTROY",
+  "handler_vma": "0x08233b7c"
+ },
+ {
+  "id": 60,
+  "name": "AC_VESSEL_AUTOGEN_DISMANTLE",
+  "handler_vma": "0x08233bc0"
+ },
+ {
+  "id": 61,
+  "name": "AC_VESSEL_EXTRACT_EXP",
+  "handler_vma": "0x0822f3ad"
+ },
+ {
+  "id": 62,
+  "name": "AC_VESSEL_LEVELUP",
+  "handler_vma": "0x08230bf0"
+ },
+ {
+  "id": 63,
+  "name": "AC_VESSEL_REPAIR",
+  "handler_vma": "0x08230ad8"
+ },
+ {
+  "id": 64,
+  "name": "AC_VESSEL_REPAIR_BATTLE",
+  "handler_vma": "0x08230d28"
+ },
+ {
+  "id": 65,
+  "name": "AC_VESSEL_REFILL_BATTLE",
+  "handler_vma": "0x08233754"
+ },
+ {
+  "id": 66,
+  "name": "AC_VESSEL_STRIP_IMPROPER_BATTLE",
+  "handler_vma": "0x08233d8c"
+ },
+ {
+  "id": 67,
+  "name": "AC_VESSEL_FREE_CUSTOM_ELEMENTS",
+  "handler_vma": "0x082308a3"
+ },
+ {
+  "id": 68,
+  "name": "AC_VESSEL_CUSTOM_ELEMENTS_BUY",
+  "handler_vma": "0x0823080e"
+ },
+ {
+  "id": 69,
+  "name": "AC_VESSEL_CUSTOM_ELEMENTS_ACKNOWLEDGE_EXPIRATION",
+  "handler_vma": "0x08230779"
+ },
+ {
+  "id": 70,
+  "name": "AC_VESSEL_CRAFT",
+  "handler_vma": "0x08233f81"
+ },
+ {
+  "id": 71,
+  "name": "AC_VESSEL_RECRAFT",
+  "handler_vma": "0x08233a55"
+ },
+ {
+  "id": 72,
+  "name": "AC_VESSEL_BUDGET_LEVELUP",
+  "handler_vma": "0x08233ea8"
+ },
+ {
+  "id": 73,
+  "name": "AC_VESSEL_BUDGET_ACTIVATE",
+  "handler_vma": "0x0822ecff"
+ },
+ {
+  "id": 74,
+  "name": "AC_VESSEL_UNLOCK_NODE",
+  "handler_vma": "0x08233c04"
+ },
+ {
+  "id": 75,
+  "name": "AC_VESSEL_ACTIVATE_NODE",
+  "handler_vma": "0x08233190"
+ },
+ {
+  "id": 76,
+  "name": "AC_BATTLE_SLOTS",
+  "handler_vma": "0x0822fe20"
+ },
+ {
+  "id": 77,
+  "name": "AC_BATTLE_SLOT_CHANGE_VESSEL",
+  "handler_vma": "0x0822fae5"
+ },
+ {
+  "id": 78,
+  "name": "AC_BATTLE_SLOT_SWAP_VESSELS",
+  "handler_vma": "0x08233002"
+ },
+ {
+  "id": 79,
+  "name": "AC_BATTLE_SLOT_CHEAT_CHANGE_VESSEL",
+  "handler_vma": "0x08232f6d"
+ },
+ {
+  "id": 80,
+  "name": "AC_INV_EXT_BUY",
+  "handler_vma": "0x08232fbe"
+ },
+ {
+  "id": 81,
+  "name": "AC_AUTOGEN_INV_EXT_BUY",
+  "handler_vma": "0x0822d3b4"
+ },
+ {
+  "id": 82,
+  "name": "AC_EXCHANGE_GOLD",
+  "handler_vma": "0x08233690"
+ },
+ {
+  "id": 83,
+  "name": "AC_BUY_GOLD",
+  "handler_vma": "0x0823364b"
+ },
+ {
+  "id": 84,
+  "name": "AC_BUY_ARC_DLC",
+  "handler_vma": "0x082336d4"
+ },
+ {
+  "id": 85,
+  "name": "AC_TALENTS_ACQUIRE",
+  "handler_vma": "0x082302a0"
+ },
+ {
+  "id": 86,
+  "name": "AC_TALENTS_UPDATE",
+  "handler_vma": "0x082304ad"
+ },
+ {
+  "id": 87,
+  "name": "AC_TALENTS_RESET",
+  "handler_vma": "0x082303a7"
+ },
+ {
+  "id": 88,
+  "name": "AC_TALENTS_ASSIGN_SETS",
+  "handler_vma": "0x08230469"
+ },
+ {
+  "id": 89,
+  "name": "AC_BUY_TALENT_SET",
+  "handler_vma": "0x0822dcb4"
+ },
+ {
+  "id": 90,
+  "name": "AC_REACT_ON_ABANDONED_GAME",
+  "handler_vma": "0x08233b19"
+ },
+ {
+  "id": 91,
+  "name": "AC_SQUAD_INFO",
+  "handler_vma": "0x08230f7c"
+ },
+ {
+  "id": 92,
+  "name": "AC_SQUAD_INVITE_ACCEPT",
+  "handler_vma": "0x08233ad5"
+ },
+ {
+  "id": 93,
+  "name": "AC_SQUAD_INVITE_DECLINE",
+  "handler_vma": "0x0822f486"
+ },
+ {
+  "id": 94,
+  "name": "AC_SQUAD_LEAVE",
+  "handler_vma": "0x08230f38"
+ },
+ {
+  "id": 95,
+  "name": "AC_SQUAD_INVITE_SEND",
+  "handler_vma": "0x08230eb0"
+ },
+ {
+  "id": 96,
+  "name": "AC_SQUAD_INVITE_CANCEL",
+  "handler_vma": "0x0822c3a8"
+ },
+ {
+  "id": 97,
+  "name": "AC_SQUAD_KICK",
+  "handler_vma": "0x0822c328"
+ },
+ {
+  "id": 98,
+  "name": "AC_SQUAD_READY",
+  "handler_vma": "0x08232bf4"
+ },
+ {
+  "id": 99,
+  "name": "AC_SQUAD_CONVERT_TO_WING",
+  "handler_vma": "0x08232ae4"
+ },
+ {
+  "id": 100,
+  "name": "AC_LEAGUE_TEAM_INFO",
+  "handler_vma": "0x08232b6c"
+ },
+ {
+  "id": 101,
+  "name": "AC_LEAGUE_TEAM_CREATE",
+  "handler_vma": "0x082306bf"
+ },
+ {
+  "id": 102,
+  "name": "AC_LEAGUE_TEAM_INVITE_SEND",
+  "handler_vma": "0x08232a28"
+ },
+ {
+  "id": 103,
+  "name": "AC_LEAGUE_TEAM_INVITE_CANCEL",
+  "handler_vma": "0x082329b1"
+ },
+ {
+  "id": 104,
+  "name": "AC_LEAGUE_TEAM_INVITE_ACCEPT",
+  "handler_vma": "0x08232aa0"
+ },
+ {
+  "id": 105,
+  "name": "AC_LEAGUE_TEAM_KICK",
+  "handler_vma": "0x0822e295"
+ },
+ {
+  "id": 106,
+  "name": "AC_LEAGUE_TEAM_LEAVE",
+  "handler_vma": "0x08232c98"
+ },
+ {
+  "id": 107,
+  "name": "AC_LEAGUE_TEAM_INVITE_DECLINE",
+  "handler_vma": "0x08232b28"
+ },
+ {
+  "id": 108,
+  "name": "AC_LEAGUE_TEAM_REQUEST_NAMES",
+  "handler_vma": "0x08232bb0"
+ },
+ {
+  "id": 109,
+  "name": "AC_GET_NICKNAMES",
+  "handler_vma": "0x0822f7c1"
+ },
+ {
+  "id": 110,
+  "name": "AC_GET_UIDS",
+  "handler_vma": "0x08232521"
+ },
+ {
+  "id": 111,
+  "name": "AC_REPORT_PLAYER",
+  "handler_vma": "0x082324e5"
+ },
+ {
+  "id": 112,
+  "name": "AC_UPDATE_YUP_PURCHASES",
+  "handler_vma": "0x082327ae"
+ },
+ {
+  "id": 113,
+  "name": "AC_CHECK_YUP_PURCHASES",
+  "handler_vma": "0x0822c796"
+ },
+ {
+  "id": 114,
+  "name": "AC_UPDATE_DLC_OWNERSHIP",
+  "handler_vma": "0x08233924"
+ },
+ {
+  "id": 115,
+  "name": "AC_FRIENDS_SEND_REQUEST",
+  "handler_vma": "0x082338d8"
+ },
+ {
+  "id": 116,
+  "name": "AC_FRIENDS_ACCEPT_REQUEST",
+  "handler_vma": "0x0823003c"
+ },
+ {
+  "id": 117,
+  "name": "AC_FRIENDS_REJECT_REQUEST",
+  "handler_vma": "0x0822ff6c"
+ },
+ {
+  "id": 118,
+  "name": "AC_FRIENDS_REMOVE",
+  "handler_vma": "0x08232dfc"
+ },
+ {
+  "id": 119,
+  "name": "AC_FRIENDS_LIST",
+  "handler_vma": "0x08232d20"
+ },
+ {
+  "id": 120,
+  "name": "AC_SOCIAL_IGNORE_ADD",
+  "handler_vma": "0x0822d65b"
+ },
+ {
+  "id": 121,
+  "name": "AC_SOCIAL_IGNORE_REMOVE",
+  "handler_vma": "0x0822d57f"
+ },
+ {
+  "id": 122,
+  "name": "AC_SOCIAL_WATCH_ADD",
+  "handler_vma": "0x0823346e"
+ },
+ {
+  "id": 123,
+  "name": "AC_SOCIAL_WATCH_REMOVE",
+  "handler_vma": "0x08233392"
+ },
+ {
+  "id": 124,
+  "name": "AC_SOCIAL_SUGGEST_STEAM",
+  "handler_vma": "0x0822f25b"
+ },
+ {
+  "id": 125,
+  "name": "AC_SOCIAL_SUGGEST_FB",
+  "handler_vma": "0x0822f02b"
+ },
+ {
+  "id": 126,
+  "name": "AC_SOCIAL_SUGGEST_VK",
+  "handler_vma": "0x0822f02b"
+ },
+ {
+  "id": 127,
+  "name": "AC_TEACHING_LIST",
+  "handler_vma": "0x0822bf58"
+ },
+ {
+  "id": 128,
+  "name": "AC_TEACHING_REQUEST_TO_TEACHER",
+  "handler_vma": "0x0822be79"
+ },
+ {
+  "id": 129,
+  "name": "AC_TEACHING_REQUEST_TO_STUDENT",
+  "handler_vma": "0x082309f6"
+ },
+ {
+  "id": 130,
+  "name": "AC_TEACHING_ACCEPT",
+  "handler_vma": "0x0822bb58"
+ },
+ {
+  "id": 131,
+  "name": "AC_TEACHING_REJECT",
+  "handler_vma": "0x0822b9c6"
+ },
+ {
+  "id": 132,
+  "name": "AC_TEACHING_CHECK",
+  "handler_vma": "0x0822b97f"
+ },
+ {
+  "id": 133,
+  "name": "AC_TEACHING_ALLOW",
+  "handler_vma": "0x0822b852"
+ },
+ {
+  "id": 134,
+  "name": "AC_REFERRALS",
+  "handler_vma": "0x0822b751"
+ },
+ {
+  "id": 135,
+  "name": "AC_SET_REFERRER",
+  "handler_vma": "0x0822b4e7"
+ },
+ {
+  "id": 136,
+  "name": "AC_OBTAIN_REFERRAL_KEY",
+  "handler_vma": "0x0822b4a2"
+ },
+ {
+  "id": 137,
+  "name": "AC_ATTACH_STEAM_ACCOUNT",
+  "handler_vma": "0x0822b8fc"
+ },
+ {
+  "id": 138,
+  "name": "AC_FINALIZE_STEAM_MTXN",
+  "handler_vma": "0x0822b52b"
+ },
+ {
+  "id": 139,
+  "name": "AC_ATTACH_YUP_ACCOUNT",
+  "handler_vma": "0x0822b8b8"
+ },
+ {
+  "id": 140,
+  "name": "AC_ATTACH_EMAIL",
+  "handler_vma": "0x0822b0fe"
+ },
+ {
+  "id": 141,
+  "name": "AC_LOBBY_LIST",
+  "handler_vma": "0x0822b2eb"
+ },
+ {
+  "id": 142,
+  "name": "AC_LOBBY_JOIN",
+  "handler_vma": "0x0822b264"
+ },
+ {
+  "id": 143,
+  "name": "AC_LOBBY_CREATE",
+  "handler_vma": "0x0822b213"
+ },
+ {
+  "id": 144,
+  "name": "AC_LOBBY_INFO",
+  "handler_vma": "0x0822b1c7"
+ },
+ {
+  "id": 145,
+  "name": "AC_LOBBY_KICK",
+  "handler_vma": "0x0822b42a"
+ },
+ {
+  "id": 146,
+  "name": "AC_LOBBY_LEAVE",
+  "handler_vma": "0x0822b3db"
+ },
+ {
+  "id": 147,
+  "name": "AC_LOBBY_INVITE",
+  "handler_vma": "0x0822b466"
+ },
+ {
+  "id": 148,
+  "name": "AC_LOBBY_MODIFY",
+  "handler_vma": "0x0822aadb"
+ },
+ {
+  "id": 149,
+  "name": "AC_LOBBY_START_GAME",
+  "handler_vma": "0x0822b069"
+ },
+ {
+  "id": 150,
+  "name": "AC_LOBBY_GROUP_LIST",
+  "handler_vma": "0x0822ace0"
+ },
+ {
+  "id": 151,
+  "name": "AC_LOBBY_GROUP_INFO",
+  "handler_vma": "0x0822b01d"
+ },
+ {
+  "id": 152,
+  "name": "AC_LOBBY_GROUP_CREATE",
+  "handler_vma": "0x0822ac9c"
+ },
+ {
+  "id": 153,
+  "name": "AC_LOBBY_GROUP_MODIFY",
+  "handler_vma": "0x0822bfa4"
+ },
+ {
+  "id": 154,
+  "name": "AC_LOBBY_GROUP_DELETE",
+  "handler_vma": "0x0822ac58"
+ },
+ {
+  "id": 155,
+  "name": "AC_LOBBY_GROUP_JOINREQ_CREATE",
+  "handler_vma": "0x0822abb8"
+ },
+ {
+  "id": 156,
+  "name": "AC_LOBBY_GROUP_JOINREQ_CANCEL",
+  "handler_vma": "0x0822ab17"
+ },
+ {
+  "id": 157,
+  "name": "AC_LOBBY_GROUP_JOINREQ_REJECT",
+  "handler_vma": "0x0822c55e"
+ },
+ {
+  "id": 158,
+  "name": "AC_CLAN_REQUEST_CREDENTIALS",
+  "handler_vma": "0x0822c3e8"
+ },
+ {
+  "id": 159,
+  "name": "AC_CLAN_REQUEST_DESC",
+  "handler_vma": "0x0822c608"
+ },
+ {
+  "id": 160,
+  "name": "AC_CLAN_REQUEST_PROFILE",
+  "handler_vma": "0x0822b142"
+ },
+ {
+  "id": 161,
+  "name": "AC_CLAN_JOINREQ_CREATE",
+  "handler_vma": "0x0822c6a9"
+ },
+ {
+  "id": 162,
+  "name": "AC_CLAN_JOINREQ_CANCEL",
+  "handler_vma": "0x0822bfea"
+ },
+ {
+  "id": 163,
+  "name": "AC_CLAN_JOINREQ_ACCEPT",
+  "handler_vma": "0x0822c665"
+ },
+ {
+  "id": 164,
+  "name": "AC_CLAN_INVITE_SEND",
+  "handler_vma": "0x0822aa97"
+ },
+ {
+  "id": 165,
+  "name": "AC_CLAN_INVITE_ACCEPT",
+  "handler_vma": "0x0822aa53"
+ },
+ {
+  "id": 166,
+  "name": "AC_CLAN_INVITE_CANCEL",
+  "handler_vma": "0x0822a812"
+ },
+ {
+  "id": 167,
+  "name": "AC_CLAN_KICK",
+  "handler_vma": "0x0822a9cb"
+ },
+ {
+  "id": 168,
+  "name": "AC_CLAN_LEAVE",
+  "handler_vma": "0x0822a514"
+ },
+ {
+  "id": 169,
+  "name": "AC_CLAN_SET_ROLE",
+  "handler_vma": "0x0822aa0f"
+ },
+ {
+  "id": 170,
+  "name": "AC_CLAN_CHANGE_MOTD",
+  "handler_vma": "0x0822a645"
+ },
+ {
+  "id": 171,
+  "name": "AC_CLAN_CHANGE_DESC",
+  "handler_vma": "0x0822a941"
+ },
+ {
+  "id": 172,
+  "name": "AC_CLAN_CHANGE_RECRUITING",
+  "handler_vma": "0x0822a48c"
+ },
+ {
+  "id": 173,
+  "name": "AC_CLAN_RESOURCE_CONVERT",
+  "handler_vma": "0x0822a987"
+ },
+ {
+  "id": 174,
+  "name": "AC_CLAN_SHIP_BUILD",
+  "handler_vma": "0x0822a68b"
+ },
+ {
+  "id": 175,
+  "name": "AC_CLAN_SHIP_BOOST_BUILDING",
+  "handler_vma": "0x0822a856"
+ },
+ {
+  "id": 176,
+  "name": "AC_CLAN_SHIP_REPAIR",
+  "handler_vma": "0x0822a4d0"
+ },
+ {
+  "id": 177,
+  "name": "AC_CLAN_SHIP_BOOST_REPAIRING",
+  "handler_vma": "0x0822a856"
+ },
+ {
+  "id": 178,
+  "name": "AC_CLAN_SHIP_FIT",
+  "handler_vma": "0x0822a558"
+ },
+ {
+  "id": 179,
+  "name": "AC_CLAN_SHIP_SET_CURRENT",
+  "handler_vma": "0x0822a448"
+ },
+ {
+  "id": 180,
+  "name": "AC_CLAN_UNIVERSE_MOVE",
+  "handler_vma": "0x0822a404"
+ },
+ {
+  "id": 181,
+  "name": "AC_CLAN_SET_CIVILIAN_ZONE",
+  "handler_vma": "0x0822c7d2"
+ },
+ {
+  "id": 182,
+  "name": "AC_CLAN_REVIVE_IN_WAR",
+  "handler_vma": "0x0822d2e7"
+ },
+ {
+  "id": 183,
+  "name": "AC_CLAN_WAR_START",
+  "handler_vma": "0x0822d25e"
+ },
+ {
+  "id": 184,
+  "name": "AC_CLAN_QUEST_ACCEPT",
+  "handler_vma": "0x0822d2ab"
+ },
+ {
+  "id": 185,
+  "name": "AC_CLAN_CREATE",
+  "handler_vma": "0x0822d21a"
+ },
+ {
+  "id": 186,
+  "name": "AC_CLAN_UPGRADE",
+  "handler_vma": "0x0822e328"
+ },
+ {
+  "id": 187,
+  "name": "AC_CLAN_CHANGE_NAME",
+  "handler_vma": "0x0822d72b"
+ },
+ {
+  "id": 188,
+  "name": "AC_CLAN_CHANGE_TAG",
+  "handler_vma": "0x0822d136"
+ },
+ {
+  "id": 189,
+  "name": "AC_CLAN_ASSIGN_EMBLEM",
+  "handler_vma": "0x0822d050"
+ },
+ {
+  "id": 190,
+  "name": "AC_CLAN_BANK_TRANSFER",
+  "handler_vma": "0x0822f4c6"
+ },
+ {
+  "id": 191,
+  "name": "AC_CLAN_LIST_RECRUITING",
+  "handler_vma": "0x0822e373"
+ },
+ {
+  "id": 192,
+  "name": "AC_CLAN_HISTORY_GET",
+  "handler_vma": "0x0822f2da"
+ },
+ {
+  "id": 193,
+  "name": "AC_RELATED_QUEST_ENABLE",
+  "handler_vma": "0x0822d3f8"
+ },
+ {
+  "id": 194,
+  "name": "AC_USER_PROFILE_GET",
+  "handler_vma": "0x0822ed43"
+ },
+ {
+  "id": 195,
+  "name": "AC_ACHIEVEMENTS",
+  "handler_vma": "0x0822dd00"
+ },
+ {
+  "id": 196,
+  "name": "AC_ADMIN_CMD",
+  "handler_vma": "0x0822c2d4"
+ },
+ {
+  "id": 197,
+  "name": "AC_GAMES_INFO",
+  "handler_vma": "0x0822c20a"
+ },
+ {
+  "id": 198,
+  "name": "AC_ZONE_INSTANCES_INFO",
+  "handler_vma": "0x0822ef89"
+ },
+ {
+  "id": 199,
+  "name": "AC_GET_PUNISHMENTS",
+  "handler_vma": "0x0822eed9"
+ },
+ {
+  "id": 200,
+  "name": "AC_WELCOME_MSG",
+  "handler_vma": "0x0822ee95"
+ },
+ {
+  "id": 201,
+  "name": "AC_MOTD",
+  "handler_vma": "0x0822ee4f"
+ },
+ {
+  "id": 202,
+  "name": "AC_SURVEY_GET_NEW",
+  "handler_vma": "0x0822f5b2"
+ },
+ {
+  "id": 203,
+  "name": "AC_SURVEY_VOTE",
+  "handler_vma": "0x0822efcd"
+ },
+ {
+  "id": 204,
+  "name": "AC_SURVEY_RESULTS",
+  "handler_vma": "0x0822f502"
+ },
+ {
+  "id": 205,
+  "name": "AC_UNIVERSE_GET",
+  "handler_vma": "0x0822d533"
+ },
+ {
+  "id": 206,
+  "name": "AC_UNIVERSE_COUNTERS",
+  "handler_vma": "0x0822e0f3"
+ },
+ {
+  "id": 207,
+  "name": "AC_WARMAP_GET",
+  "handler_vma": "0x0822e0a7"
+ },
+ {
+  "id": 208,
+  "name": "AC_MAIL_GET",
+  "handler_vma": "0x0822e030"
+ },
+ {
+  "id": 209,
+  "name": "AC_MAIL_DELIVER",
+  "handler_vma": "0x0822de4f"
+ },
+ {
+  "id": 210,
+  "name": "AC_MAIL_SEND",
+  "handler_vma": "0x0822e200"
+ },
+ {
+  "id": 211,
+  "name": "AC_MAIL_REMOVE",
+  "handler_vma": "0x0822e184"
+ },
+ {
+  "id": 212,
+  "name": "AC_MAIL_ACKNOWLEDGE_EXPIRATION",
+  "handler_vma": "0x0822e251"
+ },
+ {
+  "id": 214,
+  "name": "AC_AUTO_PILOT_SPACE_STATION",
+  "handler_vma": "0x0822cfb0"
+ },
+ {
+  "id": 215,
+  "name": "AC_UNDOCK_SPACE_STATION",
+  "handler_vma": "0x0822cf28"
+ },
+ {
+  "id": 216,
+  "name": "AC_SET_VISITED_ZONE",
+  "handler_vma": "0x0822cec6"
+ },
+ {
+  "id": 218,
+  "name": "AC_SPACE_STATIONS_POPULATION",
+  "handler_vma": "0x0822cdfa"
+ },
+ {
+  "id": 219,
+  "name": "AC_KARMA_RESET",
+  "handler_vma": "0x0822cdb6"
+ },
+ {
+  "id": 220,
+  "name": "AC_FACTION_REP_RESET",
+  "handler_vma": "0x0822cd72"
+ },
+ {
+  "id": 221,
+  "name": "AC_LEADERBOARD_GET",
+  "handler_vma": "0x0822cca1"
+ },
+ {
+  "id": 222,
+  "name": "AC_LEADERBOARD_GET_DESCS",
+  "handler_vma": "0x0822ca6a"
+ },
+ {
+  "id": 224,
+  "name": "AC_GET_FB_TOKEN",
+  "handler_vma": "0x0822c944"
+ },
+ {
+  "id": 226,
+  "name": "AC_GET_CRAFT_RESOURCES",
+  "handler_vma": "0x0822c89e"
+ },
+ {
+  "id": 227,
+  "name": "AC_USE_BLUEPRINT",
+  "handler_vma": "0x0822c85a"
+ },
+ {
+  "id": 228,
+  "name": "AC_SELL_CRAFT_RESOURCE",
+  "handler_vma": "0x0822c816"
+ },
+ {
+  "id": 229,
+  "name": "AC_SELL_CRAFT_RESOURCES",
+  "handler_vma": "0x0822c816"
+ },
+ {
+  "id": 230,
+  "name": "AC_GET_BLUEPRINTS",
+  "handler_vma": "0x0822d434"
+ },
+ {
+  "id": 231,
+  "name": "AC_LEARN_BLUEPRINT",
+  "handler_vma": "0x08233eec"
+ },
+ {
+  "id": 232,
+  "name": "AC_GET_FREE_SPACE_SAVE_DATA",
+  "handler_vma": "0x08233330"
+ },
+ {
+  "id": 233,
+  "name": "AC_DISASSEMBLE_ITEM",
+  "handler_vma": "0x0822ee0b"
+ },
+ {
+  "id": 234,
+  "name": "AC_ADD_THUMB_UP",
+  "handler_vma": "0x0822edb0"
+ },
+ {
+  "id": 235,
+  "name": "AC_GET_VISITED_FREE_SPACE_ZONES",
+  "handler_vma": "0x08234052"
+ },
+ {
+  "id": 236,
+  "name": "AC_ADVERT_CREATE",
+  "handler_vma": "0x082309a5"
+ },
+ {
+  "id": 237,
+  "name": "AC_ADVERT_DELETE",
+  "handler_vma": "0x08233a99"
+ },
+ {
+  "id": 238,
+  "name": "AC_ADVERT_HEADER_GET",
+  "handler_vma": "0x0822fede"
+ },
+ {
+  "id": 239,
+  "name": "AC_ADVERT_GET",
+  "handler_vma": "0x08232457"
+ },
+ {
+  "id": 240,
+  "name": "AC_BUY_PRODUCT_FROM_ADVERT",
+  "handler_vma": "0x0822d4ee"
+ },
+ {
+  "id": 241,
+  "name": "AC_EMM_CHANGE_READY",
+  "handler_vma": "0x0822d4a0"
+ },
+ {
+  "id": 242,
+  "name": "AC_UNLIM_PVE_UPGRADE_PLAYER_LEVEL",
+  "handler_vma": "0x08233710"
+ },
+ {
+  "id": 243,
+  "name": "AC_UNLIM_PVE_DISABLE_PLAYER_BUFFS",
+  "handler_vma": "0x08233d48"
+ },
+ {
+  "id": 246,
+  "name": "AC_USER_NOTES",
+  "handler_vma": "0x0822f662"
+ },
+ {
+  "id": 247,
+  "name": "AC_USER_NOTES_ADD",
+  "handler_vma": "0x08231a88"
+ },
+ {
+  "id": 248,
+  "name": "AC_USER_NOTES_DELETE",
+  "handler_vma": "0x08230ff7"
+ },
+ {
+  "id": 249,
+  "name": "AC_BATTLE_PASS_UNLOCK_LEVEL",
+  "handler_vma": "0x0822c900"
+ },
+ {
+  "id": 250,
+  "name": "AC_ZONES_LUA_ACTIVE_EVENTS_UPDATE",
+  "handler_vma": "0x0822ca25"
+ },
+ {
+  "id": 251,
+  "name": "AC_ADVENTURES",
+  "handler_vma": "0x0822ce46"
+ },
+ {
+  "id": 252,
+  "name": "AC_ADVENTURE_CANCEL",
+  "handler_vma": "0x0822b940"
+ },
+ {
+  "id": 253,
+  "name": "AC_253",
+  "handler_vma": "0x08242c42"
+ },
+ {
+  "id": 254,
+  "name": "AC_254",
+  "handler_vma": "0x08242b9b"
+ },
+ {
+  "id": 255,
+  "name": "AC_255",
+  "handler_vma": "0x08242faa"
+ }
+]

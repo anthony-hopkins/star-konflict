@@ -1,0 +1,26 @@
+# sc-capture is an independent repository with its own history and licence,
+# checked out inside this workspace. Commit to it separately.
+sc-capture/
+
+# Captured traffic NEVER goes in git. Recordings contain login credentials in
+# the clear — the master-server protocol has no transport encryption.
+captures/
+SC_*__*/
+*.pcapng
+*.pcap
+
+# Submitted bundles land here but are not tracked, for the same reason.
+packet-caps/*
+!packet-caps/.gitkeep
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+
+# Env
+.env
+.env.*

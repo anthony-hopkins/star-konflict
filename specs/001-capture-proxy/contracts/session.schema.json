@@ -1,0 +1,250 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/sc-re/sc-capture/schemas/session.schema.json",
+  "title": "sccap session metadata",
+  "description": "Metadata sidecar for a capture bundle. Superset of docs/Star-Conflict-Capture-Protocol.md 2.4. A bundle with only pcapng segments and a valid instance of this document is a valid session.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "bundle_id",
+    "software",
+    "utc_start",
+    "clock",
+    "mode",
+    "host",
+    "sensitive",
+    "sensitivity_reason"
+  ],
+  "additionalProperties": true,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$",
+      "description": "Bundle schema version. Readers MUST refuse an unknown MAJOR with an explicit diagnostic (FR-027)."
+    },
+    "bundle_id": {
+      "type": "string",
+      "pattern": "^SC_[0-9]{8}T[0-9]{6}Z__[A-Z0-9-]+__[A-Za-z0-9-]+__[A-Z]*__[0-9]{3}$",
+      "description": "Equals the bundle directory name."
+    },
+    "scenario_id": { "type": "string" },
+    "volunteer_id": { "type": "string" },
+    "region": { "type": "string", "enum": ["EU", "NA", "RU", "SEA", ""] },
+    "tier": { "type": "integer", "minimum": 1, "maximum": 3 },
+
+    "software": {
+      "type": "object",
+      "required": ["name", "version"],
+      "properties": {
+        "name": { "type": "string", "const": "sccap" },
+        "version": { "type": "string" },
+        "git_commit": { "type": "string" },
+        "protocol_tables_version": {
+          "type": "string",
+          "description": "Revision of the embedded protocol element tables (docs/protocol/) this build used, so a coverage claim can be traced to the table revision that produced it."
+        },
+        "protocol_lib_commit": {
+          "type": "string",
+          "description": "DEPRECATED, schema 1.0 only. Pinned the external starconflict protocol library, before Principle VI was amended on 2026-08-13 to require a single in-repo implementation. Readers MUST still accept it on existing bundles."
+        }
+      }
+    },
+
+    "utc_start": { "type": "string", "format": "date-time" },
+    "utc_end": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Absent or null for an interrupted session. Absence does not invalidate the bundle."
+    },
+
+    "clock": {
+      "type": "object",
+      "required": ["anchors"],
+      "properties": {
+        "ntp_source": { "type": ["string", "null"] },
+        "method": { "type": ["string", "null"] },
+        "offset_ms_at_start": { "type": ["number", "null"] },
+        "anchors": {
+          "type": "array",
+          "description": "Paired realtime/monotonic readings. Makes monotonic time recoverable for any pcapng frame and makes a wall-clock step visible rather than corrupting (FR-003).",
+          "items": {
+            "type": "object",
+            "required": ["t_wall", "t_mono", "kind"],
+            "properties": {
+              "t_wall": { "type": "string", "format": "date-time" },
+              "t_mono": { "type": "integer", "description": "Nanoseconds since session start." },
+              "kind": { "type": "string", "enum": ["start", "periodic", "step_detected", "end"] }
+            }
+          }
+        }
+      }
+    },
+
+    "mode": {
+      "type": "string",
+      "enum": ["passive", "relay"],
+      "description": "passive is the default; relay means an interposition overlay was active (Principle IV)."
+    },
+
+    "rewrites": {
+      "type": "array",
+      "description": "Every rewrite performed, enumerated. MUST be empty when mode is passive (FR-010).",
+      "items": {
+        "type": "object",
+        "required": ["kind", "message_type", "from", "to"],
+        "properties": {
+          "kind": { "type": "string", "enum": ["address"] },
+          "message_type": { "type": "string" },
+          "from": { "type": "string" },
+          "to": { "type": "string" },
+          "rationale": { "type": "string" }
+        }
+      }
+    },
+
+    "client": {
+      "type": "object",
+      "properties": {
+        "game_version": { "type": "string" },
+        "build_id": { "type": "string" },
+        "platform": { "type": "string" },
+        "runtime": { "type": "string" },
+        "launcher": { "type": "string" },
+        "process_name": { "type": "string" },
+        "locale": { "type": "string" }
+      }
+    },
+
+    "host": {
+      "type": "object",
+      "required": ["interfaces", "capture_tool", "snaplen", "packets_captured", "packets_dropped"],
+      "properties": {
+        "profile": { "type": "string" },
+        "link": { "type": "string" },
+        "nic": { "type": "string" },
+        "interfaces": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "role"],
+            "properties": {
+              "name": { "type": "string" },
+              "role": { "type": "string", "enum": ["game-uplink", "loopback-relay-leg", "other"] },
+              "pcapng_interface_id": { "type": "integer", "minimum": 0 }
+            }
+          }
+        },
+        "netns_isolated": { "type": "boolean" },
+        "offloads_disabled": { "type": "array", "items": { "type": "string" } },
+        "capture_tool": { "type": "string" },
+        "capture_filter": {
+          "type": "string",
+          "description": "Empty by default. A non-empty value is a capture-time discard decision and MUST be warned about (Principle I)."
+        },
+        "snaplen": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "0 means full frame, the default. Any other value is a capture-time truncation and MUST be warned about."
+        },
+        "packets_captured": { "type": "integer", "minimum": 0 },
+        "packets_dropped": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Kernel drop counter. Must be 0 for the session to pass verification without warning (SC-002)."
+        }
+      }
+    },
+
+    "services_observed": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["loadbalancer", "shard", "chat", "web", "dedicated", "unknown"]
+      }
+    },
+
+    "connections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["conn_id", "transport", "service", "service_evidence", "endpoints"],
+        "properties": {
+          "conn_id": { "type": "string" },
+          "transport": { "type": "string", "enum": ["tcp", "udp"] },
+          "service": {
+            "type": "string",
+            "enum": ["loadbalancer", "shard", "chat", "web", "dedicated", "unknown"]
+          },
+          "service_evidence": { "type": "string", "enum": ["port", "handoff", "heuristic"] },
+          "rewritten": { "type": "boolean" },
+          "reassembly_state": { "type": "string", "enum": ["ok", "desynced"] },
+          "desync_at_frame": { "type": ["integer", "null"] },
+          "endpoints": {
+            "type": "object",
+            "required": ["client_ip", "client_port", "server_ip", "server_port"],
+            "properties": {
+              "client_ip": { "type": "string" },
+              "client_port": { "type": "integer" },
+              "server_ip": { "type": "string" },
+              "server_port": { "type": "integer" }
+            }
+          },
+          "first_seen": { "type": "string", "format": "date-time" },
+          "last_seen": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+
+    "sensitive": {
+      "type": "boolean",
+      "const": true,
+      "description": "Always true. Every session is sensitive by default (FR-031)."
+    },
+    "sensitivity_reason": { "type": "string" },
+    "credential_warning": {
+      "type": "boolean",
+      "description": "Set when CCMD_AUTH_REQUEST or AC_PLAYER_CREDENTIALS traffic was observed (FR-033)."
+    },
+
+    "termination": {
+      "type": "string",
+      "enum": ["clean", "interrupted", "disk_floor", "error"]
+    },
+
+    "segments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["file", "first_frame_utc"],
+        "properties": {
+          "file": { "type": "string" },
+          "first_frame_utc": { "type": "string", "format": "date-time" },
+          "last_frame_utc": { "type": ["string", "null"], "format": "date-time" },
+          "frames": { "type": "integer", "minimum": 0 }
+        }
+      }
+    },
+
+    "markers": {
+      "type": "object",
+      "properties": {
+        "beacon_port": { "type": "integer" },
+        "count": { "type": "integer", "minimum": 0 },
+        "first_seq": { "type": "integer" },
+        "last_seq": { "type": "integer" }
+      }
+    },
+
+    "economy_ledger": {
+      "type": "array",
+      "description": "Optional contributor-supplied before/after currency integers. Converts blind structural analysis of payload into a grep (manual 2.4).",
+      "items": { "type": "object" }
+    },
+    "known_plaintext": { "type": "object" },
+    "video": { "type": "object" },
+    "tls": { "type": "object" },
+    "account": { "type": "object" },
+    "anomalies": { "type": "array", "items": { "type": "string" } },
+    "notes": { "type": "string" }
+  }
+}

@@ -1,0 +1,158 @@
+[
+ {
+  "id": 0,
+  "name": "SCMD_ASSIGNED_SHARD"
+ },
+ {
+  "id": 1,
+  "name": "SCMD_LB_QUEUE_INFO"
+ },
+ {
+  "id": 2,
+  "name": "SCMD_LB_CVARS"
+ },
+ {
+  "id": 3,
+  "name": "SCMD_AUTH_REQ"
+ },
+ {
+  "id": 4,
+  "name": "CCMD_AUTH_REQUEST"
+ },
+ {
+  "id": 5,
+  "name": "SCMD_AUTH_ACK"
+ },
+ {
+  "id": 6,
+  "name": "SCMD_STEAM_NOT_ATTACHED"
+ },
+ {
+  "id": 7,
+  "name": "SCMD_ARC_NOT_ATTACHED"
+ },
+ {
+  "id": 8,
+  "name": "CCMD_STORE"
+ },
+ {
+  "id": 9,
+  "name": "SCMD_STORE"
+ },
+ {
+  "id": 10,
+  "name": "SCMD_STORE_SPOILED"
+ },
+ {
+  "id": 11,
+  "name": "SCMD_CONNECT_DEDICATED_SERVER"
+ },
+ {
+  "id": 12,
+  "name": "SCMD_GAME_ENDED"
+ },
+ {
+  "id": 13,
+  "name": "CSCMD_ASYNC_REQ"
+ },
+ {
+  "id": 14,
+  "name": "SCMD_NOTIFICATION"
+ },
+ {
+  "id": 15,
+  "name": "SCMD_SQUAD_NOTIFICATION"
+ },
+ {
+  "id": 16,
+  "name": "SCMD_SOCIAL_NOTIFICATION"
+ },
+ {
+  "id": 17,
+  "name": "SCMD_TEACH_NOTIFICATION"
+ },
+ {
+  "id": 18,
+  "name": "SCMD_CLAN_NOTIFICATION"
+ },
+ {
+  "id": 19,
+  "name": "SCMD_USER_PROFILE_NOTIFICATION"
+ },
+ {
+  "id": 20,
+  "name": "SCMD_QUEST_NOTIFICATION"
+ },
+ {
+  "id": 21,
+  "name": "SCMD_LEAGUE_NOTIFICATION"
+ },
+ {
+  "id": 22,
+  "name": "SCMD_VESSEL_NOTIFICATION"
+ },
+ {
+  "id": 23,
+  "name": "SCMD_LOBBY_NOTIFICATION"
+ },
+ {
+  "id": 24,
+  "name": "SCMD_KEEP_ALIVE"
+ },
+ {
+  "id": 25,
+  "name": "SCMD_BAN_INFO"
+ },
+ {
+  "id": 26,
+  "name": "SCMD_WELCOME_MSG"
+ },
+ {
+  "id": 27,
+  "name": "SCMD_DOCK_SPACE_STATION"
+ },
+ {
+  "id": 28,
+  "name": "SCMD_FREE_SPACE_DEBRIEFING"
+ },
+ {
+  "id": 29,
+  "name": "SCMD_NEW_MOTD"
+ },
+ {
+  "id": 30,
+  "name": "SCMD_TOURNAMENT_TEAMS_INFO"
+ },
+ {
+  "id": 31,
+  "name": "SCMD_BRAWL_SCHEDULE"
+ },
+ {
+  "id": 32,
+  "name": "SCMD_REWARD_SCHEDULE"
+ },
+ {
+  "id": 33,
+  "name": "SCMD_PVE_SCHEDULE"
+ },
+ {
+  "id": 34,
+  "name": "SCMD_LEAGUE_FORBIDDEN_EQUIPMENT"
+ },
+ {
+  "id": 35,
+  "name": "SCMD_BATTLE_PASS_ACTIVATION"
+ },
+ {
+  "id": 36,
+  "name": "SCMD_ZONES_WITH_DISABLED_QUESTS"
+ },
+ {
+  "id": 37,
+  "name": "SCMD_ADVENTURE_NOTIFICATION"
+ },
+ {
+  "id": 38,
+  "name": "SCMD_REPLACE_CHAT_MSG"
+ }
+]
