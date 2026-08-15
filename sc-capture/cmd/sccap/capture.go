@@ -105,7 +105,7 @@ func runCapture(args []string) int {
 	scenario := fs.String("scenario", session.DefaultScenario, "scenario id for the bundle name")
 	volunteer := fs.String("volunteer", session.DefaultVolunteer, "volunteer id")
 	region := fs.String("region", "", "server region: EU, NA, RU, SEA")
-	out := fs.String("out", "./captures", "parent directory for the bundle")
+	out := fs.String("out", "", "parent directory for the bundle (default: packet-caps/ at the repository root)")
 	minFree := fs.String("min-free", "2GiB", "warn when free space drops below this")
 	floor := fs.String("floor", "512MiB", "stop capturing cleanly at this much free space")
 	snaplen := fs.Int("snaplen", 0, "bytes captured per frame (0 = whole frame)")
@@ -118,6 +118,10 @@ func runCapture(args []string) int {
 	fs.Var(&ifaces, "interface", "interface to capture (repeatable; default: autodetect)")
 	if err := fs.Parse(args); err != nil {
 		return exitcode.Usage
+	}
+
+	if *out == "" {
+		*out = session.DefaultCaptureDir()
 	}
 
 	if *relay {

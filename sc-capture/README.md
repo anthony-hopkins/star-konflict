@@ -29,12 +29,14 @@ here that is both silent and total.
 ## Capture
 
 ```bash
-./out/sccap capture --scenario AUTH-02 --region EU --out ./captures
+./out/sccap capture --scenario AUTH-02 --region EU
 # play, then Ctrl+C
-./out/sccap verify ./captures/SC_*
+./out/sccap verify ../packet-caps/SC_*
 ```
 
 Defaults are passive, unfiltered and full-snaplen. Nothing is rewritten and nothing is discarded.
+Bundles land in `packet-caps/` at the repository root regardless of the directory the tool was
+started from; `--out` overrides this.
 
 ## How it works
 
@@ -78,8 +80,8 @@ away and regenerated.
 ### Reading an archive
 
 ```bash
-./out/sccap decode ~/captures/SC_* --status unknown_element   # what surprised us
-./out/sccap decode ~/captures/SC_* --type SCMD_CONNECT_DEDICATED_SERVER
+./out/sccap decode ../packet-caps/SC_* --status unknown_element   # what surprised us
+./out/sccap decode ../packet-caps/SC_* --type SCMD_CONNECT_DEDICATED_SERVER
 ./out/sccap coverage                                          # what is still missing
 ./out/sccap coverage --state never_observed                   # the list, in full
 ```
@@ -90,8 +92,8 @@ allowed. Capture-time filtering is not: the journal always holds everything.
 ### Improving a decoder later
 
 ```bash
-./out/sccap index ~/captures/SC_* --rebuild
-./out/sccap verify ~/captures/SC_* --write-sums
+./out/sccap index ../packet-caps/SC_* --rebuild
+./out/sccap verify ../packet-caps/SC_* --write-sums
 ```
 
 `--rebuild` regenerates `index.jsonl` from the pcapng segments alone and

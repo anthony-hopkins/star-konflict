@@ -61,7 +61,9 @@ sccap capture [flags]
   --volunteer <ID>       Volunteer id (default: vol-local)
   --region <R>           Server region: EU|NA|RU|SEA (default: unset)
   --interface <if>       Capture interface; repeatable (default: autodetect + lo)
-  --out <dir>            Bundle parent directory (default: ./captures)
+  --out <dir>            Bundle parent directory (default: packet-caps/ at the
+                         repository root, found by walking up from the working
+                         directory; ./packet-caps outside a repository)
   --min-free <size>      Warning threshold (default: 2GiB)
   --floor <size>         Hard stop threshold (default: 512MiB)
   --relay                Enable interposition overlay (default: OFF — passive)

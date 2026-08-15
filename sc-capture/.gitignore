@@ -9,6 +9,7 @@ dist/
 # Capture output — never commit a real session, they contain credentials.
 # Scoped so that small reference bundles under testdata/bundles/ stay committed.
 captures/
+packet-caps/
 SC_*__*/
 *.pcapng
 !testdata/bundles/**/*.pcapng

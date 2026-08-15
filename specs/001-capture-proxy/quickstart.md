@@ -79,9 +79,9 @@ changes.
 **Proves**: US1 acceptance 1–3 · FR-001, FR-025, FR-026, FR-028 · SC-001, SC-011
 
 ```bash
-sccap capture --scenario AUTH-02 --region EU --out ./captures
+sccap capture --scenario AUTH-02 --region EU --out ./packet-caps
 # play a login-to-hangar session, then Ctrl+C
-sccap verify ./captures/SC_*__AUTH-02__*
+sccap verify ./packet-caps/SC_*__AUTH-02__*
 ```
 
 **Expected**: a bundle directory containing at least one `capture_*.pcapng`, a `session.json`, and
@@ -104,7 +104,7 @@ Run `sccap` and `dumpcap` against the same interface simultaneously, then compar
 
 ```bash
 dumpcap -i <if> -n -s 0 -w /tmp/independent.pcapng &
-sccap capture --scenario BASE-01 --interface <if> --out ./captures
+sccap capture --scenario BASE-01 --interface <if> --out ./packet-caps
 # play for ~2 minutes, stop both
 ```
 
@@ -113,7 +113,7 @@ bytes, not whole files:
 
 ```bash
 tshark -r /tmp/independent.pcapng -T fields -e data.data > /tmp/a.txt
-tshark -r ./captures/SC_*__BASE-01__*/capture_00001_*.pcapng -T fields -e data.data > /tmp/b.txt
+tshark -r ./packet-caps/SC_*__BASE-01__*/capture_00001_*.pcapng -T fields -e data.data > /tmp/b.txt
 diff /tmp/a.txt /tmp/b.txt && echo "BYTE-IDENTICAL"
 ```
 
@@ -162,10 +162,10 @@ amount of careful coding restores it.
 **Proves**: US1 acceptance 4 · FR-006 · SC-008
 
 ```bash
-sccap capture --scenario BASE-01 --out ./captures &
+sccap capture --scenario BASE-01 --out ./packet-caps &
 sleep 30
 kill -9 %1                       # SIGKILL — no clean shutdown path runs
-sccap verify ./captures/SC_*__BASE-01__*
+sccap verify ./packet-caps/SC_*__BASE-01__*
 ```
 
 **Expected**: `verify` reports status `interrupted` and exits `0`. The pcapng walks structurally
@@ -184,16 +184,16 @@ Repeat 20 times. SC-008 requires **100%** of trials to produce a valid, verifiab
 Passive capture — no relay, no rewriting, no ban exposure. Use a **non-competitive mode** only.
 
 ```bash
-sccap capture --scenario CBT-07 --region EU --out ./captures
+sccap capture --scenario CBT-07 --region EU --out ./packet-caps
 # enter a non-competitive match, play it out, return to hangar, Ctrl+C
-sccap decode ./captures/SC_*__CBT-07__* --type SCMD_CONNECT_DEDICATED_SERVER --json
+sccap decode ./packet-caps/SC_*__CBT-07__* --type SCMD_CONNECT_DEDICATED_SERVER --json
 ```
 
 **Expected**: the handoff record decodes, yielding `addr`, `port`, `session_id` and `zone_id`.
 Then:
 
 ```bash
-sccap decode ./captures/SC_*__CBT-07__* --conn <dedicated-conn-id> --json | head
+sccap decode ./packet-caps/SC_*__CBT-07__* --conn <dedicated-conn-id> --json | head
 ```
 
 **Expected**: UDP records in **both** directions, with wall and monotonic timestamps, spanning the
@@ -212,7 +212,7 @@ outcome in the feature.
 
 ```bash
 sccap coverage --json > /tmp/before.json
-sccap capture --scenario ECON-03 --out ./captures     # exercise the store
+sccap capture --scenario ECON-03 --out ./packet-caps     # exercise the store
 sccap coverage --json > /tmp/after.json
 ```
 
@@ -238,11 +238,11 @@ make the project's progress metric untrustworthy, which is worse than not having
 Run with every game service unreachable — pull the network cable, or run in an empty namespace.
 
 ```bash
-sha256sum ./captures/SC_*__AUTH-02__*/capture_*.pcapng > /tmp/raw-before.txt
+sha256sum ./packet-caps/SC_*__AUTH-02__*/capture_*.pcapng > /tmp/raw-before.txt
 
-sccap decode ./captures/SC_*__AUTH-02__* --json > /tmp/decode-1.json
-sccap index ./captures/SC_*__AUTH-02__* --rebuild
-sccap decode ./captures/SC_*__AUTH-02__* --json > /tmp/decode-2.json
+sccap decode ./packet-caps/SC_*__AUTH-02__* --json > /tmp/decode-1.json
+sccap index ./packet-caps/SC_*__AUTH-02__* --rebuild
+sccap decode ./packet-caps/SC_*__AUTH-02__* --json > /tmp/decode-2.json
 
 diff /tmp/decode-1.json /tmp/decode-2.json && echo "REPRODUCIBLE"
 sha256sum -c /tmp/raw-before.txt && echo "RAW UNMODIFIED"
@@ -266,7 +266,7 @@ exit `5` with a diagnostic naming both versions, and must not attempt a partial 
 
 ```bash
 sudo tcpdump -i any -n 'not host <game-server-ips>' -w /tmp/egress.pcap &
-sccap capture --scenario BASE-01 --out ./captures
+sccap capture --scenario BASE-01 --out ./packet-caps
 # full session, then stop both
 tshark -r /tmp/egress.pcap -Y 'tcp.flags.syn==1 && tcp.flags.ack==0'
 ```
@@ -279,7 +279,7 @@ so there is nothing that could fire.
 **Also assert**:
 
 ```bash
-stat -c '%a %n' ./captures/SC_*__BASE-01__* ./captures/SC_*__BASE-01__*/*
+stat -c '%a %n' ./packet-caps/SC_*__BASE-01__* ./packet-caps/SC_*__BASE-01__*/*
 ```
 
 Directory `700`, files `600`. `session.json` has `sensitive: true` with a stated reason, and
@@ -293,8 +293,8 @@ having to know it should be.
 **Proves**: US6 acceptance 3 · FR-012, FR-013 · Principle IV
 
 ```bash
-sccap capture --scenario BASE-01 --out ./captures        # no flags — passive
-sccap verify ./captures/SC_*__BASE-01__* --json | grep -E '"mode"|"rewrites"'
+sccap capture --scenario BASE-01 --out ./packet-caps        # no flags — passive
+sccap verify ./packet-caps/SC_*__BASE-01__* --json | grep -E '"mode"|"rewrites"'
 ```
 
 **Expected**: `passive []` — mode is passive and the rewrite list is empty, without the
@@ -328,7 +328,7 @@ This is a **spike, and disproving it is a valid and useful outcome** — passive
 archives in-match traffic, so nothing depends on this succeeding. Non-competitive modes only.
 
 ```bash
-sccap capture --scenario CBT-07 --relay --relay-udp --out ./captures
+sccap capture --scenario CBT-07 --relay --relay-udp --out ./packet-caps
 ```
 
 **Expected, either way**: the attempt, any rejection, and all traffic leading to it are recorded,
@@ -338,7 +338,7 @@ broken client. `session.json.rewrites` enumerates every rewrite performed.
 If the match **is** joinable through the relay, measure the cost:
 
 ```bash
-sccap decode ./captures/SC_*__CBT-07__* --conn <dedicated-conn-id> --json \
+sccap decode ./packet-caps/SC_*__CBT-07__* --conn <dedicated-conn-id> --json \
   | <compute p99 RTT delta vs. an unrelayed baseline session>
 ```
 
