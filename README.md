@@ -137,7 +137,19 @@ elevated anyway, and the restricted setting is the safer of the two.
 
 You only need this to **record**. Skip it if you just want to read somebody else's recordings.
 
-### 2.2 Build the tool
+### 2.2 Get the tool
+
+**Download the prebuilt binary** — grab `sccap-windows-amd64.exe` from the
+[Releases page](https://github.com/anthony-hopkins/star-konflict/releases). It's the offline build:
+it runs `verify`, `decode`, `index` and `coverage` with nothing else installed, but it **cannot
+record** (see the note below). Check the download against the published checksum in PowerShell:
+
+```powershell
+(Get-FileHash .\sccap-windows-amd64.exe -Algorithm SHA256).Hash.ToLower()
+```
+
+**Build to record** — the capture backend can't be shipped (Npcap's licence forbids redistributing
+it), so recording needs a local build with `-tags npcap` after installing Npcap (§2.1):
 
 ```powershell
 cd sc-capture
@@ -145,9 +157,9 @@ go build -tags npcap -o out\sccap.exe .\cmd\sccap
 ```
 
 > `-tags npcap` is what compiles the recorder in. Building without it gives you a binary that
-> reads and analyses archived sessions with nothing extra installed — no Npcap, no C compiler.
-> That build runs `verify`, `decode`, `index` and `coverage` perfectly well; it just can't record.
-> `sccap doctor` tells you which one you have.
+> reads and analyses archived sessions with nothing extra installed — no Npcap, no C compiler —
+> which is exactly what the download above is. That build runs `verify`, `decode`, `index` and
+> `coverage` perfectly well; it just can't record. `sccap doctor` tells you which one you have.
 
 ### 2.3 Run your terminal as Administrator
 

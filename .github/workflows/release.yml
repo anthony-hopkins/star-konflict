@@ -1,0 +1,58 @@
+name: Release binary
+
+# Publishes a downloadable sccap.exe to a GitHub Release.
+#
+# Cut a release by pushing a version tag:
+#     git tag v0.1.0 && git push origin v0.1.0
+# or from the Actions tab -> Release binary -> Run workflow (give it a tag).
+#
+# The shipped artifact is the static OFFLINE build (CGO_ENABLED=0, no -tags npcap):
+# it runs verify/decode/index/coverage with nothing installed. A capture-capable
+# binary needs Npcap and -tags npcap, whose licence forbids redistribution, so
+# recording stays a local build (see the README, section 2).
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to create (e.g. v0.1.0)'
+        required: true
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    working-directory: sc-capture
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache-dependency-path: sc-capture/go.sum
+
+      - name: Build sccap.exe (windows/amd64, static offline build)
+        env:
+          CGO_ENABLED: '0'
+          GOOS: windows
+          GOARCH: amd64
+        run: go build -trimpath -ldflags="-s -w" -o out/sccap-windows-amd64.exe ./cmd/sccap
+
+      - name: Checksum
+        run: (cd out && sha256sum sccap-windows-amd64.exe > sccap-windows-amd64.exe.sha256)
+
+      - name: Publish to Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          NOTES="Static windows/amd64 build of sccap (offline/analysis build): runs verify, decode, index and coverage with nothing else installed. It cannot RECORD — a capture-capable binary needs Npcap and '-tags npcap', whose licence forbids redistribution, so recording is a local build. See the README, section 2."
+          gh release create "$TAG" out/sccap-windows-amd64.exe out/sccap-windows-amd64.exe.sha256 \
+              --title "sccap $TAG — Windows (amd64, offline)" --notes "$NOTES" \
+          || gh release upload "$TAG" out/sccap-windows-amd64.exe out/sccap-windows-amd64.exe.sha256 --clobber
