@@ -187,6 +187,7 @@ footer .mono{color:var(--ink-2);}
 <script>
 const DATA = __SCCOV_DATA__;
 const fmt = n => Number(n).toLocaleString("en-US");
+const fmtCompact = n => new Intl.NumberFormat("en-US", {notation:"compact", maximumFractionDigits:2}).format(Number(n));
 const $ = id => document.getElementById(id);
 
 (function render(D){
@@ -206,9 +207,9 @@ const $ = id => document.getElementById(id);
     {k:"Novel found", v:fmt(D.novelCount), n:"unknown to the client build", cls:""},
     {k:"Sessions", v:fmt(D.sessions), n:"contributed coverage", cls:""},
   ];
-  if (D.hasBundles) tiles.push({k:"Frames", v:fmt(D.framesTotal), n:"archived to pcapng", cls:""});
+  if (D.hasBundles) tiles.push({k:"Frames", v:fmtCompact(D.framesTotal), title:`${fmt(D.framesTotal)} frames`, n:"archived to pcapng", cls:""});
   $("tiles").innerHTML = tiles.map(t =>
-    `<div class="tile ${t.cls}"><div class="k">${t.k}</div><div class="v">${t.v}</div><div class="n">${t.n}</div></div>`).join("");
+    `<div class="tile ${t.cls}"><div class="k">${t.k}</div><div class="v"${t.title?` title="${t.title}"`:""}>${t.v}</div><div class="n">${t.n}</div></div>`).join("");
 
   // kind bars
   $("kinds").innerHTML = (D.kinds||[]).map(k => {
