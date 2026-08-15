@@ -1,4 +1,4 @@
-# Star Conflict Preservation Project
+# Star Konflict
 
 Record everything **Star Conflict**'s servers say, before they are switched off — so the game can
 be understood, and eventually reimplemented, afterwards.
