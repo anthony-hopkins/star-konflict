@@ -1,0 +1,57 @@
+name: Release binary
+
+# Publishes a downloadable sccap binary to a GitHub Release.
+#
+# Cut a release by pushing a version tag:
+#     git tag v0.1.0 && git push origin v0.1.0
+# or from the Actions tab -> Release binary -> Run workflow (give it a tag).
+#
+# The shipped artifact is the static, offline build (CGO_ENABLED=0). On Linux
+# that build is fully capture-capable — grant it CAP_NET_RAW with setcap after
+# download; it needs no runtime prerequisites.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag to create (e.g. v0.1.0)'
+        required: true
+
+permissions:
+  contents: write
+
+defaults:
+  run:
+    working-directory: sc-capture
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache-dependency-path: sc-capture/go.sum
+
+      - name: Build sccap (linux/amd64, static)
+        env:
+          CGO_ENABLED: '0'
+          GOOS: linux
+          GOARCH: amd64
+        run: go build -trimpath -ldflags="-s -w" -o out/sccap-linux-amd64 ./cmd/sccap
+
+      - name: Checksum
+        run: (cd out && sha256sum sccap-linux-amd64 > sccap-linux-amd64.sha256)
+
+      - name: Publish to Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="${{ github.event.inputs.tag || github.ref_name }}"
+          NOTES="Static linux/amd64 build of sccap — no runtime prerequisites. After downloading: 'chmod +x sccap-linux-amd64' then 'sudo setcap cap_net_raw,cap_net_admin=eip sccap-linux-amd64' then './sccap-linux-amd64 doctor'. See the README for the full guide."
+          gh release create "$TAG" out/sccap-linux-amd64 out/sccap-linux-amd64.sha256 \
+              --title "sccap $TAG — Linux (amd64)" --notes "$NOTES" \
+          || gh release upload "$TAG" out/sccap-linux-amd64 out/sccap-linux-amd64.sha256 --clobber
