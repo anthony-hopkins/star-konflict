@@ -122,14 +122,27 @@ So: go make the game do unusual things. Don't worry about whether we understand 
 
 You need **Ubuntu** (or similar Linux), **Go 1.26+**, and a working Star Conflict install.
 
-### 2.1 Build the tool
+### 2.1 Get the tool
+
+**Download the prebuilt binary** (fastest) — grab `sccap-linux-amd64` from the
+[Releases page](https://github.com/anthony-hopkins/star-konflict/releases), verify it, and put it
+in place:
+
+```bash
+sha256sum -c sccap-linux-amd64.sha256
+chmod +x sccap-linux-amd64
+mkdir -p out && mv sccap-linux-amd64 out/sccap
+```
+
+**Or build from source** (Go 1.26+):
 
 ```bash
 cd sc-capture
 CGO_ENABLED=0 go build -o out/sccap ./cmd/sccap
 ```
 
-One static binary. Nothing to install, no dependencies to fetch at runtime.
+Either way you end up with one static binary at `out/sccap` — nothing to install, no dependencies
+to fetch at runtime.
 
 ### 2.2 Give it permission to see the network
 
@@ -274,11 +287,12 @@ hard to interpret later.
 ### 4.1 Start
 
 ```bash
-./out/sccap capture --scenario AUTH-02 --region EU --out ~/captures
+./out/sccap capture --scenario AUTH-02 --region EU
 ```
 
-Use the scenario ID from the checklist, without the `SC-` prefix. Add `--interface eno1` if
-`doctor --watch` showed more than one live connection.
+The recording lands in `packet-caps/` at the repository root, wherever you started the tool
+from (`--out` overrides this). Use the scenario ID from the checklist, without the `SC-`
+prefix. Add `--interface eno1` if `doctor --watch` showed more than one live connection.
 
 You'll see a status line updating once a second:
 
@@ -341,7 +355,7 @@ informative recordings in the archive.
 ### 5.1 Verify it
 
 ```bash
-./out/sccap verify ~/captures/SC_*
+./out/sccap verify ../packet-caps/SC_*
 ```
 
 Every line should read `ok`:
