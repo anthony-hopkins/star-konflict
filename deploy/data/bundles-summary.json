@@ -46,5 +46,109 @@
     "seen": 12,
     "novel": 4,
     "first": false
+  },
+  {
+    "scen": "BASE-01",
+    "region": "NA",
+    "frames": 5736,
+    "seen": 5,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "HGR-01",
+    "region": "NA",
+    "frames": 7897,
+    "seen": 7,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "HGR-03",
+    "region": "NA",
+    "frames": 24741,
+    "seen": 8,
+    "novel": 1,
+    "first": false
+  },
+  {
+    "scen": "ECON-02",
+    "region": "NA",
+    "frames": 14717,
+    "seen": 13,
+    "novel": 2,
+    "first": false
+  },
+  {
+    "scen": "HGR-04",
+    "region": "NA",
+    "frames": 31582,
+    "seen": 11,
+    "novel": 2,
+    "first": false
+  },
+  {
+    "scen": "ECON-07",
+    "region": "NA",
+    "frames": 19943,
+    "seen": 8,
+    "novel": 1,
+    "first": false
+  },
+  {
+    "scen": "MM-01",
+    "region": "NA",
+    "frames": 28694,
+    "seen": 16,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "MM-04",
+    "region": "NA",
+    "frames": 24292,
+    "seen": 13,
+    "novel": 1,
+    "first": false
+  },
+  {
+    "scen": "MM-04",
+    "region": "NA",
+    "frames": 132597,
+    "seen": 24,
+    "novel": 6,
+    "first": false
+  },
+  {
+    "scen": "CBT-01",
+    "region": "NA",
+    "frames": 31836,
+    "seen": 16,
+    "novel": 2,
+    "first": false
+  },
+  {
+    "scen": "WLD-01",
+    "region": "NA",
+    "frames": 595485,
+    "seen": 21,
+    "novel": 3,
+    "first": false
+  },
+  {
+    "scen": "EDGE-02",
+    "region": "NA",
+    "frames": 65619,
+    "seen": 55,
+    "novel": 1,
+    "first": false
+  },
+  {
+    "scen": "AUTH-05",
+    "region": "NA",
+    "frames": 57071,
+    "seen": 4,
+    "novel": 0,
+    "first": false
   }
 ]

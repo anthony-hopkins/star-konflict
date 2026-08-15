@@ -8,7 +8,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:1": {
    "kind": "async_request",
@@ -17,7 +17,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 7
+   "observations": 20
   },
   "async_request:10": {
    "kind": "async_request",
@@ -26,7 +26,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 5
+   "observations": 11
   },
   "async_request:100": {
    "kind": "async_request",
@@ -35,7 +35,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:101": {
    "kind": "async_request",
@@ -116,7 +116,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:110": {
    "kind": "async_request",
@@ -165,7 +165,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:116": {
    "kind": "async_request",
@@ -270,7 +270,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:128": {
    "kind": "async_request",
@@ -335,7 +335,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:135": {
    "kind": "async_request",
@@ -352,7 +352,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:137": {
    "kind": "async_request",
@@ -425,7 +425,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:145": {
    "kind": "async_request",
@@ -479,9 +479,10 @@
    "kind": "async_request",
    "id": 150,
    "name": "AC_LOBBY_GROUP_LIST",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T202707Z__MM-04__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:32:54.563736418Z",
+   "observations": 1
   },
   "async_request:151": {
    "kind": "async_request",
@@ -543,9 +544,10 @@
    "kind": "async_request",
    "id": 158,
    "name": "AC_CLAN_REQUEST_CREDENTIALS",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T210832Z__WLD-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T21:42:51.960588161Z",
+   "observations": 1
   },
   "async_request:159": {
    "kind": "async_request",
@@ -554,7 +556,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:16": {
    "kind": "async_request",
@@ -571,7 +573,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T040306Z__AUTH-04__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T04:05:21.520635276Z",
-   "observations": 2
+   "observations": 4
   },
   "async_request:161": {
    "kind": "async_request",
@@ -740,7 +742,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:180": {
    "kind": "async_request",
@@ -829,7 +831,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:190": {
    "kind": "async_request",
@@ -870,7 +872,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 5
+   "observations": 8
   },
   "async_request:195": {
    "kind": "async_request",
@@ -879,7 +881,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T050345Z__ECON-01__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T05:17:53.273507701Z",
-   "observations": 1
+   "observations": 2
   },
   "async_request:196": {
    "kind": "async_request",
@@ -917,9 +919,10 @@
    "kind": "async_request",
    "id": 2,
    "name": "AC_ENTER_MM_QUEUE",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T202152Z__MM-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:26:05.066759511Z",
+   "observations": 3
   },
   "async_request:20": {
    "kind": "async_request",
@@ -936,7 +939,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:201": {
    "kind": "async_request",
@@ -945,7 +948,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:202": {
    "kind": "async_request",
@@ -954,7 +957,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 7
+   "observations": 18
   },
   "async_request:203": {
    "kind": "async_request",
@@ -971,7 +974,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 7
+   "observations": 18
   },
   "async_request:205": {
    "kind": "async_request",
@@ -980,7 +983,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 6
+   "observations": 19
   },
   "async_request:206": {
    "kind": "async_request",
@@ -1005,7 +1008,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:209": {
    "kind": "async_request",
@@ -1022,7 +1025,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 6
   },
   "async_request:210": {
    "kind": "async_request",
@@ -1047,7 +1050,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:214": {
    "kind": "async_request",
@@ -1061,9 +1064,10 @@
    "kind": "async_request",
    "id": 215,
    "name": "AC_UNDOCK_SPACE_STATION",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T210832Z__WLD-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T21:42:51.960588161Z",
+   "observations": 1
   },
   "async_request:216": {
    "kind": "async_request",
@@ -1121,7 +1125,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:224": {
    "kind": "async_request",
@@ -1130,7 +1134,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:226": {
    "kind": "async_request",
@@ -1139,7 +1143,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 5
+   "observations": 7
   },
   "async_request:227": {
    "kind": "async_request",
@@ -1153,9 +1157,10 @@
    "kind": "async_request",
    "id": 228,
    "name": "AC_SELL_CRAFT_RESOURCE",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T195941Z__ECON-02__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:04:49.857235715Z",
+   "observations": 1
   },
   "async_request:229": {
    "kind": "async_request",
@@ -1180,7 +1185,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:231": {
    "kind": "async_request",
@@ -1221,7 +1226,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:236": {
    "kind": "async_request",
@@ -1262,7 +1267,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 5
+   "observations": 10
   },
   "async_request:240": {
    "kind": "async_request",
@@ -1333,9 +1338,10 @@
    "kind": "async_request",
    "id": 25,
    "name": "AC_QUEST_ACCEPT",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T202707Z__MM-04__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:32:54.563736418Z",
+   "observations": 1
   },
   "async_request:250": {
    "kind": "async_request",
@@ -1344,7 +1350,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 6
+   "observations": 19
   },
   "async_request:251": {
    "kind": "async_request",
@@ -1353,7 +1359,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:252": {
    "kind": "async_request",
@@ -1410,15 +1416,16 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:3": {
    "kind": "async_request",
    "id": 3,
    "name": "AC_LEAVE_MM_QUEUE",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T202152Z__MM-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:26:05.066759511Z",
+   "observations": 3
   },
   "async_request:30": {
    "kind": "async_request",
@@ -1451,7 +1458,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:34": {
    "kind": "async_request",
@@ -1469,7 +1476,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 5
+   "observations": 6
   },
   "async_request:36": {
    "kind": "async_request",
@@ -1478,7 +1485,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:37": {
    "kind": "async_request",
@@ -1487,7 +1494,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:38": {
    "kind": "async_request",
@@ -1510,9 +1517,10 @@
    "kind": "async_request",
    "id": 4,
    "name": "AC_MM_INFO",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T202152Z__MM-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:26:05.066759511Z",
+   "observations": 3
   },
   "async_request:40": {
    "kind": "async_request",
@@ -1558,9 +1566,10 @@
    "kind": "async_request",
    "id": 45,
    "name": "AC_UPGRADE_ITEMS",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T200546Z__HGR-04__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:15:10.992966802Z",
+   "observations": 1
   },
   "async_request:46": {
    "kind": "async_request",
@@ -1747,7 +1756,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:67": {
    "kind": "async_request",
@@ -1756,7 +1765,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:68": {
    "kind": "async_request",
@@ -1781,7 +1790,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:70": {
    "kind": "async_request",
@@ -1814,7 +1823,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:74": {
    "kind": "async_request",
@@ -1839,7 +1848,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:77": {
    "kind": "async_request",
@@ -1848,7 +1857,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T044854Z__HGR-02__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T05:01:35.303789462Z",
-   "observations": 2
+   "observations": 3
   },
   "async_request:78": {
    "kind": "async_request",
@@ -1874,7 +1883,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 5
+   "observations": 12
   },
   "async_request:80": {
    "kind": "async_request",
@@ -1931,7 +1940,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:87": {
    "kind": "async_request",
@@ -1964,7 +1973,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:90": {
    "kind": "async_request",
@@ -1973,7 +1982,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 1
+   "observations": 4
   },
   "async_request:91": {
    "kind": "async_request",
@@ -1982,7 +1991,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "async_request:92": {
    "kind": "async_request",
@@ -2055,7 +2064,7 @@
    "state": "decoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 10
+   "observations": 12
   },
   "message_type:1": {
    "kind": "message_type",
@@ -2077,17 +2086,19 @@
    "kind": "message_type",
    "id": 11,
    "name": "SCMD_CONNECT_DEDICATED_SERVER",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "decoded",
+   "first_seen_session": "SC_20260815T202152Z__MM-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:26:05.066759511Z",
+   "observations": 6
   },
   "message_type:12": {
    "kind": "message_type",
    "id": 12,
    "name": "SCMD_GAME_ENDED",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T203551Z__MM-04__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:51:51.827615229Z",
+   "observations": 1
   },
   "message_type:13": {
    "kind": "message_type",
@@ -2096,7 +2107,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 7
+   "observations": 20
   },
   "message_type:14": {
    "kind": "message_type",
@@ -2105,7 +2116,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 7
+   "observations": 16
   },
   "message_type:15": {
    "kind": "message_type",
@@ -2146,7 +2157,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 7
   },
   "message_type:2": {
    "kind": "message_type",
@@ -2155,15 +2166,16 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 5
+   "observations": 6
   },
   "message_type:20": {
    "kind": "message_type",
    "id": 20,
    "name": "SCMD_QUEST_NOTIFICATION",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T203551Z__MM-04__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:51:51.827615229Z",
+   "observations": 3
   },
   "message_type:21": {
    "kind": "message_type",
@@ -2180,7 +2192,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 2
+   "observations": 5
   },
   "message_type:23": {
    "kind": "message_type",
@@ -2197,7 +2209,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 8
+   "observations": 20
   },
   "message_type:25": {
    "kind": "message_type",
@@ -2227,9 +2239,10 @@
    "kind": "message_type",
    "id": 28,
    "name": "SCMD_FREE_SPACE_DEBRIEFING",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T210832Z__WLD-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T21:42:51.960588161Z",
+   "observations": 1
   },
   "message_type:29": {
    "kind": "message_type",
@@ -2246,7 +2259,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 5
+   "observations": 6
   },
   "message_type:30": {
    "kind": "message_type",
@@ -2276,9 +2289,10 @@
    "kind": "message_type",
    "id": 33,
    "name": "SCMD_PVE_SCHEDULE",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T195941Z__ECON-02__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:04:49.857235715Z",
+   "observations": 1
   },
   "message_type:34": {
    "kind": "message_type",
@@ -2327,7 +2341,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 5
+   "observations": 6
   },
   "message_type:5": {
    "kind": "message_type",
@@ -2336,7 +2350,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "message_type:6": {
    "kind": "message_type",
@@ -2362,7 +2376,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "message_type:9": {
    "kind": "message_type",
@@ -2371,7 +2385,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   "notification:0": {
    "kind": "notification",
@@ -3337,7 +3351,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 5
   },
   {
    "kind": "async_request",
@@ -3364,7 +3378,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
-   "observations": 4
+   "observations": 8
   },
   {
    "kind": "async_request",
@@ -3382,7 +3396,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T032745Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T03:35:05.489651682Z",
-   "observations": 3
+   "observations": 5
   },
   {
    "kind": "notification",
@@ -3409,7 +3423,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T044854Z__HGR-02__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T05:01:35.303789462Z",
-   "observations": 1
+   "observations": 8
   },
   {
    "kind": "notification",
@@ -3446,7 +3460,43 @@
    "first_seen_session": "SC_20260815T052052Z__ECON-04__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T05:26:49.003585581Z",
    "observations": 1
+  },
+  {
+   "kind": "notification",
+   "id": 3328,
+   "name": "SN_UNKNOWN_3328",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T195941Z__ECON-02__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:04:49.857235715Z",
+   "observations": 1
+  },
+  {
+   "kind": "notification",
+   "id": 7680,
+   "name": "SN_UNKNOWN_7680",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T203551Z__MM-04__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:51:51.827615229Z",
+   "observations": 1
+  },
+  {
+   "kind": "notification",
+   "id": 1280,
+   "name": "SN_UNKNOWN_1280",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T203551Z__MM-04__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:51:51.827615229Z",
+   "observations": 2
+  },
+  {
+   "kind": "notification",
+   "id": 20736,
+   "name": "SN_UNKNOWN_20736",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T203551Z__MM-04__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T20:51:51.827615229Z",
+   "observations": 1
   }
  ],
- "updated_utc": "2026-08-15T05:26:49.003928308Z"
+ "updated_utc": "2026-08-15T21:54:30.786342663Z"
 }
