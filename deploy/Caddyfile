@@ -1,0 +1,15 @@
+# Caddy reverse proxy for the sccov coverage dashboard.
+# Caddy provisions and renews a Let's Encrypt certificate for the domain
+# automatically, so sccov itself only ever speaks plain HTTP on loopback.
+#
+# Install once:  sudo cp deploy/Caddyfile /etc/caddy/Caddyfile && sudo systemctl reload caddy
+# Requires:      DNS A/AAAA for the domain -> this server, and ports 80 + 443 open.
+
+starkonflict.com, www.starkonflict.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:8080
+	header {
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Content-Type-Options nosniff
+	}
+}

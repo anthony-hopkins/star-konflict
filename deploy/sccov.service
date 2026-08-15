@@ -1,0 +1,34 @@
+[Unit]
+Description=Star Conflict capture-coverage dashboard (sccov)
+Documentation=https://github.com/anthony-hopkins/star-konflict
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=sccov
+Group=sccov
+# Binds loopback only; Caddy terminates TLS for starkonflict.com and proxies here.
+ExecStart=/usr/local/bin/sccov -addr 127.0.0.1:8080 -coverage /var/lib/sccov/coverage.json -bundles-summary /var/lib/sccov/bundles-summary.json
+Restart=on-failure
+RestartSec=3
+
+# --- hardening: sccov only reads two local files and serves HTTP ---
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6
+RestrictNamespaces=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+
+[Install]
+WantedBy=multi-user.target

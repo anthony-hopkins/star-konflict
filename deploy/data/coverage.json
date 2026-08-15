@@ -1,0 +1,3452 @@
+{
+ "schema_version": "1.0",
+ "elements": {
+  "async_request:0": {
+   "kind": "async_request",
+   "id": 0,
+   "name": "AC_LOAD_INITIAL_PLAYER_DATA",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:1": {
+   "kind": "async_request",
+   "id": 1,
+   "name": "AC_SERVER_INFO",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 7
+  },
+  "async_request:10": {
+   "kind": "async_request",
+   "id": 10,
+   "name": "AC_PLAYER_CREDITS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 5
+  },
+  "async_request:100": {
+   "kind": "async_request",
+   "id": 100,
+   "name": "AC_LEAGUE_TEAM_INFO",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:101": {
+   "kind": "async_request",
+   "id": 101,
+   "name": "AC_LEAGUE_TEAM_CREATE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:102": {
+   "kind": "async_request",
+   "id": 102,
+   "name": "AC_LEAGUE_TEAM_INVITE_SEND",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:103": {
+   "kind": "async_request",
+   "id": 103,
+   "name": "AC_LEAGUE_TEAM_INVITE_CANCEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:104": {
+   "kind": "async_request",
+   "id": 104,
+   "name": "AC_LEAGUE_TEAM_INVITE_ACCEPT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:105": {
+   "kind": "async_request",
+   "id": 105,
+   "name": "AC_LEAGUE_TEAM_KICK",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:106": {
+   "kind": "async_request",
+   "id": 106,
+   "name": "AC_LEAGUE_TEAM_LEAVE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:107": {
+   "kind": "async_request",
+   "id": 107,
+   "name": "AC_LEAGUE_TEAM_INVITE_DECLINE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:108": {
+   "kind": "async_request",
+   "id": 108,
+   "name": "AC_LEAGUE_TEAM_REQUEST_NAMES",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:109": {
+   "kind": "async_request",
+   "id": 109,
+   "name": "AC_GET_NICKNAMES",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:11": {
+   "kind": "async_request",
+   "id": 11,
+   "name": "AC_PLAYER_STATS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:110": {
+   "kind": "async_request",
+   "id": 110,
+   "name": "AC_GET_UIDS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:111": {
+   "kind": "async_request",
+   "id": 111,
+   "name": "AC_REPORT_PLAYER",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:112": {
+   "kind": "async_request",
+   "id": 112,
+   "name": "AC_UPDATE_YUP_PURCHASES",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:113": {
+   "kind": "async_request",
+   "id": 113,
+   "name": "AC_CHECK_YUP_PURCHASES",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:114": {
+   "kind": "async_request",
+   "id": 114,
+   "name": "AC_UPDATE_DLC_OWNERSHIP",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:115": {
+   "kind": "async_request",
+   "id": 115,
+   "name": "AC_FRIENDS_SEND_REQUEST",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:116": {
+   "kind": "async_request",
+   "id": 116,
+   "name": "AC_FRIENDS_ACCEPT_REQUEST",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:117": {
+   "kind": "async_request",
+   "id": 117,
+   "name": "AC_FRIENDS_REJECT_REQUEST",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:118": {
+   "kind": "async_request",
+   "id": 118,
+   "name": "AC_FRIENDS_REMOVE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:119": {
+   "kind": "async_request",
+   "id": 119,
+   "name": "AC_FRIENDS_LIST",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:12": {
+   "kind": "async_request",
+   "id": 12,
+   "name": "AC_PLAYER_ARC_BALANCE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:120": {
+   "kind": "async_request",
+   "id": 120,
+   "name": "AC_SOCIAL_IGNORE_ADD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:121": {
+   "kind": "async_request",
+   "id": 121,
+   "name": "AC_SOCIAL_IGNORE_REMOVE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:122": {
+   "kind": "async_request",
+   "id": 122,
+   "name": "AC_SOCIAL_WATCH_ADD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:123": {
+   "kind": "async_request",
+   "id": 123,
+   "name": "AC_SOCIAL_WATCH_REMOVE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:124": {
+   "kind": "async_request",
+   "id": 124,
+   "name": "AC_SOCIAL_SUGGEST_STEAM",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:125": {
+   "kind": "async_request",
+   "id": 125,
+   "name": "AC_SOCIAL_SUGGEST_FB",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:126": {
+   "kind": "async_request",
+   "id": 126,
+   "name": "AC_SOCIAL_SUGGEST_VK",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:127": {
+   "kind": "async_request",
+   "id": 127,
+   "name": "AC_TEACHING_LIST",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:128": {
+   "kind": "async_request",
+   "id": 128,
+   "name": "AC_TEACHING_REQUEST_TO_TEACHER",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:129": {
+   "kind": "async_request",
+   "id": 129,
+   "name": "AC_TEACHING_REQUEST_TO_STUDENT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:13": {
+   "kind": "async_request",
+   "id": 13,
+   "name": "AC_TITLES_SET_ACTIVE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:130": {
+   "kind": "async_request",
+   "id": 130,
+   "name": "AC_TEACHING_ACCEPT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:131": {
+   "kind": "async_request",
+   "id": 131,
+   "name": "AC_TEACHING_REJECT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:132": {
+   "kind": "async_request",
+   "id": 132,
+   "name": "AC_TEACHING_CHECK",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:133": {
+   "kind": "async_request",
+   "id": 133,
+   "name": "AC_TEACHING_ALLOW",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:134": {
+   "kind": "async_request",
+   "id": 134,
+   "name": "AC_REFERRALS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:135": {
+   "kind": "async_request",
+   "id": 135,
+   "name": "AC_SET_REFERRER",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:136": {
+   "kind": "async_request",
+   "id": 136,
+   "name": "AC_OBTAIN_REFERRAL_KEY",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:137": {
+   "kind": "async_request",
+   "id": 137,
+   "name": "AC_ATTACH_STEAM_ACCOUNT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:138": {
+   "kind": "async_request",
+   "id": 138,
+   "name": "AC_FINALIZE_STEAM_MTXN",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:139": {
+   "kind": "async_request",
+   "id": 139,
+   "name": "AC_ATTACH_YUP_ACCOUNT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:14": {
+   "kind": "async_request",
+   "id": 14,
+   "name": "AC_AVATARS_SET_ACTIVE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:140": {
+   "kind": "async_request",
+   "id": 140,
+   "name": "AC_ATTACH_EMAIL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:141": {
+   "kind": "async_request",
+   "id": 141,
+   "name": "AC_LOBBY_LIST",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:142": {
+   "kind": "async_request",
+   "id": 142,
+   "name": "AC_LOBBY_JOIN",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:143": {
+   "kind": "async_request",
+   "id": 143,
+   "name": "AC_LOBBY_CREATE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:144": {
+   "kind": "async_request",
+   "id": 144,
+   "name": "AC_LOBBY_INFO",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:145": {
+   "kind": "async_request",
+   "id": 145,
+   "name": "AC_LOBBY_KICK",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:146": {
+   "kind": "async_request",
+   "id": 146,
+   "name": "AC_LOBBY_LEAVE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:147": {
+   "kind": "async_request",
+   "id": 147,
+   "name": "AC_LOBBY_INVITE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:148": {
+   "kind": "async_request",
+   "id": 148,
+   "name": "AC_LOBBY_MODIFY",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:149": {
+   "kind": "async_request",
+   "id": 149,
+   "name": "AC_LOBBY_START_GAME",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:15": {
+   "kind": "async_request",
+   "id": 15,
+   "name": "AC_MOTTOS_SET_ACTIVE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:150": {
+   "kind": "async_request",
+   "id": 150,
+   "name": "AC_LOBBY_GROUP_LIST",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:151": {
+   "kind": "async_request",
+   "id": 151,
+   "name": "AC_LOBBY_GROUP_INFO",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:152": {
+   "kind": "async_request",
+   "id": 152,
+   "name": "AC_LOBBY_GROUP_CREATE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:153": {
+   "kind": "async_request",
+   "id": 153,
+   "name": "AC_LOBBY_GROUP_MODIFY",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:154": {
+   "kind": "async_request",
+   "id": 154,
+   "name": "AC_LOBBY_GROUP_DELETE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:155": {
+   "kind": "async_request",
+   "id": 155,
+   "name": "AC_LOBBY_GROUP_JOINREQ_CREATE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:156": {
+   "kind": "async_request",
+   "id": 156,
+   "name": "AC_LOBBY_GROUP_JOINREQ_CANCEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:157": {
+   "kind": "async_request",
+   "id": 157,
+   "name": "AC_LOBBY_GROUP_JOINREQ_REJECT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:158": {
+   "kind": "async_request",
+   "id": 158,
+   "name": "AC_CLAN_REQUEST_CREDENTIALS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:159": {
+   "kind": "async_request",
+   "id": 159,
+   "name": "AC_CLAN_REQUEST_DESC",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:16": {
+   "kind": "async_request",
+   "id": 16,
+   "name": "AC_CHOOSE_STARTING_STATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:160": {
+   "kind": "async_request",
+   "id": 160,
+   "name": "AC_CLAN_REQUEST_PROFILE",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T040306Z__AUTH-04__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T04:05:21.520635276Z",
+   "observations": 2
+  },
+  "async_request:161": {
+   "kind": "async_request",
+   "id": 161,
+   "name": "AC_CLAN_JOINREQ_CREATE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:162": {
+   "kind": "async_request",
+   "id": 162,
+   "name": "AC_CLAN_JOINREQ_CANCEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:163": {
+   "kind": "async_request",
+   "id": 163,
+   "name": "AC_CLAN_JOINREQ_ACCEPT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:164": {
+   "kind": "async_request",
+   "id": 164,
+   "name": "AC_CLAN_INVITE_SEND",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:165": {
+   "kind": "async_request",
+   "id": 165,
+   "name": "AC_CLAN_INVITE_ACCEPT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:166": {
+   "kind": "async_request",
+   "id": 166,
+   "name": "AC_CLAN_INVITE_CANCEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:167": {
+   "kind": "async_request",
+   "id": 167,
+   "name": "AC_CLAN_KICK",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:168": {
+   "kind": "async_request",
+   "id": 168,
+   "name": "AC_CLAN_LEAVE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:169": {
+   "kind": "async_request",
+   "id": 169,
+   "name": "AC_CLAN_SET_ROLE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:17": {
+   "kind": "async_request",
+   "id": 17,
+   "name": "AC_CHANGE_PLAYER_NICKNAME",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:170": {
+   "kind": "async_request",
+   "id": 170,
+   "name": "AC_CLAN_CHANGE_MOTD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:171": {
+   "kind": "async_request",
+   "id": 171,
+   "name": "AC_CLAN_CHANGE_DESC",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:172": {
+   "kind": "async_request",
+   "id": 172,
+   "name": "AC_CLAN_CHANGE_RECRUITING",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:173": {
+   "kind": "async_request",
+   "id": 173,
+   "name": "AC_CLAN_RESOURCE_CONVERT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:174": {
+   "kind": "async_request",
+   "id": 174,
+   "name": "AC_CLAN_SHIP_BUILD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:175": {
+   "kind": "async_request",
+   "id": 175,
+   "name": "AC_CLAN_SHIP_BOOST_BUILDING",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:176": {
+   "kind": "async_request",
+   "id": 176,
+   "name": "AC_CLAN_SHIP_REPAIR",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:177": {
+   "kind": "async_request",
+   "id": 177,
+   "name": "AC_CLAN_SHIP_BOOST_REPAIRING",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:178": {
+   "kind": "async_request",
+   "id": 178,
+   "name": "AC_CLAN_SHIP_FIT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:179": {
+   "kind": "async_request",
+   "id": 179,
+   "name": "AC_CLAN_SHIP_SET_CURRENT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:18": {
+   "kind": "async_request",
+   "id": 18,
+   "name": "AC_STEAM_USER_INFO",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:180": {
+   "kind": "async_request",
+   "id": 180,
+   "name": "AC_CLAN_UNIVERSE_MOVE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:181": {
+   "kind": "async_request",
+   "id": 181,
+   "name": "AC_CLAN_SET_CIVILIAN_ZONE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:182": {
+   "kind": "async_request",
+   "id": 182,
+   "name": "AC_CLAN_REVIVE_IN_WAR",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:183": {
+   "kind": "async_request",
+   "id": 183,
+   "name": "AC_CLAN_WAR_START",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:184": {
+   "kind": "async_request",
+   "id": 184,
+   "name": "AC_CLAN_QUEST_ACCEPT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:185": {
+   "kind": "async_request",
+   "id": 185,
+   "name": "AC_CLAN_CREATE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:186": {
+   "kind": "async_request",
+   "id": 186,
+   "name": "AC_CLAN_UPGRADE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:187": {
+   "kind": "async_request",
+   "id": 187,
+   "name": "AC_CLAN_CHANGE_NAME",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:188": {
+   "kind": "async_request",
+   "id": 188,
+   "name": "AC_CLAN_CHANGE_TAG",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:189": {
+   "kind": "async_request",
+   "id": 189,
+   "name": "AC_CLAN_ASSIGN_EMBLEM",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:19": {
+   "kind": "async_request",
+   "id": 19,
+   "name": "AC_PREMIUM_INFO",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:190": {
+   "kind": "async_request",
+   "id": 190,
+   "name": "AC_CLAN_BANK_TRANSFER",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:191": {
+   "kind": "async_request",
+   "id": 191,
+   "name": "AC_CLAN_LIST_RECRUITING",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:192": {
+   "kind": "async_request",
+   "id": 192,
+   "name": "AC_CLAN_HISTORY_GET",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:193": {
+   "kind": "async_request",
+   "id": 193,
+   "name": "AC_RELATED_QUEST_ENABLE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:194": {
+   "kind": "async_request",
+   "id": 194,
+   "name": "AC_USER_PROFILE_GET",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 5
+  },
+  "async_request:195": {
+   "kind": "async_request",
+   "id": 195,
+   "name": "AC_ACHIEVEMENTS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T050345Z__ECON-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T05:17:53.273507701Z",
+   "observations": 1
+  },
+  "async_request:196": {
+   "kind": "async_request",
+   "id": 196,
+   "name": "AC_ADMIN_CMD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:197": {
+   "kind": "async_request",
+   "id": 197,
+   "name": "AC_GAMES_INFO",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:198": {
+   "kind": "async_request",
+   "id": 198,
+   "name": "AC_ZONE_INSTANCES_INFO",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:199": {
+   "kind": "async_request",
+   "id": 199,
+   "name": "AC_GET_PUNISHMENTS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:2": {
+   "kind": "async_request",
+   "id": 2,
+   "name": "AC_ENTER_MM_QUEUE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:20": {
+   "kind": "async_request",
+   "id": 20,
+   "name": "AC_PREMIUM_BUY",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:200": {
+   "kind": "async_request",
+   "id": 200,
+   "name": "AC_WELCOME_MSG",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:201": {
+   "kind": "async_request",
+   "id": 201,
+   "name": "AC_MOTD",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:202": {
+   "kind": "async_request",
+   "id": 202,
+   "name": "AC_SURVEY_GET_NEW",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 7
+  },
+  "async_request:203": {
+   "kind": "async_request",
+   "id": 203,
+   "name": "AC_SURVEY_VOTE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:204": {
+   "kind": "async_request",
+   "id": 204,
+   "name": "AC_SURVEY_RESULTS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 7
+  },
+  "async_request:205": {
+   "kind": "async_request",
+   "id": 205,
+   "name": "AC_UNIVERSE_GET",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 6
+  },
+  "async_request:206": {
+   "kind": "async_request",
+   "id": 206,
+   "name": "AC_UNIVERSE_COUNTERS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:207": {
+   "kind": "async_request",
+   "id": 207,
+   "name": "AC_WARMAP_GET",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:208": {
+   "kind": "async_request",
+   "id": 208,
+   "name": "AC_MAIL_GET",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:209": {
+   "kind": "async_request",
+   "id": 209,
+   "name": "AC_MAIL_DELIVER",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:21": {
+   "kind": "async_request",
+   "id": 21,
+   "name": "AC_ACCOUNT_AURAS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:210": {
+   "kind": "async_request",
+   "id": 210,
+   "name": "AC_MAIL_SEND",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:211": {
+   "kind": "async_request",
+   "id": 211,
+   "name": "AC_MAIL_REMOVE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:212": {
+   "kind": "async_request",
+   "id": 212,
+   "name": "AC_MAIL_ACKNOWLEDGE_EXPIRATION",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:214": {
+   "kind": "async_request",
+   "id": 214,
+   "name": "AC_AUTO_PILOT_SPACE_STATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:215": {
+   "kind": "async_request",
+   "id": 215,
+   "name": "AC_UNDOCK_SPACE_STATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:216": {
+   "kind": "async_request",
+   "id": 216,
+   "name": "AC_SET_VISITED_ZONE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:218": {
+   "kind": "async_request",
+   "id": 218,
+   "name": "AC_SPACE_STATIONS_POPULATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:219": {
+   "kind": "async_request",
+   "id": 219,
+   "name": "AC_KARMA_RESET",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:22": {
+   "kind": "async_request",
+   "id": 22,
+   "name": "AC_ADD_ACCOUNT_AURA",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:220": {
+   "kind": "async_request",
+   "id": 220,
+   "name": "AC_FACTION_REP_RESET",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:221": {
+   "kind": "async_request",
+   "id": 221,
+   "name": "AC_LEADERBOARD_GET",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T040306Z__AUTH-04__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T04:05:21.520635276Z",
+   "observations": 2
+  },
+  "async_request:222": {
+   "kind": "async_request",
+   "id": 222,
+   "name": "AC_LEADERBOARD_GET_DESCS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:224": {
+   "kind": "async_request",
+   "id": 224,
+   "name": "AC_GET_FB_TOKEN",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:226": {
+   "kind": "async_request",
+   "id": 226,
+   "name": "AC_GET_CRAFT_RESOURCES",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 5
+  },
+  "async_request:227": {
+   "kind": "async_request",
+   "id": 227,
+   "name": "AC_USE_BLUEPRINT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:228": {
+   "kind": "async_request",
+   "id": 228,
+   "name": "AC_SELL_CRAFT_RESOURCE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:229": {
+   "kind": "async_request",
+   "id": 229,
+   "name": "AC_SELL_CRAFT_RESOURCES",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:23": {
+   "kind": "async_request",
+   "id": 23,
+   "name": "AC_CANCEL_ACCOUNT_AURA",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:230": {
+   "kind": "async_request",
+   "id": 230,
+   "name": "AC_GET_BLUEPRINTS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:231": {
+   "kind": "async_request",
+   "id": 231,
+   "name": "AC_LEARN_BLUEPRINT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:232": {
+   "kind": "async_request",
+   "id": 232,
+   "name": "AC_GET_FREE_SPACE_SAVE_DATA",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:233": {
+   "kind": "async_request",
+   "id": 233,
+   "name": "AC_DISASSEMBLE_ITEM",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:234": {
+   "kind": "async_request",
+   "id": 234,
+   "name": "AC_ADD_THUMB_UP",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:235": {
+   "kind": "async_request",
+   "id": 235,
+   "name": "AC_GET_VISITED_FREE_SPACE_ZONES",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:236": {
+   "kind": "async_request",
+   "id": 236,
+   "name": "AC_ADVERT_CREATE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:237": {
+   "kind": "async_request",
+   "id": 237,
+   "name": "AC_ADVERT_DELETE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:238": {
+   "kind": "async_request",
+   "id": 238,
+   "name": "AC_ADVERT_HEADER_GET",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:239": {
+   "kind": "async_request",
+   "id": 239,
+   "name": "AC_ADVERT_GET",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:24": {
+   "kind": "async_request",
+   "id": 24,
+   "name": "AC_QUESTS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 5
+  },
+  "async_request:240": {
+   "kind": "async_request",
+   "id": 240,
+   "name": "AC_BUY_PRODUCT_FROM_ADVERT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:241": {
+   "kind": "async_request",
+   "id": 241,
+   "name": "AC_EMM_CHANGE_READY",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:242": {
+   "kind": "async_request",
+   "id": 242,
+   "name": "AC_UNLIM_PVE_UPGRADE_PLAYER_LEVEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:243": {
+   "kind": "async_request",
+   "id": 243,
+   "name": "AC_UNLIM_PVE_DISABLE_PLAYER_BUFFS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:246": {
+   "kind": "async_request",
+   "id": 246,
+   "name": "AC_USER_NOTES",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 2
+  },
+  "async_request:247": {
+   "kind": "async_request",
+   "id": 247,
+   "name": "AC_USER_NOTES_ADD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:248": {
+   "kind": "async_request",
+   "id": 248,
+   "name": "AC_USER_NOTES_DELETE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:249": {
+   "kind": "async_request",
+   "id": 249,
+   "name": "AC_BATTLE_PASS_UNLOCK_LEVEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:25": {
+   "kind": "async_request",
+   "id": 25,
+   "name": "AC_QUEST_ACCEPT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:250": {
+   "kind": "async_request",
+   "id": 250,
+   "name": "AC_ZONES_LUA_ACTIVE_EVENTS_UPDATE",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 6
+  },
+  "async_request:251": {
+   "kind": "async_request",
+   "id": 251,
+   "name": "AC_ADVENTURES",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:252": {
+   "kind": "async_request",
+   "id": 252,
+   "name": "AC_ADVENTURE_CANCEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:253": {
+   "kind": "async_request",
+   "id": 253,
+   "name": "AC_253",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:254": {
+   "kind": "async_request",
+   "id": 254,
+   "name": "AC_254",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:255": {
+   "kind": "async_request",
+   "id": 255,
+   "name": "AC_255",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:26": {
+   "kind": "async_request",
+   "id": 26,
+   "name": "AC_QUEST_CHANGE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:27": {
+   "kind": "async_request",
+   "id": 27,
+   "name": "AC_QUEST_COMPLETE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:29": {
+   "kind": "async_request",
+   "id": 29,
+   "name": "AC_SHIP_QUESTS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:3": {
+   "kind": "async_request",
+   "id": 3,
+   "name": "AC_LEAVE_MM_QUEUE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:30": {
+   "kind": "async_request",
+   "id": 30,
+   "name": "AC_SHIP_QUEST_START",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:31": {
+   "kind": "async_request",
+   "id": 31,
+   "name": "AC_SHIP_QUEST_CHANGE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:32": {
+   "kind": "async_request",
+   "id": 32,
+   "name": "AC_SHIP_QUEST_END",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:33": {
+   "kind": "async_request",
+   "id": 33,
+   "name": "AC_REWARDED_TUTORIALS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:34": {
+   "kind": "async_request",
+   "id": 34,
+   "name": "AC_REWARD_TUTORIAL",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T032745Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:35:05.489651682Z",
+   "observations": 1
+  },
+  "async_request:35": {
+   "kind": "async_request",
+   "id": 35,
+   "name": "AC_PLAYER_INVENTORY",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 5
+  },
+  "async_request:36": {
+   "kind": "async_request",
+   "id": 36,
+   "name": "AC_PLAYER_AUTOGEN_INVENTORY",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:37": {
+   "kind": "async_request",
+   "id": 37,
+   "name": "AC_PLAYER_VESSELS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:38": {
+   "kind": "async_request",
+   "id": 38,
+   "name": "AC_VESSEL_EQUIPMENT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:39": {
+   "kind": "async_request",
+   "id": 39,
+   "name": "AC_BUY_ITEM",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T050345Z__ECON-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T05:17:53.273507701Z",
+   "observations": 1
+  },
+  "async_request:4": {
+   "kind": "async_request",
+   "id": 4,
+   "name": "AC_MM_INFO",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:40": {
+   "kind": "async_request",
+   "id": 40,
+   "name": "AC_SELL_ITEM",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:41": {
+   "kind": "async_request",
+   "id": 41,
+   "name": "AC_SELL_ITEMS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:42": {
+   "kind": "async_request",
+   "id": 42,
+   "name": "AC_ENCHANT_ITEM",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:43": {
+   "kind": "async_request",
+   "id": 43,
+   "name": "AC_SALVAGE_ITEM",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:44": {
+   "kind": "async_request",
+   "id": 44,
+   "name": "AC_SALVAGE_ITEMS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:45": {
+   "kind": "async_request",
+   "id": 45,
+   "name": "AC_UPGRADE_ITEMS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:46": {
+   "kind": "async_request",
+   "id": 46,
+   "name": "AC_UPGRADE_AUTOGEN_ITEM",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:47": {
+   "kind": "async_request",
+   "id": 47,
+   "name": "AC_CRAFT_UPGRADE_ITEM",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:48": {
+   "kind": "async_request",
+   "id": 48,
+   "name": "AC_FIND_AUTOGEN_ITEM",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:49": {
+   "kind": "async_request",
+   "id": 49,
+   "name": "AC_ACTIVATE_RESOURCE_VESSEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:5": {
+   "kind": "async_request",
+   "id": 5,
+   "name": "AC_ENTER_TOURNAMENT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:50": {
+   "kind": "async_request",
+   "id": 50,
+   "name": "AC_SELL_VESSEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:51": {
+   "kind": "async_request",
+   "id": 51,
+   "name": "AC_VESSEL_CHANGE_EQUIP",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T044854Z__HGR-02__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T05:01:35.303789462Z",
+   "observations": 3
+  },
+  "async_request:52": {
+   "kind": "async_request",
+   "id": 52,
+   "name": "AC_VESSEL_CHANGE_EQUIP_MULTI",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:53": {
+   "kind": "async_request",
+   "id": 53,
+   "name": "AC_VESSEL_CHEAT_CHANGE_EQUIP",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:54": {
+   "kind": "async_request",
+   "id": 54,
+   "name": "AC_VESSEL_TRANSFER_EQUIP",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:55": {
+   "kind": "async_request",
+   "id": 55,
+   "name": "AC_VESSEL_STRIP_EQUIP",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:56": {
+   "kind": "async_request",
+   "id": 56,
+   "name": "AC_VESSEL_CHANGE_MUNITION",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T052052Z__ECON-04__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T05:26:49.003585581Z",
+   "observations": 1
+  },
+  "async_request:57": {
+   "kind": "async_request",
+   "id": 57,
+   "name": "AC_VESSEL_REFILL_MUNITION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:58": {
+   "kind": "async_request",
+   "id": 58,
+   "name": "AC_VESSEL_TRANSFER_MUNITION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:59": {
+   "kind": "async_request",
+   "id": 59,
+   "name": "AC_VESSEL_AUTOGEN_DESTROY",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:6": {
+   "kind": "async_request",
+   "id": 6,
+   "name": "AC_LEAVE_TOURNAMENT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:60": {
+   "kind": "async_request",
+   "id": 60,
+   "name": "AC_VESSEL_AUTOGEN_DISMANTLE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:61": {
+   "kind": "async_request",
+   "id": 61,
+   "name": "AC_VESSEL_EXTRACT_EXP",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:62": {
+   "kind": "async_request",
+   "id": 62,
+   "name": "AC_VESSEL_LEVELUP",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:63": {
+   "kind": "async_request",
+   "id": 63,
+   "name": "AC_VESSEL_REPAIR",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:64": {
+   "kind": "async_request",
+   "id": 64,
+   "name": "AC_VESSEL_REPAIR_BATTLE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:65": {
+   "kind": "async_request",
+   "id": 65,
+   "name": "AC_VESSEL_REFILL_BATTLE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:66": {
+   "kind": "async_request",
+   "id": 66,
+   "name": "AC_VESSEL_STRIP_IMPROPER_BATTLE",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:67": {
+   "kind": "async_request",
+   "id": 67,
+   "name": "AC_VESSEL_FREE_CUSTOM_ELEMENTS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:68": {
+   "kind": "async_request",
+   "id": 68,
+   "name": "AC_VESSEL_CUSTOM_ELEMENTS_BUY",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:69": {
+   "kind": "async_request",
+   "id": 69,
+   "name": "AC_VESSEL_CUSTOM_ELEMENTS_ACKNOWLEDGE_EXPIRATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:7": {
+   "kind": "async_request",
+   "id": 7,
+   "name": "AC_GET_USERDATA",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:70": {
+   "kind": "async_request",
+   "id": 70,
+   "name": "AC_VESSEL_CRAFT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:71": {
+   "kind": "async_request",
+   "id": 71,
+   "name": "AC_VESSEL_RECRAFT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:72": {
+   "kind": "async_request",
+   "id": 72,
+   "name": "AC_VESSEL_BUDGET_LEVELUP",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:73": {
+   "kind": "async_request",
+   "id": 73,
+   "name": "AC_VESSEL_BUDGET_ACTIVATE",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:74": {
+   "kind": "async_request",
+   "id": 74,
+   "name": "AC_VESSEL_UNLOCK_NODE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:75": {
+   "kind": "async_request",
+   "id": 75,
+   "name": "AC_VESSEL_ACTIVATE_NODE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:76": {
+   "kind": "async_request",
+   "id": 76,
+   "name": "AC_BATTLE_SLOTS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:77": {
+   "kind": "async_request",
+   "id": 77,
+   "name": "AC_BATTLE_SLOT_CHANGE_VESSEL",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T044854Z__HGR-02__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T05:01:35.303789462Z",
+   "observations": 2
+  },
+  "async_request:78": {
+   "kind": "async_request",
+   "id": 78,
+   "name": "AC_BATTLE_SLOT_SWAP_VESSELS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T044854Z__HGR-02__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T05:01:35.303789462Z",
+   "observations": 1
+  },
+  "async_request:79": {
+   "kind": "async_request",
+   "id": 79,
+   "name": "AC_BATTLE_SLOT_CHEAT_CHANGE_VESSEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:8": {
+   "kind": "async_request",
+   "id": 8,
+   "name": "AC_SET_USERDATA",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 5
+  },
+  "async_request:80": {
+   "kind": "async_request",
+   "id": 80,
+   "name": "AC_INV_EXT_BUY",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:81": {
+   "kind": "async_request",
+   "id": 81,
+   "name": "AC_AUTOGEN_INV_EXT_BUY",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:82": {
+   "kind": "async_request",
+   "id": 82,
+   "name": "AC_EXCHANGE_GOLD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:83": {
+   "kind": "async_request",
+   "id": 83,
+   "name": "AC_BUY_GOLD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:84": {
+   "kind": "async_request",
+   "id": 84,
+   "name": "AC_BUY_ARC_DLC",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:85": {
+   "kind": "async_request",
+   "id": 85,
+   "name": "AC_TALENTS_ACQUIRE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:86": {
+   "kind": "async_request",
+   "id": 86,
+   "name": "AC_TALENTS_UPDATE",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:87": {
+   "kind": "async_request",
+   "id": 87,
+   "name": "AC_TALENTS_RESET",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:88": {
+   "kind": "async_request",
+   "id": 88,
+   "name": "AC_TALENTS_ASSIGN_SETS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:89": {
+   "kind": "async_request",
+   "id": 89,
+   "name": "AC_BUY_TALENT_SET",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:9": {
+   "kind": "async_request",
+   "id": 9,
+   "name": "AC_PLAYER_CREDENTIALS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:90": {
+   "kind": "async_request",
+   "id": 90,
+   "name": "AC_REACT_ON_ABANDONED_GAME",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 1
+  },
+  "async_request:91": {
+   "kind": "async_request",
+   "id": 91,
+   "name": "AC_SQUAD_INFO",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "async_request:92": {
+   "kind": "async_request",
+   "id": 92,
+   "name": "AC_SQUAD_INVITE_ACCEPT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:93": {
+   "kind": "async_request",
+   "id": 93,
+   "name": "AC_SQUAD_INVITE_DECLINE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:94": {
+   "kind": "async_request",
+   "id": 94,
+   "name": "AC_SQUAD_LEAVE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:95": {
+   "kind": "async_request",
+   "id": 95,
+   "name": "AC_SQUAD_INVITE_SEND",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:96": {
+   "kind": "async_request",
+   "id": 96,
+   "name": "AC_SQUAD_INVITE_CANCEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:97": {
+   "kind": "async_request",
+   "id": 97,
+   "name": "AC_SQUAD_KICK",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:98": {
+   "kind": "async_request",
+   "id": 98,
+   "name": "AC_SQUAD_READY",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "async_request:99": {
+   "kind": "async_request",
+   "id": 99,
+   "name": "AC_SQUAD_CONVERT_TO_WING",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:0": {
+   "kind": "message_type",
+   "id": 0,
+   "name": "SCMD_ASSIGNED_SHARD",
+   "state": "decoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 10
+  },
+  "message_type:1": {
+   "kind": "message_type",
+   "id": 1,
+   "name": "SCMD_LB_QUEUE_INFO",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:10": {
+   "kind": "message_type",
+   "id": 10,
+   "name": "SCMD_STORE_SPOILED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:11": {
+   "kind": "message_type",
+   "id": 11,
+   "name": "SCMD_CONNECT_DEDICATED_SERVER",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:12": {
+   "kind": "message_type",
+   "id": 12,
+   "name": "SCMD_GAME_ENDED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:13": {
+   "kind": "message_type",
+   "id": 13,
+   "name": "CSCMD_ASYNC_REQ",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 7
+  },
+  "message_type:14": {
+   "kind": "message_type",
+   "id": 14,
+   "name": "SCMD_NOTIFICATION",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 7
+  },
+  "message_type:15": {
+   "kind": "message_type",
+   "id": 15,
+   "name": "SCMD_SQUAD_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:16": {
+   "kind": "message_type",
+   "id": 16,
+   "name": "SCMD_SOCIAL_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:17": {
+   "kind": "message_type",
+   "id": 17,
+   "name": "SCMD_TEACH_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:18": {
+   "kind": "message_type",
+   "id": 18,
+   "name": "SCMD_CLAN_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:19": {
+   "kind": "message_type",
+   "id": 19,
+   "name": "SCMD_USER_PROFILE_NOTIFICATION",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "message_type:2": {
+   "kind": "message_type",
+   "id": 2,
+   "name": "SCMD_LB_CVARS",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 5
+  },
+  "message_type:20": {
+   "kind": "message_type",
+   "id": 20,
+   "name": "SCMD_QUEST_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:21": {
+   "kind": "message_type",
+   "id": 21,
+   "name": "SCMD_LEAGUE_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:22": {
+   "kind": "message_type",
+   "id": 22,
+   "name": "SCMD_VESSEL_NOTIFICATION",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 2
+  },
+  "message_type:23": {
+   "kind": "message_type",
+   "id": 23,
+   "name": "SCMD_LOBBY_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:24": {
+   "kind": "message_type",
+   "id": 24,
+   "name": "SCMD_KEEP_ALIVE",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 8
+  },
+  "message_type:25": {
+   "kind": "message_type",
+   "id": 25,
+   "name": "SCMD_BAN_INFO",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:26": {
+   "kind": "message_type",
+   "id": 26,
+   "name": "SCMD_WELCOME_MSG",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:27": {
+   "kind": "message_type",
+   "id": 27,
+   "name": "SCMD_DOCK_SPACE_STATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:28": {
+   "kind": "message_type",
+   "id": 28,
+   "name": "SCMD_FREE_SPACE_DEBRIEFING",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:29": {
+   "kind": "message_type",
+   "id": 29,
+   "name": "SCMD_NEW_MOTD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:3": {
+   "kind": "message_type",
+   "id": 3,
+   "name": "SCMD_AUTH_REQ",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 5
+  },
+  "message_type:30": {
+   "kind": "message_type",
+   "id": 30,
+   "name": "SCMD_TOURNAMENT_TEAMS_INFO",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:31": {
+   "kind": "message_type",
+   "id": 31,
+   "name": "SCMD_BRAWL_SCHEDULE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:32": {
+   "kind": "message_type",
+   "id": 32,
+   "name": "SCMD_REWARD_SCHEDULE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:33": {
+   "kind": "message_type",
+   "id": 33,
+   "name": "SCMD_PVE_SCHEDULE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:34": {
+   "kind": "message_type",
+   "id": 34,
+   "name": "SCMD_LEAGUE_FORBIDDEN_EQUIPMENT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:35": {
+   "kind": "message_type",
+   "id": 35,
+   "name": "SCMD_BATTLE_PASS_ACTIVATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:36": {
+   "kind": "message_type",
+   "id": 36,
+   "name": "SCMD_ZONES_WITH_DISABLED_QUESTS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:37": {
+   "kind": "message_type",
+   "id": 37,
+   "name": "SCMD_ADVENTURE_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:38": {
+   "kind": "message_type",
+   "id": 38,
+   "name": "SCMD_REPLACE_CHAT_MSG",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:4": {
+   "kind": "message_type",
+   "id": 4,
+   "name": "CCMD_AUTH_REQUEST",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 5
+  },
+  "message_type:5": {
+   "kind": "message_type",
+   "id": 5,
+   "name": "SCMD_AUTH_ACK",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "message_type:6": {
+   "kind": "message_type",
+   "id": 6,
+   "name": "SCMD_STEAM_NOT_ATTACHED",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 2
+  },
+  "message_type:7": {
+   "kind": "message_type",
+   "id": 7,
+   "name": "SCMD_ARC_NOT_ATTACHED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "message_type:8": {
+   "kind": "message_type",
+   "id": 8,
+   "name": "CCMD_STORE",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "message_type:9": {
+   "kind": "message_type",
+   "id": 9,
+   "name": "SCMD_STORE",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  "notification:0": {
+   "kind": "notification",
+   "id": 0,
+   "name": "SN_VESSELS_AUTO_REPAIRED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:1": {
+   "kind": "notification",
+   "id": 1,
+   "name": "SN_VESSELS_AUTO_REPAIR_FAILED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:10": {
+   "kind": "notification",
+   "id": 10,
+   "name": "SN_CREDITS_PURCHASED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:100": {
+   "kind": "notification",
+   "id": 100,
+   "name": "SN_SELL_PRODUCT_FROM_ADVERT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:101": {
+   "kind": "notification",
+   "id": 101,
+   "name": "SN_UNLIM_PVE_UPGRADE_PLAYER_LEVEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:102": {
+   "kind": "notification",
+   "id": 102,
+   "name": "SN_AUTOGEN_INVENTORY_EXT_PURCHASED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:103": {
+   "kind": "notification",
+   "id": 103,
+   "name": "SN_AUTOGEN_UPGRADE_RESULT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:104": {
+   "kind": "notification",
+   "id": 104,
+   "name": "SN_EQUIPMENT_CHANGE_MULTI",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:105": {
+   "kind": "notification",
+   "id": 105,
+   "name": "SN_BATTLE_PASS_UNLOCK",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:106": {
+   "kind": "notification",
+   "id": 106,
+   "name": "SN_IMAGINARY_QUEST_REWARD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:107": {
+   "kind": "notification",
+   "id": 107,
+   "name": "SN_LOBBY_GROUP_CREATED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:108": {
+   "kind": "notification",
+   "id": 108,
+   "name": "SN_AUTOGEN_DESTROYED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:109": {
+   "kind": "notification",
+   "id": 109,
+   "name": "SN_AUTOGEN_DISMANTLED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:11": {
+   "kind": "notification",
+   "id": 11,
+   "name": "SN_PREMIUM_TIME_PURCHASED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:110": {
+   "kind": "notification",
+   "id": 110,
+   "name": "SN_QUEST_KEY_CHANGE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:111": {
+   "kind": "notification",
+   "id": 111,
+   "name": "SN_GAME_EVENT_STATE_CHANGED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:112": {
+   "kind": "notification",
+   "id": 112,
+   "name": "SN_DLC_PURCHASED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:113": {
+   "kind": "notification",
+   "id": 113,
+   "name": "SN_ADVENTURE_FINAL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:114": {
+   "kind": "notification",
+   "id": 114,
+   "name": "SN_ADVENTURE_PROGRESS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:115": {
+   "kind": "notification",
+   "id": 115,
+   "name": "SN_NUM",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:12": {
+   "kind": "notification",
+   "id": 12,
+   "name": "SN_INVENTORY_EXT_PURCHASED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:13": {
+   "kind": "notification",
+   "id": 13,
+   "name": "SN_ITEM_SOLD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:14": {
+   "kind": "notification",
+   "id": 14,
+   "name": "SN_ITEM_SALVAGED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:15": {
+   "kind": "notification",
+   "id": 15,
+   "name": "SN_LIKE_ADDED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:16": {
+   "kind": "notification",
+   "id": 16,
+   "name": "SN_UPDATE_DLC_OWNERSHIP",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:17": {
+   "kind": "notification",
+   "id": 17,
+   "name": "SN_WAR_THUNDER_PROMO",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:18": {
+   "kind": "notification",
+   "id": 18,
+   "name": "SN_VK_GROUP_REWARD_PROMO",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:19": {
+   "kind": "notification",
+   "id": 19,
+   "name": "SN_VESSEL_LEVELUP",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:2": {
+   "kind": "notification",
+   "id": 2,
+   "name": "SN_VESSEL_REPAIRED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:20": {
+   "kind": "notification",
+   "id": 20,
+   "name": "SN_BATTLE_SLOT_AVAILABLE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:21": {
+   "kind": "notification",
+   "id": 21,
+   "name": "SN_SKILL_LEARNED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:22": {
+   "kind": "notification",
+   "id": 22,
+   "name": "SN_SKILL_RESET",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:23": {
+   "kind": "notification",
+   "id": 23,
+   "name": "SN_MODULE_EQUIPPED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:24": {
+   "kind": "notification",
+   "id": 24,
+   "name": "SN_MODULE_UNEQUIPPED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:25": {
+   "kind": "notification",
+   "id": 25,
+   "name": "SN_MODULE_UNEQUIPPED_MULTI",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:26": {
+   "kind": "notification",
+   "id": 26,
+   "name": "SN_MUNITION_EQUIPPED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:27": {
+   "kind": "notification",
+   "id": 27,
+   "name": "SN_MUNITION_UNEQUIPPED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:28": {
+   "kind": "notification",
+   "id": 28,
+   "name": "SN_BATTLE_SLOT_VESSEL_INSTALLED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:29": {
+   "kind": "notification",
+   "id": 29,
+   "name": "SN_BATTLE_SLOT_VESSEL_REMOVED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:3": {
+   "kind": "notification",
+   "id": 3,
+   "name": "SN_DURABILITY_RESTORED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:30": {
+   "kind": "notification",
+   "id": 30,
+   "name": "SN_GAME_REWARDED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:31": {
+   "kind": "notification",
+   "id": 31,
+   "name": "SN_LEADERBOARD_SOMETHING",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:32": {
+   "kind": "notification",
+   "id": 32,
+   "name": "SN_ACHIEVEMENT_UNLOCKED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:33": {
+   "kind": "notification",
+   "id": 33,
+   "name": "SN_SQUAD_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:34": {
+   "kind": "notification",
+   "id": 34,
+   "name": "SN_RACE_RANK",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:35": {
+   "kind": "notification",
+   "id": 35,
+   "name": "SN_SOCIAL_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:36": {
+   "kind": "notification",
+   "id": 36,
+   "name": "SN_YUP_PURCHASE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:37": {
+   "kind": "notification",
+   "id": 37,
+   "name": "SN_GOLD_REVOKE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:38": {
+   "kind": "notification",
+   "id": 38,
+   "name": "SN_GOLD_EMISSION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:39": {
+   "kind": "notification",
+   "id": 39,
+   "name": "SN_STEAM_PURCHASE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:4": {
+   "kind": "notification",
+   "id": 4,
+   "name": "SN_FREE_REPAIR_USED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:40": {
+   "kind": "notification",
+   "id": 40,
+   "name": "SN_BONUS_BUNDLE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:41": {
+   "kind": "notification",
+   "id": 41,
+   "name": "SN_STRIPPED_UNAVAILABLE_ITEMS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:42": {
+   "kind": "notification",
+   "id": 42,
+   "name": "SN_MAINTENANCE_COUNTDOWN",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:43": {
+   "kind": "notification",
+   "id": 43,
+   "name": "SN_MAINTENANCE_CANCELLED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:44": {
+   "kind": "notification",
+   "id": 44,
+   "name": "SN_STEAM_DLC_PURCHASED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:45": {
+   "kind": "notification",
+   "id": 45,
+   "name": "SN_PREMIUM_ACCESS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:46": {
+   "kind": "notification",
+   "id": 46,
+   "name": "SN_VESSEL_CUSTOM_ELEMENTS_CHANGED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:47": {
+   "kind": "notification",
+   "id": 47,
+   "name": "SN_VESSEL_CUSTOM_ELEMENTS_EXPIRED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:48": {
+   "kind": "notification",
+   "id": 48,
+   "name": "SN_VESSEL_CUSTOM_ELEMENTS_NEW_FREE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:49": {
+   "kind": "notification",
+   "id": 49,
+   "name": "SN_WELCOME_MSG",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:5": {
+   "kind": "notification",
+   "id": 5,
+   "name": "SN_VESSELS_AUTO_REFILLED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:50": {
+   "kind": "notification",
+   "id": 50,
+   "name": "SN_MOTD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:51": {
+   "kind": "notification",
+   "id": 51,
+   "name": "SN_ITEM_ADVERT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:52": {
+   "kind": "notification",
+   "id": 52,
+   "name": "SN_GOLD_POOL_ADVERT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:53": {
+   "kind": "notification",
+   "id": 53,
+   "name": "SN_LOBBY_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:54": {
+   "kind": "notification",
+   "id": 54,
+   "name": "SN_DAILY_LOGIN",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:55": {
+   "kind": "notification",
+   "id": 55,
+   "name": "SN_NEW_LETTER",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:56": {
+   "kind": "notification",
+   "id": 56,
+   "name": "SN_STEAM_GROUP_PROMO",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:57": {
+   "kind": "notification",
+   "id": 57,
+   "name": "SN_QUEST_ACCEPTED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:58": {
+   "kind": "notification",
+   "id": 58,
+   "name": "SN_QUEST_PROGRESS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:59": {
+   "kind": "notification",
+   "id": 59,
+   "name": "SN_QUEST_COMPLETED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:6": {
+   "kind": "notification",
+   "id": 6,
+   "name": "SN_VESSELS_AUTO_REFILL_FAILED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:60": {
+   "kind": "notification",
+   "id": 60,
+   "name": "SN_TITLE_ACQUIRED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:61": {
+   "kind": "notification",
+   "id": 61,
+   "name": "SN_AVATAR_ACQUIRED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:62": {
+   "kind": "notification",
+   "id": 62,
+   "name": "SN_MOTTO_ACQUIRED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:63": {
+   "kind": "notification",
+   "id": 63,
+   "name": "SN_REFEREE_ADDED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:64": {
+   "kind": "notification",
+   "id": 64,
+   "name": "SN_REFERRER_BONUS_GOLD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:65": {
+   "kind": "notification",
+   "id": 65,
+   "name": "SN_STEAM_PRIVATE_PROFILE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:66": {
+   "kind": "notification",
+   "id": 66,
+   "name": "SN_PRESTIGE_CHANGED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:67": {
+   "kind": "notification",
+   "id": 67,
+   "name": "SN_RESOURCE_VESSEL_DEACTIVATE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:68": {
+   "kind": "notification",
+   "id": 68,
+   "name": "SN_ZONE_OWNAGE_REWARD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:69": {
+   "kind": "notification",
+   "id": 69,
+   "name": "SN_CLAN_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:7": {
+   "kind": "notification",
+   "id": 7,
+   "name": "SN_VESSEL_REFILLED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:70": {
+   "kind": "notification",
+   "id": 70,
+   "name": "SN_PLAYER_CRAFTED_VESSEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:71": {
+   "kind": "notification",
+   "id": 71,
+   "name": "SN_PLAYER_BOUGHT_PREMIUM_VESSEL",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:72": {
+   "kind": "notification",
+   "id": 72,
+   "name": "SN_ADMIN_TASK_RESULT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:73": {
+   "kind": "notification",
+   "id": 73,
+   "name": "SN_TEACHING_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:74": {
+   "kind": "notification",
+   "id": 74,
+   "name": "SN_CRAFT_RESULT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:75": {
+   "kind": "notification",
+   "id": 75,
+   "name": "SN_ARC_PURCHASE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:76": {
+   "kind": "notification",
+   "id": 76,
+   "name": "SN_TALENT_NOTIFICATION",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:77": {
+   "kind": "notification",
+   "id": 77,
+   "name": "SN_GAME_REWARDED_PREMIUM",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:78": {
+   "kind": "notification",
+   "id": 78,
+   "name": "SN_SHIP_QUEST_STARTED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:79": {
+   "kind": "notification",
+   "id": 79,
+   "name": "SN_SHIP_QUEST_ENDED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:8": {
+   "kind": "notification",
+   "id": 8,
+   "name": "SN_ITEM_PURCHASED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:80": {
+   "kind": "notification",
+   "id": 80,
+   "name": "SN_TOURNAMENT_REWARDS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:81": {
+   "kind": "notification",
+   "id": 81,
+   "name": "SN_ZONE_OWNER_CHANGED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:82": {
+   "kind": "notification",
+   "id": 82,
+   "name": "SN_CLANSHIP_BUILDING_FINISHED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:83": {
+   "kind": "notification",
+   "id": 83,
+   "name": "SN_NEW_LETTERS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:84": {
+   "kind": "notification",
+   "id": 84,
+   "name": "SN_ITEM_CONVERTED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:85": {
+   "kind": "notification",
+   "id": 85,
+   "name": "SN_PLAYER_UNLOCKED_ACHIEVEMENT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:86": {
+   "kind": "notification",
+   "id": 86,
+   "name": "SN_MASSIVE_SALE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:87": {
+   "kind": "notification",
+   "id": 87,
+   "name": "SN_MASSIVE_RESOURCE_SALE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:88": {
+   "kind": "notification",
+   "id": 88,
+   "name": "SN_LETTER_PAYMENT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:89": {
+   "kind": "notification",
+   "id": 89,
+   "name": "SN_LETTER_REJECTED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:9": {
+   "kind": "notification",
+   "id": 9,
+   "name": "SN_ITEM_BURNED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:90": {
+   "kind": "notification",
+   "id": 90,
+   "name": "SN_LETTER_EXPIRED",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:91": {
+   "kind": "notification",
+   "id": 91,
+   "name": "SN_ADMIN_LETTERS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:92": {
+   "kind": "notification",
+   "id": 92,
+   "name": "SN_LETTER_ITEMS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:93": {
+   "kind": "notification",
+   "id": 93,
+   "name": "SN_LETTER_GOODS",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:94": {
+   "kind": "notification",
+   "id": 94,
+   "name": "SN_UPGRADE_RESULT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:95": {
+   "kind": "notification",
+   "id": 95,
+   "name": "SN_EMM_EXIST_OPPONENT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:96": {
+   "kind": "notification",
+   "id": 96,
+   "name": "SN_ATLAS_INIT",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:97": {
+   "kind": "notification",
+   "id": 97,
+   "name": "SN_ACCOUNT_RANK_UP",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:98": {
+   "kind": "notification",
+   "id": 98,
+   "name": "SN_MILITARY_EXP_ADD",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  },
+  "notification:99": {
+   "kind": "notification",
+   "id": 99,
+   "name": "SN_ADVERT_DELETE",
+   "state": "never_observed",
+   "first_seen_utc": "0001-01-01T00:00:00Z",
+   "observations": 0
+  }
+ },
+ "novel": [
+  {
+   "kind": "notification",
+   "id": 4608,
+   "name": "SN_UNKNOWN_4608",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 2
+  },
+  {
+   "kind": "notification",
+   "id": 13824,
+   "name": "SN_UNKNOWN_13824",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 3
+  },
+  {
+   "kind": "notification",
+   "id": 14336,
+   "name": "SN_UNKNOWN_14336",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 2
+  },
+  {
+   "kind": "notification",
+   "id": 24576,
+   "name": "SN_UNKNOWN_24576",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  {
+   "kind": "async_request",
+   "id": 244,
+   "name": "AC_UNKNOWN_244",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 2
+  },
+  {
+   "kind": "async_request",
+   "id": 213,
+   "name": "AC_UNKNOWN_213",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 3
+  },
+  {
+   "kind": "notification",
+   "id": 28416,
+   "name": "SN_UNKNOWN_28416",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 4
+  },
+  {
+   "kind": "async_request",
+   "id": 245,
+   "name": "AC_UNKNOWN_245",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:23:26.209228014Z",
+   "observations": 2
+  },
+  {
+   "kind": "notification",
+   "id": 17920,
+   "name": "SN_UNKNOWN_17920",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T032745Z__AUTH-01__vol-local__US__000",
+   "first_seen_utc": "2026-08-15T03:35:05.489651682Z",
+   "observations": 3
+  },
+  {
+   "kind": "notification",
+   "id": 6144,
+   "name": "SN_UNKNOWN_6144",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T044854Z__HGR-02__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T05:01:35.303789462Z",
+   "observations": 2
+  },
+  {
+   "kind": "notification",
+   "id": 5888,
+   "name": "SN_UNKNOWN_5888",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T044854Z__HGR-02__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T05:01:35.303789462Z",
+   "observations": 3
+  },
+  {
+   "kind": "notification",
+   "id": 18176,
+   "name": "SN_UNKNOWN_18176",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T044854Z__HGR-02__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T05:01:35.303789462Z",
+   "observations": 1
+  },
+  {
+   "kind": "notification",
+   "id": 2048,
+   "name": "SN_UNKNOWN_2048",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T050345Z__ECON-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T05:17:53.273507701Z",
+   "observations": 1
+  },
+  {
+   "kind": "notification",
+   "id": 21760,
+   "name": "SN_UNKNOWN_21760",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T050345Z__ECON-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T05:17:53.273507701Z",
+   "observations": 1
+  },
+  {
+   "kind": "notification",
+   "id": 6912,
+   "name": "SN_UNKNOWN_6912",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T052052Z__ECON-04__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T05:26:49.003585581Z",
+   "observations": 1
+  },
+  {
+   "kind": "notification",
+   "id": 6656,
+   "name": "SN_UNKNOWN_6656",
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260815T052052Z__ECON-04__vol-local__NA__000",
+   "first_seen_utc": "2026-08-15T05:26:49.003585581Z",
+   "observations": 1
+  }
+ ],
+ "updated_utc": "2026-08-15T05:26:49.003928308Z"
+}

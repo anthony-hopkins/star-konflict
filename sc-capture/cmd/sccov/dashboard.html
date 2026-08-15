@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Star Conflict Coverage</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{
+  --bg:#EDF1F7; --panel:#FFFFFF; --panel-2:#F5F8FC; --border:#DCE4EE;
+  --track:#DDE5EF; --ink:#131820; --ink-2:#39434F; --muted:#5E6875;
+  --accent:#0F857A; --accent-soft:#37AEA3; --accent-deep:#0A5F57;
+  --amber:#A66512; --amber-soft:#C68227; --danger:#B44A3A;
+  --shadow:0 1px 2px rgba(16,28,40,.06),0 8px 24px rgba(16,28,40,.06);
+  --radius:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0B0E15; --panel:#141a24; --panel-2:#10151d; --border:#232b38;
+  --track:#212a36; --ink:#E8EDF4; --ink-2:#BCC5D2; --muted:#828d9d;
+  --accent:#38B0A6; --accent-soft:#63D2C7; --accent-deep:#1E8C82;
+  --amber:#E6A94D; --amber-soft:#F0BE72; --danger:#E27862;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+}}
+:root[data-theme="dark"]{
+  --bg:#0B0E15; --panel:#141a24; --panel-2:#10151d; --border:#232b38;
+  --track:#212a36; --ink:#E8EDF4; --ink-2:#BCC5D2; --muted:#828d9d;
+  --accent:#38B0A6; --accent-soft:#63D2C7; --accent-deep:#1E8C82;
+  --amber:#E6A94D; --amber-soft:#F0BE72; --danger:#E27862;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.5;-webkit-font-smoothing:antialiased;}
+.mono{font-family:ui-monospace,"JetBrains Mono","SF Mono","Cascadia Code",Menlo,Consolas,monospace;
+  font-variant-numeric:tabular-nums;}
+.wrap{max-width:1040px;margin:0 auto;padding:clamp(20px,4vw,44px) clamp(16px,4vw,32px) 60px;}
+.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
+  font-weight:600;font-family:ui-monospace,monospace;}
+header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;}
+h1{font-size:clamp(26px,4vw,38px);line-height:1.05;margin:.35em 0 .15em;letter-spacing:-.02em;
+  text-wrap:balance;font-weight:700;}
+.sub{color:var(--ink-2);max-width:60ch;margin:0;font-size:15px;}
+.toggle{background:var(--panel);border:1px solid var(--border);color:var(--muted);
+  border-radius:99px;padding:7px 13px;font-size:12px;cursor:pointer;font-family:ui-monospace,monospace;
+  display:inline-flex;gap:7px;align-items:center;}
+.toggle:hover{color:var(--ink);border-color:var(--accent);}
+.toggle:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+.hero{margin-top:26px;background:
+    radial-gradient(120% 140% at 100% 0%, color-mix(in srgb,var(--accent) 9%, transparent), transparent 60%),
+    var(--panel);
+  border:1px solid var(--border);border-radius:14px;padding:clamp(20px,3vw,30px);
+  box-shadow:var(--shadow);display:grid;grid-template-columns:1.1fr 1fr;gap:clamp(20px,4vw,44px);align-items:center;}
+@media(max-width:640px){.hero{grid-template-columns:1fr;}}
+.count{font-size:clamp(56px,12vw,104px);line-height:.86;font-weight:700;color:var(--amber);
+  letter-spacing:-.03em;font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums;}
+.count small{display:block;font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em;
+  margin-top:14px;line-height:1.5;font-family:ui-monospace,monospace;}
+.count small b{color:var(--ink-2);font-weight:600;}
+.meter-wrap{display:flex;flex-direction:column;gap:10px;}
+.meter-top{display:flex;justify-content:space-between;align-items:baseline;font-size:13px;color:var(--muted);}
+.meter-top b{color:var(--ink);font-size:22px;font-family:ui-monospace,monospace;}
+.meter{height:14px;border-radius:99px;background:var(--track);overflow:hidden;display:flex;}
+.meter i{display:block;height:100%;}
+.meter .m-dec{background:var(--accent-deep);}
+.meter .m-obs{background:var(--accent);}
+.legend{display:flex;flex-wrap:wrap;gap:14px 18px;font-size:12.5px;color:var(--ink-2);margin-top:2px;}
+.legend span{display:inline-flex;align-items:center;gap:7px;}
+.sw{width:11px;height:11px;border-radius:3px;flex:none;}
+.sw.dec{background:var(--accent-deep);} .sw.obs{background:var(--accent);}
+.sw.nev{background:var(--track);box-shadow:inset 0 0 0 1px var(--border);}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-top:14px;}
+.tile{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:16px 16px 15px;}
+.tile .k{font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);font-weight:600;
+  font-family:ui-monospace,monospace;}
+.tile .v{font-size:30px;font-weight:700;margin-top:8px;letter-spacing:-.02em;
+  font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums;line-height:1;}
+.tile .n{font-size:12px;color:var(--muted);margin-top:6px;}
+.tile.hl .v{color:var(--amber);}
+.tile.ok .v{color:var(--accent);}
+section{margin-top:40px;}
+h2{font-size:19px;letter-spacing:-.01em;margin:0 0 4px;font-weight:700;}
+.lede{color:var(--ink-2);margin:0 0 18px;font-size:14px;max-width:70ch;}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  padding:clamp(16px,2.4vw,24px);box-shadow:var(--shadow);}
+.kind{display:grid;grid-template-columns:190px 1fr;gap:16px;align-items:center;padding:14px 0;border-top:1px solid var(--border);}
+.kind:first-of-type{border-top:0;}
+@media(max-width:560px){.kind{grid-template-columns:1fr;gap:8px;}}
+.kind .name{font-weight:600;font-size:14px;}
+.kind .name em{display:block;font-style:normal;color:var(--muted);font-size:12px;font-family:ui-monospace,monospace;margin-top:2px;}
+.bar{position:relative;height:26px;border-radius:6px;background:var(--track);overflow:hidden;display:flex;}
+.bar i{height:100%;}
+.bar i.dec{background:var(--accent-deep);}
+.bar i.obs{background:var(--accent);}
+.bar i+i{box-shadow:inset 2px 0 0 var(--panel);}
+.bar .lab{position:absolute;top:50%;transform:translateY(-50%);right:10px;font-size:12px;font-weight:600;
+  color:var(--ink-2);font-family:ui-monospace,monospace;text-shadow:0 0 4px var(--panel);}
+.bar[data-full] .lab{color:var(--danger);}
+.bundles{display:flex;flex-direction:column;gap:2px;}
+.brow{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:center;padding:9px 0;}
+@media(max-width:560px){.brow{grid-template-columns:96px 1fr;gap:10px;}}
+.brow .tag{font-family:ui-monospace,monospace;font-size:12.5px;font-weight:600;}
+.brow .tag em{display:block;font-style:normal;color:var(--muted);font-size:11px;font-weight:400;margin-top:1px;}
+.bwrap{display:flex;align-items:center;gap:9px;}
+.bwrap .fill{height:16px;border-radius:5px;background:var(--accent);min-width:2px;}
+.bwrap .fill.top{background:var(--amber);}
+.bwrap .num{font-family:ui-monospace,monospace;font-size:12.5px;color:var(--ink-2);flex:none;}
+.bwrap .num small{color:var(--muted);}
+.tbl{width:100%;overflow-x:auto;margin-top:20px;}
+table{border-collapse:collapse;width:100%;font-size:13px;}
+th,td{text-align:right;padding:9px 12px;border-top:1px solid var(--border);white-space:nowrap;}
+th:first-child,td:first-child{text-align:left;}
+thead th{color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:600;border-top:0;
+  font-family:ui-monospace,monospace;}
+td.mono{font-family:ui-monospace,monospace;font-variant-numeric:tabular-nums;}
+tbody tr:hover{background:var(--panel-2);}
+td .scn{font-family:ui-monospace,monospace;font-weight:600;}
+.empty{color:var(--muted);font-size:13.5px;}
+.journey svg{width:100%;height:auto;display:block;overflow:visible;}
+.jx{font-size:10.5px;fill:var(--muted);font-family:ui-monospace,monospace;}
+.jv{font-size:11px;fill:var(--ink-2);font-family:ui-monospace,monospace;font-weight:600;}
+.jdot{fill:var(--accent);stroke:var(--panel);stroke-width:2;}
+.jdot.end{fill:var(--amber);}
+footer{margin-top:44px;padding-top:20px;border-top:1px solid var(--border);color:var(--muted);font-size:12.5px;
+  display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+footer .mono{color:var(--ink-2);}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:99px;font-size:11px;
+  background:color-mix(in srgb,var(--accent) 14%, transparent);color:var(--accent-deep);font-weight:600;
+  font-family:ui-monospace,monospace;}
+:root[data-theme="dark"] .pill{color:var(--accent-soft);}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill{color:var(--accent-soft);}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">Star Conflict · protocol preservation</div>
+      <h1>Capture Coverage</h1>
+      <p class="sub">How much of the game's wire protocol has been recorded before the servers go dark — and what each session pulled off the wire.</p>
+    </div>
+    <button class="toggle" id="tg" aria-label="Toggle light or dark theme"><span id="tgi">◐</span> theme</button>
+  </header>
+
+  <div class="hero">
+    <div><div class="count"><span id="heroCount">—</span><small id="heroMeta"></small></div></div>
+    <div class="meter-wrap">
+      <div class="meter-top"><span>Observed so far</span><b id="meterTop">—</b></div>
+      <div class="meter" id="meter" role="img" aria-label="observed vs total elements">
+        <i class="m-dec" id="mDec" style="width:0"></i><i class="m-obs" id="mObs" style="width:0"></i>
+      </div>
+      <div class="legend">
+        <span><i class="sw dec"></i> Decoded — readable</span>
+        <span><i class="sw obs"></i> Observed — captured, not yet decoded</span>
+        <span><i class="sw nev"></i> Never observed — the gap</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="tiles" id="tiles"></div>
+
+  <section>
+    <h2>Coverage by element class</h2>
+    <p class="lede">Each bar is one class of the protocol, filled left-to-right by what's been captured.</p>
+    <div class="card" id="kinds"></div>
+  </section>
+
+  <section>
+    <h2>What each session captured</h2>
+    <p class="lede">Elements each session saw on the wire (amber = the biggest contributor). Later sessions overlap heavily; the countdown moves on the <em>new</em> codes a session adds, not the total it sees.</p>
+    <div class="card" id="bundleCard"></div>
+  </section>
+
+  <section class="journey">
+    <h2>The countdown</h2>
+    <p class="lede">Never-observed elements across the sessions, in order — the number that dies with the servers if nobody records it.</p>
+    <div class="card"><div id="jchart"></div></div>
+  </section>
+
+  <footer>
+    <span>Generated <span class="mono" id="gen">—</span> · <span class="mono" id="genSess">—</span> sessions · live from <span class="mono">sccap coverage</span></span>
+    <span class="pill">Capturing has a deadline. Decoding doesn't.</span>
+  </footer>
+</div>
+
+<script>
+const DATA = __SCCOV_DATA__;
+const fmt = n => Number(n).toLocaleString("en-US");
+const $ = id => document.getElementById(id);
+
+(function render(D){
+  const T = D.totals;
+  // hero
+  $("heroCount").textContent = fmt(T.never);
+  $("heroMeta").innerHTML = `<b>never observed</b>, of ${fmt(T.known)} known elements.<br>These die with the servers if nobody records them.`;
+  $("meterTop").textContent = `${fmt(T.observed)} / ${fmt(T.known)} · ${T.pct}%`;
+  $("mDec").style.width = (T.known ? 100*T.decoded/T.known : 0) + "%";
+  $("mObs").style.width = (T.known ? 100*T.undecoded/T.known : 0) + "%";
+
+  // tiles
+  const tiles = [
+    {k:"Observed", v:fmt(T.observed), n:`of ${fmt(T.known)} known · ${T.pct}%`, cls:"ok"},
+    {k:"Never observed", v:fmt(T.never), n:"the countdown", cls:"hl"},
+    {k:"Decoded", v:fmt(T.decoded), n:"reading has no deadline", cls:""},
+    {k:"Novel found", v:fmt(D.novelCount), n:"unknown to the client build", cls:""},
+    {k:"Sessions", v:fmt(D.sessions), n:"contributed coverage", cls:""},
+  ];
+  if (D.hasBundles) tiles.push({k:"Frames", v:fmt(D.framesTotal), n:"archived to pcapng", cls:""});
+  $("tiles").innerHTML = tiles.map(t =>
+    `<div class="tile ${t.cls}"><div class="k">${t.k}</div><div class="v">${t.v}</div><div class="n">${t.n}</div></div>`).join("");
+
+  // kind bars
+  $("kinds").innerHTML = (D.kinds||[]).map(k => {
+    const obs = k.decoded + k.undecoded, pct = k.known ? Math.round(1000*obs/k.known)/10 : 0;
+    const wd = k.known ? 100*k.decoded/k.known : 0, wo = k.known ? 100*k.undecoded/k.known : 0;
+    const full = obs === 0;
+    return `<div class="kind">
+      <div class="name">${k.label}<em>${k.code}</em></div>
+      <div class="bar" ${full?'data-full':''} title="${k.label}: ${k.decoded} decoded, ${k.undecoded} observed, ${k.known-obs} never observed">
+        ${wd?`<i class="dec" style="width:${wd}%"></i>`:''}
+        ${wo?`<i class="obs" style="width:${wo}%"></i>`:''}
+        <span class="lab">${obs} / ${k.known} · ${pct}%${full?' · untouched':''}</span>
+      </div></div>`;
+  }).join("");
+
+  // bundles
+  const bc = $("bundleCard");
+  if (D.hasBundles && D.bundles && D.bundles.length) {
+    const maxSeen = Math.max(...D.bundles.map(b => b.seen), 1);
+    const bars = D.bundles.map(b => `
+      <div class="brow">
+        <div class="tag">${b.scen||"?"}<em>${b.region||""}</em></div>
+        <div class="bwrap">
+          <span class="fill ${b.first?'top':''}" style="width:${Math.max(2,100*b.seen/maxSeen)}%" title="${b.scen}: ${b.seen} elements seen"></span>
+          <span class="num">${b.seen}<small> seen · ${b.novel} novel</small></span>
+        </div></div>`).join("");
+    const rows = D.bundles.map(b =>
+      `<tr><td><span class="scn">${b.scen||"?"}</span></td><td class="mono">${b.region||"—"}</td><td class="mono">${fmt(b.frames)}</td><td class="mono">${b.seen}</td><td class="mono">${b.novel}</td></tr>`).join("");
+    bc.innerHTML = `<div class="bundles">${bars}</div>
+      <div class="tbl"><table>
+        <thead><tr><th>Session</th><th>Region</th><th>Frames</th><th>Elements seen</th><th>Novel</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>`;
+  } else {
+    bc.innerHTML = `<p class="empty">No bundle directory configured. Start <span class="mono">sccov</span> with <span class="mono">-bundles /path/to/packet-caps</span> to show per-session stats.</p>`;
+  }
+
+  // journey line
+  const J = D.journey || [];
+  if (J.length >= 2) {
+    const W=780,H=210,pl=48,pr=16,pt=24,pb=42;
+    const vals = J.map(d => d[1]);
+    let hi = Math.max(...vals), lo = Math.min(...vals);
+    const pad = Math.max(4, Math.round((hi-lo)*0.25)); hi += pad; lo = Math.max(0, lo - pad);
+    const xs = i => pl + (W-pl-pr) * i/(J.length-1);
+    const ys = v => pt + (H-pt-pb) * (hi-v)/((hi-lo)||1);
+    const pts = J.map((d,i) => [xs(i), ys(d[1])]);
+    const line = pts.map((p,i) => (i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join(" ");
+    const area = line + ` L ${pts[pts.length-1][0].toFixed(1)} ${H-pb} L ${pts[0][0].toFixed(1)} ${H-pb} Z`;
+    let grid = "";
+    const ticks = 4;
+    for (let i=0;i<=ticks;i++){ const v=Math.round(lo+(hi-lo)*i/ticks); const y=ys(v);
+      grid += `<line x1="${pl}" y1="${y.toFixed(1)}" x2="${W-pr}" y2="${y.toFixed(1)}" stroke="var(--border)" stroke-width="1"/><text class="jx" x="${pl-8}" y="${(y+3).toFixed(1)}" text-anchor="end">${v}</text>`; }
+    const dots = J.map((d,i) => { const [x,y]=pts[i]; const end=i===J.length-1;
+      return `<circle class="jdot ${end?'end':''}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${end?6:4}"><title>${d[0]}: ${d[1]} never observed</title></circle>`
+        + `<text class="jx" x="${x.toFixed(1)}" y="${H-pb+16}" text-anchor="middle">${d[0]}</text>`
+        + ((i===0||end)?`<text class="jv" x="${x.toFixed(1)}" y="${(y-12).toFixed(1)}" text-anchor="middle" fill="${end?'var(--amber)':'var(--muted)'}">${d[1]}</text>`:"");
+    }).join("");
+    $("jchart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Never-observed elements across sessions">
+      <defs><linearGradient id="jg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="var(--accent)" stop-opacity="0.22"/>
+        <stop offset="1" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>
+      ${grid}<path d="${area}" fill="url(#jg)"/>
+      <path d="${line}" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+      ${dots}</svg>`;
+  } else {
+    $("jchart").innerHTML = `<p class="empty">Not enough sessions yet to chart the countdown.</p>`;
+  }
+
+  $("gen").textContent = D.generated || "—";
+  $("genSess").textContent = fmt(D.sessions);
+})(DATA);
+
+// theme toggle
+$("tg").addEventListener("click", () => {
+  const cur = document.documentElement.getAttribute("data-theme");
+  const dark = cur ? cur === "dark" : matchMedia("(prefers-color-scheme:dark)").matches;
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+name: Deploy coverage dashboard
+
+# Builds the static sccov binary and deploys it to the Vultr server on every
+# push to main that touches the dashboard, its data, or this workflow.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'sc-capture/cmd/sccov/**'
+      - 'sc-capture/go.mod'
+      - 'deploy/**'
+      - '.github/workflows/deploy.yml'
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy-sccov
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: sc-capture/go.mod
+          cache-dependency-path: sc-capture/go.sum
+
+      - name: Build static binary
+        working-directory: sc-capture
+        run: |
+          CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o ../out/sccov ./cmd/sccov
+          test -x ../out/sccov && echo "built $(stat -c%s ../out/sccov) bytes"
+
+      - name: Configure SSH
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/id_deploy
+          chmod 600 ~/.ssh/id_deploy
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Upload artifacts
+        env:
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+        run: |
+          scp -i ~/.ssh/id_deploy out/sccov                     "$TARGET:/tmp/sccov"
+          scp -i ~/.ssh/id_deploy deploy/sccov.service          "$TARGET:/tmp/sccov.service"
+          scp -i ~/.ssh/id_deploy deploy/data/coverage.json     "$TARGET:/tmp/coverage.json"
+          scp -i ~/.ssh/id_deploy deploy/data/bundles-summary.json "$TARGET:/tmp/bundles-summary.json"
+
+      - name: Install and restart
+        env:
+          TARGET: ${{ secrets.DEPLOY_USER }}@${{ secrets.DEPLOY_HOST }}
+        run: ssh -i ~/.ssh/id_deploy "$TARGET" 'sudo bash -s' < deploy/install.sh

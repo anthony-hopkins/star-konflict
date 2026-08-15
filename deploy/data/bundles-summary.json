@@ -1,0 +1,50 @@
+[
+  {
+    "scen": "AUTH-01",
+    "region": "US",
+    "frames": 96622,
+    "seen": 60,
+    "novel": 8,
+    "first": true
+  },
+  {
+    "scen": "AUTH-04",
+    "region": "NA",
+    "frames": 9591,
+    "seen": 6,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "AUTH-03",
+    "region": "NA",
+    "frames": 12475,
+    "seen": 55,
+    "novel": 2,
+    "first": false
+  },
+  {
+    "scen": "HGR-02",
+    "region": "NA",
+    "frames": 54287,
+    "seen": 12,
+    "novel": 5,
+    "first": false
+  },
+  {
+    "scen": "ECON-01",
+    "region": "NA",
+    "frames": 39717,
+    "seen": 18,
+    "novel": 5,
+    "first": false
+  },
+  {
+    "scen": "ECON-04",
+    "region": "NA",
+    "frames": 13506,
+    "seen": 12,
+    "novel": 4,
+    "first": false
+  }
+]
