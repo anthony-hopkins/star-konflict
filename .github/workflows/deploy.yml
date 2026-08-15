@@ -10,6 +10,7 @@ on:
       - 'sc-capture/cmd/sccov/**'
       - 'sc-capture/go.mod'
       - 'deploy/**'
+      - '!deploy/**.md'   # docs-only changes don't need a redeploy
       - '.github/workflows/deploy.yml'
   workflow_dispatch: {}
 
