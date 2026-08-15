@@ -68,7 +68,11 @@ func (m *Message) NotificationType() (NotificationType, bool) {
 	if m.Header.Type != SCMDNotification || len(m.Body) < 2 {
 		return 0, false
 	}
-	return NotificationType(binary.BigEndian.Uint16(m.Body[0:2])), true
+	// The SN_* opcode is carried little-endian here — the id is in the low
+	// (first) body byte — unlike the big-endian async-request id above. Reading
+	// it big-endian multiplied every notification id by 256, so none matched the
+	// known SN_* table and every one was misreported as a novel element.
+	return NotificationType(binary.LittleEndian.Uint16(m.Body[0:2])), true
 }
 
 // ErrDesync reports that the byte stream no longer looks like framed messages.

@@ -3,8 +3,8 @@
     "scen": "AUTH-01",
     "region": "US",
     "frames": 96622,
-    "seen": 60,
-    "novel": 8,
+    "seen": 65,
+    "novel": 3,
     "first": true
   },
   {
@@ -19,32 +19,32 @@
     "scen": "AUTH-03",
     "region": "NA",
     "frames": 12475,
-    "seen": 55,
-    "novel": 2,
+    "seen": 57,
+    "novel": 0,
     "first": false
   },
   {
     "scen": "HGR-02",
     "region": "NA",
     "frames": 54287,
-    "seen": 12,
-    "novel": 5,
+    "seen": 17,
+    "novel": 0,
     "first": false
   },
   {
     "scen": "ECON-01",
     "region": "NA",
     "frames": 39717,
-    "seen": 18,
-    "novel": 5,
+    "seen": 23,
+    "novel": 0,
     "first": false
   },
   {
     "scen": "ECON-04",
     "region": "NA",
     "frames": 13506,
-    "seen": 12,
-    "novel": 4,
+    "seen": 16,
+    "novel": 0,
     "first": false
   },
   {
@@ -67,32 +67,32 @@
     "scen": "HGR-03",
     "region": "NA",
     "frames": 24741,
-    "seen": 8,
-    "novel": 1,
+    "seen": 9,
+    "novel": 0,
     "first": false
   },
   {
     "scen": "ECON-02",
     "region": "NA",
     "frames": 14717,
-    "seen": 13,
-    "novel": 2,
+    "seen": 15,
+    "novel": 0,
     "first": false
   },
   {
     "scen": "HGR-04",
     "region": "NA",
     "frames": 31582,
-    "seen": 11,
-    "novel": 2,
+    "seen": 13,
+    "novel": 0,
     "first": false
   },
   {
     "scen": "ECON-07",
     "region": "NA",
     "frames": 19943,
-    "seen": 8,
-    "novel": 1,
+    "seen": 9,
+    "novel": 0,
     "first": false
   },
   {
@@ -107,40 +107,40 @@
     "scen": "MM-04",
     "region": "NA",
     "frames": 24292,
-    "seen": 13,
-    "novel": 1,
+    "seen": 14,
+    "novel": 0,
     "first": false
   },
   {
     "scen": "MM-04",
     "region": "NA",
     "frames": 132597,
-    "seen": 24,
-    "novel": 6,
+    "seen": 30,
+    "novel": 0,
     "first": false
   },
   {
     "scen": "CBT-01",
     "region": "NA",
     "frames": 31836,
-    "seen": 16,
-    "novel": 2,
+    "seen": 18,
+    "novel": 0,
     "first": false
   },
   {
     "scen": "WLD-01",
     "region": "NA",
     "frames": 595485,
-    "seen": 21,
-    "novel": 3,
+    "seen": 24,
+    "novel": 0,
     "first": false
   },
   {
     "scen": "EDGE-02",
     "region": "NA",
     "frames": 65619,
-    "seen": 55,
-    "novel": 1,
+    "seen": 56,
+    "novel": 0,
     "first": false
   },
   {

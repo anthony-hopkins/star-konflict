@@ -5,12 +5,16 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
+	"time"
 
+	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/coverage"
 	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/decode"
 	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/exitcode"
 	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/index"
 	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/journal"
 	"github.com/anthony-hopkins/star-konflict/sc-capture/internal/session"
+	"github.com/anthony-hopkins/star-konflict/sc-capture/pkg/scproto"
 )
 
 // runIndex rebuilds the derived record index from the raw journal.
@@ -87,6 +91,25 @@ func runIndex(args []string) int {
 		}
 	}
 
+	// Refresh the bundle's coverage contribution from this fresh decode. A
+	// rebuild exists precisely so a decoder improvement is reflected without
+	// re-capturing; that improvement must reach machine-wide coverage, not only
+	// index.jsonl. The machine store is left alone — it is rebuilt by
+	// re-ingesting the deltas.
+	if err := refreshDelta(dir, meta.BundleID, meta.UTCStart, stats); err != nil {
+		fmt.Fprintf(os.Stderr, "warning: could not refresh %s: %v\n", coverage.DeltaFile, err)
+	}
+
+	// The rebuild just rewrote index.jsonl and coverage-delta.json, both of which
+	// SHA256SUMS covers. Refresh the manifest so the bundle stays verifiable. This
+	// is safe precisely because the raw-journal hashes were checked unchanged
+	// above: only derived-file hashes move; the evidence entries are identical.
+	sumsRefreshed := true
+	if err := journal.WriteSums(dir); err != nil {
+		sumsRefreshed = false
+		fmt.Fprintf(os.Stderr, "warning: could not refresh %s: %v\n", journal.SumsFile, err)
+	}
+
 	fmt.Fprintf(os.Stderr, "Rebuilt %s: %d records from %d segment(s).\n",
 		index.File, count, len(before))
 	fmt.Fprintf(os.Stderr, "Raw journal unchanged (%d segment hashes verified).\n", len(before))
@@ -97,9 +120,48 @@ func runIndex(args []string) int {
 	if len(stats.Novel) > 0 {
 		fmt.Fprintf(os.Stderr, "%d novel element(s) observed.\n", len(stats.Novel))
 	}
-	fmt.Fprintln(os.Stderr, "\nSHA256SUMS now covers a changed index; refresh it with:")
-	fmt.Fprintf(os.Stderr, "  sccap verify %s --write-sums\n", dir)
+	if sumsRefreshed {
+		fmt.Fprintln(os.Stderr, "SHA256SUMS refreshed for the rebuilt derived files "+
+			"(evidence hashes unchanged).")
+	} else {
+		fmt.Fprintf(os.Stderr, "\nSHA256SUMS not refreshed; do it with:\n  sccap verify %s --write-sums\n", dir)
+	}
 	return exitcode.OK
+}
+
+// refreshDelta rewrites the bundle's coverage-delta.json from a fresh decode,
+// so a decoder improvement reaches machine-wide coverage after a rebuild and not
+// only index.jsonl. It mirrors capture-time coverage recording but deliberately
+// does not touch the machine store: that is rebuilt by re-ingesting the deltas,
+// which is the only way a corrected id can supersede a stale one (the store
+// never regresses in place).
+func refreshDelta(dir, bundleID string, start time.Time, stats decode.Stats) error {
+	var observed []coverage.Entry
+	for key := range stats.ObservedElements {
+		kind, id, ok := coverage.ParseKey(key)
+		if !ok {
+			continue
+		}
+		decoded := strings.HasSuffix(key, "!")
+		name, _ := scproto.Name(kind, id)
+		state := coverage.ObservedUndecoded
+		if decoded {
+			state = coverage.Decoded
+		}
+		observed = append(observed, coverage.Entry{
+			Kind: string(kind), ID: id, Name: name, State: state,
+			FirstSeenSession: bundleID, FirstSeenUTC: start, Observations: 1,
+		})
+	}
+	var novel []coverage.Entry
+	for _, e := range stats.Novel {
+		novel = append(novel, coverage.Entry{
+			Kind: string(e.Kind), ID: e.ID, Name: e.Name,
+			State: coverage.ObservedUndecoded, FirstSeenSession: bundleID,
+			FirstSeenUTC: start, Observations: 1,
+		})
+	}
+	return coverage.WriteDelta(dir, bundleID, observed, novel)
 }
 
 func hashSegments(dir string) (map[string]string, error) {
