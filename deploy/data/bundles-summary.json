@@ -278,5 +278,21 @@
     "seen": 69,
     "novel": 3,
     "first": false
+  },
+  {
+    "scen": "TRADE-01",
+    "region": "NA",
+    "frames": 256612,
+    "seen": 19,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "ECON-IRID",
+    "region": "NA",
+    "frames": 283681,
+    "seen": 26,
+    "novel": 0,
+    "first": false
   }
 ]

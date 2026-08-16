@@ -17,7 +17,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 50
+   "observations": 54
   },
   "async_request:10": {
    "kind": "async_request",
@@ -26,7 +26,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 27
+   "observations": 31
   },
   "async_request:100": {
    "kind": "async_request",
@@ -562,7 +562,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T210832Z__WLD-01__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T22:47:51.08443774Z",
-   "observations": 9
+   "observations": 11
   },
   "async_request:159": {
    "kind": "async_request",
@@ -888,7 +888,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 20
+   "observations": 22
   },
   "async_request:195": {
    "kind": "async_request",
@@ -974,7 +974,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 41
+   "observations": 45
   },
   "async_request:203": {
    "kind": "async_request",
@@ -991,7 +991,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 41
+   "observations": 45
   },
   "async_request:205": {
    "kind": "async_request",
@@ -1000,7 +1000,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 50
+   "observations": 54
   },
   "async_request:206": {
    "kind": "async_request",
@@ -1086,7 +1086,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T210832Z__WLD-01__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T22:47:51.08443774Z",
-   "observations": 3
+   "observations": 5
   },
   "async_request:216": {
    "kind": "async_request",
@@ -1135,7 +1135,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T050345Z__ECON-01__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T22:47:50.995041349Z",
-   "observations": 9
+   "observations": 11
   },
   "async_request:222": {
    "kind": "async_request",
@@ -1162,7 +1162,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 13
+   "observations": 15
   },
   "async_request:227": {
    "kind": "async_request",
@@ -1227,9 +1227,10 @@
    "kind": "async_request",
    "id": 233,
    "name": "AC_DISASSEMBLE_ITEM",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260816T045806Z__TRADE-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-16T05:03:10.091677554Z",
+   "observations": 2
   },
   "async_request:234": {
    "kind": "async_request",
@@ -1288,7 +1289,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 24
+   "observations": 28
   },
   "async_request:240": {
    "kind": "async_request",
@@ -1362,7 +1363,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T202707Z__MM-04__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T22:47:51.064771874Z",
-   "observations": 1
+   "observations": 3
   },
   "async_request:250": {
    "kind": "async_request",
@@ -1371,7 +1372,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 50
+   "observations": 54
   },
   "async_request:251": {
    "kind": "async_request",
@@ -1429,7 +1430,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260816T015903Z__WLD-03__vol-local__NA__000",
    "first_seen_utc": "2026-08-16T02:13:15.39123574Z",
-   "observations": 4
+   "observations": 6
   },
   "async_request:29": {
    "kind": "async_request",
@@ -1473,7 +1474,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260816T015903Z__WLD-03__vol-local__NA__000",
    "first_seen_utc": "2026-08-16T02:13:15.39123574Z",
-   "observations": 2
+   "observations": 4
   },
   "async_request:33": {
    "kind": "async_request",
@@ -1500,7 +1501,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 16
+   "observations": 18
   },
   "async_request:36": {
    "kind": "async_request",
@@ -1524,9 +1525,10 @@
    "kind": "async_request",
    "id": 38,
    "name": "AC_VESSEL_EQUIPMENT",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260816T045806Z__TRADE-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-16T05:03:10.091677554Z",
+   "observations": 2
   },
   "async_request:39": {
    "kind": "async_request",
@@ -1912,7 +1914,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 30
+   "observations": 34
   },
   "async_request:80": {
    "kind": "async_request",
@@ -2123,7 +2125,7 @@
    "state": "decoded",
    "first_seen_session": "SC_20260815T202152Z__MM-01__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T22:47:51.057893906Z",
-   "observations": 18
+   "observations": 22
   },
   "message_type:12": {
    "kind": "message_type",
@@ -2141,7 +2143,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 50
+   "observations": 54
   },
   "message_type:14": {
    "kind": "message_type",
@@ -2150,7 +2152,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 39
+   "observations": 43
   },
   "message_type:15": {
    "kind": "message_type",
@@ -2191,7 +2193,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 21
+   "observations": 23
   },
   "message_type:2": {
    "kind": "message_type",
@@ -2209,7 +2211,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T203551Z__MM-04__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T22:47:51.071347896Z",
-   "observations": 9
+   "observations": 11
   },
   "message_type:21": {
    "kind": "message_type",
@@ -2226,7 +2228,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 14
+   "observations": 16
   },
   "message_type:23": {
    "kind": "message_type",
@@ -2243,7 +2245,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 49
+   "observations": 53
   },
   "message_type:25": {
    "kind": "message_type",
@@ -2268,7 +2270,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260816T015903Z__WLD-03__vol-local__NA__000",
    "first_seen_utc": "2026-08-16T02:13:15.39123574Z",
-   "observations": 2
+   "observations": 4
   },
   "message_type:28": {
    "kind": "message_type",
@@ -2277,7 +2279,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T210832Z__WLD-01__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T22:47:51.08443774Z",
-   "observations": 3
+   "observations": 5
   },
   "message_type:29": {
    "kind": "message_type",
@@ -2550,7 +2552,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 21
+   "observations": 23
   },
   "notification:112": {
    "kind": "notification",
@@ -2605,9 +2607,10 @@
    "kind": "notification",
    "id": 14,
    "name": "SN_ITEM_SALVAGED",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260816T045806Z__TRADE-01__vol-local__NA__000",
+   "first_seen_utc": "2026-08-16T05:03:10.091677554Z",
+   "observations": 2
   },
   "notification:15": {
    "kind": "notification",
@@ -2927,7 +2930,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T203551Z__MM-04__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T22:47:51.071347896Z",
-   "observations": 4
+   "observations": 6
   },
   "notification:50": {
    "kind": "notification",
@@ -3189,7 +3192,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260816T015903Z__WLD-03__vol-local__NA__000",
    "first_seen_utc": "2026-08-16T02:13:15.39123574Z",
-   "observations": 2
+   "observations": 4
   },
   "notification:8": {
    "kind": "notification",
@@ -3249,7 +3252,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T050345Z__ECON-01__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T22:47:50.995041349Z",
-   "observations": 1
+   "observations": 3
   },
   "notification:86": {
    "kind": "notification",
@@ -3403,5 +3406,5 @@
    "observations": 3
   }
  ],
- "updated_utc": "2026-08-16T04:51:24.366652348Z"
+ "updated_utc": "2026-08-16T05:17:10.73817327Z"
 }
