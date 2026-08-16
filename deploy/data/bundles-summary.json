@@ -150,5 +150,29 @@
     "seen": 4,
     "novel": 0,
     "first": false
+  },
+  {
+    "scen": "ECON-07",
+    "region": "NA",
+    "frames": 30815,
+    "seen": 7,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "CLAN-01",
+    "region": "NA",
+    "frames": 438746,
+    "seen": 29,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "ECON-07",
+    "region": "NA",
+    "frames": 148130,
+    "seen": 10,
+    "novel": 0,
+    "first": false
   }
 ]
