@@ -246,5 +246,13 @@
     "seen": 7,
     "novel": 0,
     "first": false
+  },
+  {
+    "scen": "HGR-GRIND",
+    "region": "NA",
+    "frames": 444673,
+    "seen": 68,
+    "novel": 0,
+    "first": false
   }
 ]
