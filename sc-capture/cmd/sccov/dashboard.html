@@ -262,10 +262,31 @@ const $ = id => document.getElementById(id);
     const ticks = 4;
     for (let i=0;i<=ticks;i++){ const v=Math.round(lo+(hi-lo)*i/ticks); const y=ys(v);
       grid += `<line x1="${pl}" y1="${y.toFixed(1)}" x2="${W-pr}" y2="${y.toFixed(1)}" stroke="var(--border)" stroke-width="1"/><text class="jx" x="${pl-8}" y="${(y+3).toFixed(1)}" text-anchor="end">${v}</text>`; }
+    // Only label points that actually fit: at 10.5px monospace a label is ~0.6em
+    // per character, so past a dozen sessions labelling every point collides into
+    // an unreadable smear. Spans differ by anchor (see below), so place greedily
+    // left-to-right rather than on a fixed stride — a stride can't account for the
+    // edge labels being wider on one side.
+    const labelW = Math.max(...J.map(d => String(d[0]).length)) * 6.3, labelGap = 10;
+    const span = i => { const x = xs(i);
+      if (i === 0) return [x, x+labelW];
+      if (i === J.length-1) return [x-labelW, x];
+      return [x-labelW/2, x+labelW/2]; };
+    // The final point is the headline (current state), so it is reserved first and
+    // everything else has to fit to its left.
+    const endSpan = span(J.length-1), keep = new Set([J.length-1]);
+    for (let i=0, cursor=-1e9; i<J.length-1; i++) {
+      const [s,e] = span(i);
+      if (s >= cursor + labelGap && e + labelGap <= endSpan[0]) { keep.add(i); cursor = e; }
+    }
+    const labelled = i => keep.has(i);
     const dots = J.map((d,i) => { const [x,y]=pts[i]; const end=i===J.length-1;
+      // Anchor the edge labels inward, or they overflow the viewBox and collide
+      // with the y-axis ticks.
+      const anchor = i===0 ? "start" : end ? "end" : "middle";
       return `<circle class="jdot ${end?'end':''}" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${end?6:4}"><title>${d[0]}: ${d[1]} never observed</title></circle>`
-        + `<text class="jx" x="${x.toFixed(1)}" y="${H-pb+16}" text-anchor="middle">${d[0]}</text>`
-        + ((i===0||end)?`<text class="jv" x="${x.toFixed(1)}" y="${(y-12).toFixed(1)}" text-anchor="middle" fill="${end?'var(--amber)':'var(--muted)'}">${d[1]}</text>`:"");
+        + (labelled(i) ? `<text class="jx" x="${x.toFixed(1)}" y="${H-pb+16}" text-anchor="${anchor}">${d[0]}</text>` : "")
+        + ((i===0||end)?`<text class="jv" x="${x.toFixed(1)}" y="${(y-12).toFixed(1)}" text-anchor="${anchor}" fill="${end?'var(--amber)':'var(--muted)'}">${d[1]}</text>`:"");
     }).join("");
     $("jchart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Never-observed elements across sessions">
       <defs><linearGradient id="jg" x1="0" y1="0" x2="0" y2="1">
