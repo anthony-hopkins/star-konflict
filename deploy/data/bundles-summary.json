@@ -294,5 +294,13 @@
     "seen": 26,
     "novel": 0,
     "first": false
+  },
+  {
+    "scen": "TRADE-02",
+    "region": "NA",
+    "frames": 139110,
+    "seen": 14,
+    "novel": 0,
+    "first": false
   }
 ]

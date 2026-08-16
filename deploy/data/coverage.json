@@ -17,7 +17,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 54
+   "observations": 56
   },
   "async_request:10": {
    "kind": "async_request",
@@ -108,7 +108,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T230210Z__CLAN-01__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T23:40:14.03143932Z",
-   "observations": 4
+   "observations": 6
   },
   "async_request:11": {
    "kind": "async_request",
@@ -562,7 +562,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T210832Z__WLD-01__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T22:47:51.08443774Z",
-   "observations": 11
+   "observations": 13
   },
   "async_request:159": {
    "kind": "async_request",
@@ -588,7 +588,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T050345Z__ECON-01__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T22:47:50.995041349Z",
-   "observations": 13
+   "observations": 15
   },
   "async_request:161": {
    "kind": "async_request",
@@ -1000,7 +1000,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 54
+   "observations": 56
   },
   "async_request:206": {
    "kind": "async_request",
@@ -1253,25 +1253,28 @@
    "kind": "async_request",
    "id": 236,
    "name": "AC_ADVERT_CREATE",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260816T061620Z__TRADE-02__vol-local__NA__000",
+   "first_seen_utc": "2026-08-16T06:20:15.288875073Z",
+   "observations": 2
   },
   "async_request:237": {
    "kind": "async_request",
    "id": 237,
    "name": "AC_ADVERT_DELETE",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260816T061620Z__TRADE-02__vol-local__NA__000",
+   "first_seen_utc": "2026-08-16T06:20:15.288875073Z",
+   "observations": 2
   },
   "async_request:238": {
    "kind": "async_request",
    "id": 238,
    "name": "AC_ADVERT_HEADER_GET",
-   "state": "never_observed",
-   "first_seen_utc": "0001-01-01T00:00:00Z",
-   "observations": 0
+   "state": "observed_undecoded",
+   "first_seen_session": "SC_20260816T061620Z__TRADE-02__vol-local__NA__000",
+   "first_seen_utc": "2026-08-16T06:20:15.288875073Z",
+   "observations": 2
   },
   "async_request:239": {
    "kind": "async_request",
@@ -1280,7 +1283,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260816T034429Z__HGR-GRIND2__vol-local__NA__000",
    "first_seen_utc": "2026-08-16T04:26:24.887744043Z",
-   "observations": 2
+   "observations": 4
   },
   "async_request:24": {
    "kind": "async_request",
@@ -1372,7 +1375,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 54
+   "observations": 56
   },
   "async_request:251": {
    "kind": "async_request",
@@ -2143,7 +2146,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 54
+   "observations": 56
   },
   "message_type:14": {
    "kind": "message_type",
@@ -2152,7 +2155,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 43
+   "observations": 45
   },
   "message_type:15": {
    "kind": "message_type",
@@ -2245,7 +2248,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T031346Z__AUTH-01__vol-local__US__000",
    "first_seen_utc": "2026-08-15T22:47:50.936585395Z",
-   "observations": 53
+   "observations": 55
   },
   "message_type:25": {
    "kind": "message_type",
@@ -3126,7 +3129,7 @@
    "state": "observed_undecoded",
    "first_seen_session": "SC_20260815T044854Z__HGR-02__vol-local__NA__000",
    "first_seen_utc": "2026-08-15T22:47:50.987880389Z",
-   "observations": 23
+   "observations": 25
   },
   "notification:72": {
    "kind": "notification",
@@ -3406,5 +3409,5 @@
    "observations": 3
   }
  ],
- "updated_utc": "2026-08-16T05:17:10.73817327Z"
+ "updated_utc": "2026-08-16T06:20:19.927464837Z"
 }
