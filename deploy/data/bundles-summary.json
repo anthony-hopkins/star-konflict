@@ -221,7 +221,7 @@
     "frames": 374422,
     "seen": 74,
     "novel": 0,
-    "first": true
+    "first": false
   },
   {
     "scen": "ECON-07B",
@@ -253,6 +253,30 @@
     "frames": 444673,
     "seen": 68,
     "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "HGR-GRIND2",
+    "region": "NA",
+    "frames": 216090,
+    "seen": 77,
+    "novel": 0,
+    "first": true
+  },
+  {
+    "scen": "ECON-07C",
+    "region": "NA",
+    "frames": 113195,
+    "seen": 9,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "AUTH-01",
+    "region": "NA",
+    "frames": 757344,
+    "seen": 69,
+    "novel": 3,
     "first": false
   }
 ]
