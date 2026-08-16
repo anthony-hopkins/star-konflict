@@ -5,7 +5,7 @@
     "frames": 96622,
     "seen": 65,
     "novel": 3,
-    "first": true
+    "first": false
   },
   {
     "scen": "AUTH-04",
@@ -172,6 +172,78 @@
     "region": "NA",
     "frames": 148130,
     "seen": 10,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "ECON-05",
+    "region": "NA",
+    "frames": 680928,
+    "seen": 21,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "HGR-OPS",
+    "region": "NA",
+    "frames": 225158,
+    "seen": 28,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "HGR-OPS2",
+    "region": "NA",
+    "frames": 397565,
+    "seen": 29,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "MM-06",
+    "region": "NA",
+    "frames": 598598,
+    "seen": 31,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "EDGE-02B",
+    "region": "NA",
+    "frames": 92516,
+    "seen": 6,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "WLD-03",
+    "region": "NA",
+    "frames": 374422,
+    "seen": 74,
+    "novel": 0,
+    "first": true
+  },
+  {
+    "scen": "ECON-07B",
+    "region": "NA",
+    "frames": 201001,
+    "seen": 21,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "HGR-CREW",
+    "region": "NA",
+    "frames": 248532,
+    "seen": 11,
+    "novel": 0,
+    "first": false
+  },
+  {
+    "scen": "HGR-CREW2",
+    "region": "NA",
+    "frames": 95605,
+    "seen": 7,
     "novel": 0,
     "first": false
   }
